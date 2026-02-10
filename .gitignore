@@ -1,3 +1,54 @@
-.idea
-.vscode
-.vs
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependency directories
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Cache & misc
+*.tgz
+.npm/
+.eslintcache
+.yarn-integrity
+node_modules/.cache/
+vite.config.ts.timestamp-*
+vite.config.js.timestamp-*
+
+# TypeScript incremental build files
+*.tsbuildinfo
+
+# Coverage
+coverage/
+
+# Optional: local test/output data
+*.pid
+*.pid.lock
+
+
+# Backend
+**/bin/
+**/obj/
