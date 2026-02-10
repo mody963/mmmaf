@@ -52,3 +52,36 @@ coverage/
 # Backend
 **/bin/
 **/obj/
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+project.lock.json
+
+# MSBuild generated
+*.g.props
+*.g.targets
+*.dgspec.json
+*.nuget.props
+*.nuget.targets
+
+# Auto-generated AssemblyInfo (older SDKs)
+*AssemblyInfo.cs
+
+# Test results
+TestResult*/
+*.trx
+
+# Coverage (extra patterns)
+*.coverage
+*.coveragexml
+
+# Rider / ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# VS Code C# extension
+.vscode/*.csproj
+.vscode/*.json
+.vscode/*.cache
