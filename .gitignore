@@ -37,19 +37,18 @@ dist-ssr/
 node_modules/.cache/
 vite.config.ts.timestamp-*
 vite.config.js.timestamp-*
-
-# TypeScript incremental build files
 *.tsbuildinfo
 
 # Coverage
 coverage/
+*.coverage
+*.coveragexml
 
 # Optional: local test/output data
 *.pid
 *.pid.lock
 
-
-# Backend
+# Backend (.NET)
 **/bin/
 **/obj/
 
@@ -58,6 +57,8 @@ coverage/
 *.snupkg
 *.nuspec
 project.lock.json
+project.assets.json
+project.nuget.cache
 
 # MSBuild generated
 *.g.props
@@ -73,15 +74,11 @@ project.lock.json
 TestResult*/
 *.trx
 
-# Coverage (extra patterns)
-*.coverage
-*.coveragexml
-
 # Rider / ReSharper
 _ReSharper*/
 *.DotSettings.user
 
-# VS Code C# extension
+# VS Code C# extension temp files
 .vscode/*.csproj
 .vscode/*.json
 .vscode/*.cache
