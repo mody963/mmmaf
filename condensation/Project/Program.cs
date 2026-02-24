@@ -1,4 +1,14 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Welcome to this amazing program");
-Menu.Start();
-Console.WriteLine("hihihihihihi");
+﻿using System.Globalization;
+using System.Reflection;
+using System.Threading;
+using Project;
+
+Console.WriteLine("1. English");
+Console.WriteLine("2. Nederlands");
+
+var input = Console.ReadLine();
+
+var culture = input == "2" ? "nl-NL" : "en-US";
+Thread.CurrentThread.CurrentUICulture = new CultureInfo(culture);
+
+Console.WriteLine(Texts.Get("Welcome"));
