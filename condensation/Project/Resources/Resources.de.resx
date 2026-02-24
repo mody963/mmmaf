@@ -118,67 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Welcome" xml:space="preserve">
-    <value>Welkom bij de applicatie!</value>
+    <value>Willkommen bei der Anwendung!</value>
     <comment/>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Druk op "esx om af te sluiten.</value>
+    <value>Drücke „Esc“, um zu beenden</value>
     <comment/>
   </data>
   <data name="Test" xml:space="preserve">
-    <value>Dit is een test</value>
-    <comment/>
-  </data>
-  <data name="Menu_Main" xml:space="preserve">
-    <value>Hoofdmenu</value>
-    <comment/>
-  </data>
-  <data name="Menu_Login" xml:space="preserve">
-    <value>Inloggen / Registreren</value>
-    <comment/>
-  </data>
-  <data name="Menu_Game" xml:space="preserve">
-    <value>Gamemenu</value>
-    <comment/>
-  </data>
-  <data name="Menu_Cart" xml:space="preserve">
-    <value>Winkelwagen</value>
-    <comment/>
-  </data>
-  <data name="Menu_Checkout" xml:space="preserve">
-    <value>Betalen</value>
-    <comment/>
-  </data>
-  <data name="Menu_Orders" xml:space="preserve">
-    <value>Vorige Bestellingen</value>
-    <comment/>
-  </data>
-  <data name="Menu_About" xml:space="preserve">
-    <value>Over Ons</value>
-    <comment/>
-  </data>
-  <data name="Menu_Language" xml:space="preserve">
-    <value>Taal</value>
-    <comment/>
-  </data>
-  <data name="Menu_Exit" xml:space="preserve">
-    <value>Afsluiten</value>
-    <comment/>
-  </data>
-  <data name="Game_List" xml:space="preserve">
-    <value>Gamelijst</value>
-    <comment/>
-  </data>
-  <data name="Game_Search" xml:space="preserve">
-    <value>Game Zoeken</value>
-    <comment/>
-  </data>
-  <data name="Game_Filter" xml:space="preserve">
-    <value>Game Filter</value>
-    <comment/>
-  </data>
-  <data name="Game_Back" xml:space="preserve">
-    <value>Terug</value>
+    <value>Dies ist ein Test.</value>
     <comment/>
   </data>
 </root>
