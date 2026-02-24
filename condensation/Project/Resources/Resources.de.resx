@@ -129,4 +129,56 @@
     <value>Dies ist ein Test.</value>
     <comment/>
   </data>
+  <data name="Menu_Main" xml:space="preserve">
+    <value>Hauptmenü</value>
+    <comment/>
+  </data>
+  <data name="Menu_Login" xml:space="preserve">
+    <value>Anmelden / Registrieren</value>
+    <comment/>
+  </data>
+  <data name="Menu_Game" xml:space="preserve">
+    <value>Spielmenü</value>
+    <comment/>
+  </data>
+  <data name="Menu_Cart" xml:space="preserve">
+    <value>Warenkorb</value>
+    <comment/>
+  </data>
+  <data name="Menu_Checkout" xml:space="preserve">
+    <value>Kasse</value>
+    <comment/>
+  </data>
+  <data name="Menu_Orders" xml:space="preserve">
+    <value>Frühere Bestellungen</value>
+    <comment/>
+  </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>Über uns</value>
+    <comment/>
+  </data>
+  <data name="Menu_Language" xml:space="preserve">
+    <value>Sprache</value>
+    <comment/>
+  </data>
+  <data name="Menu_Exit" xml:space="preserve">
+    <value>Beenden</value>
+    <comment/>
+  </data>
+  <data name="Game_List" xml:space="preserve">
+    <value>Spiele Liste</value>
+    <comment/>
+  </data>
+  <data name="Game_Search" xml:space="preserve">
+    <value>Spiel Suche</value>
+    <comment/>
+  </data>
+  <data name="Game_Filter" xml:space="preserve">
+    <value>Spiel Filter</value>
+    <comment/>
+  </data>
+  <data name="Game_Back" xml:space="preserve">
+    <value>Zurück</value>
+    <comment/>
+  </data>
 </root>
