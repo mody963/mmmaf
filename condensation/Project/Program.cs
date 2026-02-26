@@ -2,6 +2,8 @@
 using System.Globalization;
 using System.Threading;
 using Project;
+using System.Resources;
+using System.Reflection;
 
 // -----------------------------
 // LANGUAGE SELECTION
@@ -33,7 +35,6 @@ AnsiConsole.MarkupLine($"[green]{Texts.Get("Welcome")}[/]");
 // MAIN MENU LOOP
 // -----------------------------
 bool running = true;
-
 while (running)
 {
     var mainMenu = new SelectionPrompt<string>()
