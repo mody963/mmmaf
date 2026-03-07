@@ -4,6 +4,7 @@ using System.Threading;
 using Project;
 using System.Resources;
 using System.Reflection;
+using CondensationApp;
 
 // -----------------------------
 // LANGUAGE SELECTION
@@ -126,3 +127,19 @@ void ShowGameMenu()
             return;
     }
 }
+
+string connString = "Host=localhost;Port=5432;Database=Condensation;Username=menno;Password=aiGhei6ane1OoRo9zaeJ";
+
+var db = new Database(connString);
+
+try
+{
+    await db.TestConnectionAsync();
+    await db.RunVersionQueryAsync();
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Fout bij databaseverbinding:");
+    Console.WriteLine(ex.Message);
+}
+
