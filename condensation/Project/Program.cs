@@ -5,7 +5,46 @@ using Project;
 using System.Resources;
 using System.Reflection;
 using CondensationApp;
+using Microsoft.Extensions.Configuration;
 
+
+// -----------------------------
+// 1. DATABASE & CONFIG SETUP
+// -----------------------------
+// Build the configuration to read from appsettings.json
+IConfiguration config = new ConfigurationBuilder()
+    .SetBasePath(AppContext.BaseDirectory)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+
+string? connString = config.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connString))
+{
+    AnsiConsole.MarkupLine("[red]Error: Connection string 'DefaultConnection' is missing in appsettings.json![/]");
+    return; // Stop the app if we have no database connection
+}
+
+// Initialize your data access classes
+var accountsDb = new AccountsAccess(connString);
+var db = new Database(connString);
+
+try
+{
+    // Test the connection before starting the UI
+    await db.TestConnectionAsync();
+    await db.RunVersionQueryAsync();
+    AnsiConsole.MarkupLine("[green]Database connection successful![/]");
+    Thread.Sleep(1500); // Pause for a second so the user can see the success message
+    Console.Clear();
+}
+catch (Exception ex)
+{
+    AnsiConsole.MarkupLine($"[red]Error connecting to database: {ex.Message}[/]");
+    AnsiConsole.MarkupLine("[yellow]Press any key to exit...[/]");
+    Console.ReadKey();
+    return;
+}
 // -----------------------------
 // LANGUAGE SELECTION
 // -----------------------------
@@ -127,19 +166,3 @@ void ShowGameMenu()
             return;
     }
 }
-
-string connString = "Host=localhost;Port=5432;Database=Condensation;Username=menno;Password=aiGhei6ane1OoRo9zaeJ";
-
-var db = new Database(connString);
-
-try
-{
-    await db.TestConnectionAsync();
-    await db.RunVersionQueryAsync();
-}
-catch (Exception ex)
-{
-    Console.WriteLine("Fout bij databaseverbinding:");
-    Console.WriteLine(ex.Message);
-}
-
