@@ -2,8 +2,6 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 
-namespace CondensationApp; // Assuming this is your namespace based on your Database class
-
 public class AccountsAccess
 {
     private readonly string _connectionString;
