@@ -4,13 +4,7 @@ using System.Collections.Generic;
 
 public class AccountsLogic
 {
-    private readonly AccountsAccess _accounts;
-
-    // We pass the already-configured AccountsAccess in through the constructor
-    public AccountsLogic(AccountsAccess accountsAccess)
-    {
-        _accounts = accountsAccess;
-    }
+    private readonly AccountsAccess _accounts = new AccountsAccess();
     
     public AccountModel? CheckLogin(string email, string password)
     {
@@ -26,7 +20,6 @@ public class AccountsLogic
         var account = CheckLogin(email, password);
         if (account == null) return null;
         
-        // Assuming AccountRoles is an enum or constant somewhere in your project
         return account.Role == AccountRoles.Admin ? account : null;
     }
 
