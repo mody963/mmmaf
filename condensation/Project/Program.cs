@@ -28,6 +28,8 @@ if (string.IsNullOrEmpty(connString))
 // Initialize your data access classes
 var accountsDb = new AccountsAccess(connString);
 var db = new Database(connString);
+// ---> PUT IT RIGHT HERE! <---
+var accountsLogic = new AccountsLogic(accountsDb);
 
 try
 {
@@ -96,7 +98,7 @@ while (running)
     switch (choice)
     {
         case var c when c == Texts.Get("Menu_Login"):
-            AnsiConsole.MarkupLine("[blue]Not implemented yet.[/]");
+            LoginMenu.Start(accountsLogic);
             break;
 
         case var c when c == Texts.Get("Menu_Game"):

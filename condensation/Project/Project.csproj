@@ -11,8 +11,13 @@
    <Content Include="DataSources/*">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
    </Content>
-</ItemGroup>
+  </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.2" />

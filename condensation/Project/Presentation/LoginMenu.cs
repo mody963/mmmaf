@@ -1,11 +1,12 @@
+using System;
 using Spectre.Console;
-using System.Text;
 
 public static class LoginMenu
 {
-    private static readonly AccountsLogic accountsLogic = new AccountsLogic();
+    // 1. We DELETED the 'new AccountsLogic()' line from here!
 
-    public static void Start()
+    // 2. We ask for AccountsLogic to be passed in when Start is called
+    public static void Start(AccountsLogic accountsLogic) 
     {
         bool exitMenu = false;
 
@@ -26,12 +27,11 @@ public static class LoginMenu
             switch (choice)
             {
                 case "Log in":
-                    if (DoLogin()) exitMenu = true; // Exit menu after login success
-                    
+                    // 3. Pass it down into the DoLogin method
+                    if (DoLogin(accountsLogic)) exitMenu = true; 
                     break;
 
                 case "Create account":
-                    // TODO: Implement registration later
                     AnsiConsole.MarkupLine("[yellow]Registration not implemented yet.[/]");
                     break;
 
@@ -46,7 +46,8 @@ public static class LoginMenu
         }
     }
 
-    private static bool DoLogin()
+    // 4. Ask for it here too!
+    private static bool DoLogin(AccountsLogic accountsLogic) 
     {
         if (CurrentUserModel.CurrentUser != null)
         {
@@ -70,7 +71,8 @@ public static class LoginMenu
                     .Secret() // Masks the input
             );
 
-            var account = accountsLogic.CheckAdminLogin(email, password); // Admin-only for now
+            // 5. Now it uses the fully connected accountsLogic!
+            var account = accountsLogic.CheckAdminLogin(email, password); 
 
             if (account != null)
             {
@@ -80,7 +82,7 @@ public static class LoginMenu
                 {
                     AnsiConsole.MarkupLine($"[green]Welcome back {account.FirstName}! (Admin)[/]");
                     AdminMenu.Start(); // Open admin menu
-                    return true;       // Exit login menu after admin logs out
+                    return true;       
                 }
 
                 AnsiConsole.MarkupLine($"[green]Welcome back {account.FirstName}![/]");
@@ -95,10 +97,9 @@ public static class LoginMenu
                 if (attempts >= maxAttempts)
                 {
                     AnsiConsole.MarkupLine("[red]Too many failed attempts. Returning to main menu...[/]");
-                    return true; // Return to main menu after 3 failed tries
+                    return true; 
                 }
 
-                // Optional: allow escape to go back early
                 AnsiConsole.MarkupLine("Press Enter to try again or ESC to go back.");
                 var key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.Escape)
