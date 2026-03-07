@@ -1,35 +1,46 @@
-﻿
-
-//This class is not static so later on we can use inheritance and interfaces
-public class AccountsLogic
+﻿public class AccountsLogic
 {
-
-    //Static properties are shared across all instances of the class
-    //This can be used to get the current logged in account from anywhere in the program
-    //private set, so this can only be set by the class itself
-    public static AccountModel? CurrentAccount { get; private set; }
-    private AccountsAccess _access = new();
-
-    public AccountsLogic()
+    private readonly AccountsAccess accounts = new AccountsAccess();
+    
+    public AccountModel? CheckLogin(string email, string password)
     {
-        // Could do something here
-
+        var account = accounts.GetByEmail(email);
+        if (account == null || !account.IsActive) return null;
+        return account.Password == password? account : null;
+    }
+    public AccountModel? CheckAdminLogin(string email, string password)
+    {
+        var account = CheckLogin(email, password);
+        if (account == null) return null;
+        return account.Role == AccountRoles.Admin ? account : null;
     }
 
-    public AccountModel CheckLogin(string email, string password)
+    public int CreateAccount(AccountModel account)
     {
+        var existing = accounts.GetByEmail(account.Email);
+        if (existing != null) throw new InvalidOperationException("Email already in use");
+        return accounts.Create(account);
+    }
+    public bool IsValidPassword(string password)
+    {
+        if (string.IsNullOrEmpty(password) || password.Length < 8) return false;
+        return password.IndexOfAny("!@#$%^&*()".ToCharArray()) >= 0;
+    }
+    public List<AccountModel> GetAllAccounts()
+    {
+        return accounts.GetAll();
+    }
 
+    public void UpdateAccount(AccountModel account)
+    {
+        accounts.Update(account);
+    }
 
-        AccountModel acc = _access.GetByEmail(email);
-        if (acc != null && acc.Password == password)
-        {
-            CurrentAccount = acc;
-            return acc;
-        }
-        return null;
+    public void DeleteAccount(int id)
+    {
+        accounts.Delete(id);
     }
 }
-
 
 
 

@@ -122,11 +122,67 @@
     <comment/>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Press 0 to exit.</value>
+    <value>Press "esc" to exit.</value>
     <comment/>
   </data>
   <data name="Test" xml:space="preserve">
     <value>This is a test</value>
+    <comment/>
+  </data>
+  <data name="Menu_Main" xml:space="preserve">
+    <value>Main Menu</value>
+    <comment/>
+  </data>
+  <data name="Menu_Login" xml:space="preserve">
+    <value>Login / Register</value>
+    <comment/>
+  </data>
+  <data name="Menu _Game" xml:space="preserve">
+    <value>Game Menu</value>
+    <comment/>
+  </data>
+  <data name="Menu_Cart" xml:space="preserve">
+    <value>Cart</value>
+    <comment/>
+  </data>
+  <data name="Menu_Checkout" xml:space="preserve">
+    <value>Checkout</value>
+    <comment/>
+  </data>
+  <data name="Menu_Orders" xml:space="preserve">
+    <value>Previous Orders</value>
+    <comment/>
+  </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>About Us</value>
+    <comment/>
+  </data>
+  <data name="Menu_Language" xml:space="preserve">
+    <value>Language</value>
+    <comment/>
+  </data>
+  <data name="Menu_Exit" xml:space="preserve">
+    <value>Exit</value>
+    <comment/>
+  </data>
+  <data name="Game_List" xml:space="preserve">
+    <value>Game List</value>
+    <comment/>
+  </data>
+  <data name="Game_Search" xml:space="preserve">
+    <value>Game Search</value>
+    <comment/>
+  </data>
+  <data name="Game_Filter" xml:space="preserve">
+    <value>Game Filter</value>
+    <comment/>
+  </data>
+  <data name="Game_Back" xml:space="preserve">
+    <value>Back</value>
+    <comment/>
+  </data>
+  <data name="Menu_Game" xml:space="preserve">
+    <value>Game Menu</value>
     <comment/>
   </data>
 </root>
