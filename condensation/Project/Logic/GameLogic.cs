@@ -1,0 +1,42 @@
+using System.Collections.Generic;
+
+public class GameLogic
+{
+    private readonly GameAccess _gameAccess = new GameAccess();
+
+    public void AddGame(GameModel game)
+    {
+        if (string.IsNullOrWhiteSpace(game.Title)) return;
+        _gameAccess.AddGame(game);
+    }
+
+    public void UpdateGame(GameModel game)
+    {
+        _gameAccess.UpdateGame(game);
+    }
+
+    public List<GameModel> SearchGamesByTitle(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title)) return new List<GameModel>();
+        return _gameAccess.SearchByTitle(title);
+    }
+
+    public void SoftDeleteGame(int id)
+    {
+        _gameAccess.SoftDeleteGame(id);
+    }
+
+    public List<GameModel> GetAllGames()
+    {
+        return _gameAccess.GetAllGames();
+    }
+    public List<GenreModel> GetAllGenres()
+    {
+        return _gameAccess.GetAllGenres();
+    }
+
+    public List<AgeRatingModel> GetAllAgeRatings()
+    {
+        return _gameAccess.GetAllAgeRatings();
+    }
+}
