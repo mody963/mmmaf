@@ -12,12 +12,6 @@ IConfiguration config = new ConfigurationBuilder()
 
 string? connString = config.GetConnectionString("DefaultConnection");
 
-if (string.IsNullOrEmpty(connString))
-{
-    AnsiConsole.MarkupLine("[red]Error: Connection string 'DefaultConnection' is missing in appsettings.json![/]");
-    return;
-}
-AppConfig.ConnectionString = connString;
 // Initialize your data access classes
 var db = new Database(connString);
 

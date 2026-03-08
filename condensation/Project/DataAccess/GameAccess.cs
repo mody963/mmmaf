@@ -67,4 +67,11 @@ public class GameAccess
         // Ordering by ID so Age Ratings appear in their logical order (E, T, M, A)
         return connection.Query<AgeRatingModel>("SELECT * FROM age_rating ORDER BY id").ToList();
     }
+
+    public List<GameModel> GetActiveGames()
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        string sql = "SELECT * FROM game WHERE is_active = true ORDER BY title";
+        return connection.Query<GameModel>(sql).ToList();
+    }
 }

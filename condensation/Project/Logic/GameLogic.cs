@@ -39,4 +39,9 @@ public class GameLogic
     {
         return _gameAccess.GetAllAgeRatings();
     }
+
+    public List<GameModel> GetActiveGames()
+    {
+        return _gameAccess.GetActiveGames();
+    }
 }
