@@ -8,6 +8,8 @@ using CondensationApp;
 IConfiguration config = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    // ADD THIS NEW LINE:
+    .AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true)
     .Build();
 
 string? connString = config.GetConnectionString("DefaultConnection");

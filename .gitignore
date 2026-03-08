@@ -83,5 +83,5 @@ _ReSharper*/
 .vscode/*.json
 .vscode/*.cache
 
-
+# local fix
 appsettings.local.json
