@@ -82,3 +82,5 @@ _ReSharper*/
 .vscode/*.csproj
 .vscode/*.json
 .vscode/*.cache
+
+appsettings.local.json
