@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Resources;
 
-namespace Project;
 // This class is responsible for fetching the correct text based on the current culture.
 public static class Texts
 {

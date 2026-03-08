@@ -2,11 +2,9 @@ using System;
 using Spectre.Console;
 
 public static class LoginMenu
-{
-    // 1. We DELETED the 'new AccountsLogic()' line from here!
-
-    // 2. We ask for AccountsLogic to be passed in when Start is called
-    public static void Start(AccountsLogic accountsLogic) 
+{ 
+    private static readonly AccountsLogic accountsLogic = new AccountsLogic();
+    public static void Start() 
     {
         bool exitMenu = false;
 
@@ -28,7 +26,7 @@ public static class LoginMenu
             {
                 case "Log in":
                     // 3. Pass it down into the DoLogin method
-                    if (DoLogin(accountsLogic)) exitMenu = true; 
+                    if (DoLogin()) exitMenu = true; 
                     break;
 
                 case "Create account":
@@ -47,7 +45,7 @@ public static class LoginMenu
     }
 
     // 4. Ask for it here too!
-    private static bool DoLogin(AccountsLogic accountsLogic) 
+    private static bool DoLogin() 
     {
         if (CurrentUserModel.CurrentUser != null)
         {
