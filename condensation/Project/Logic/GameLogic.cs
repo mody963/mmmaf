@@ -39,4 +39,16 @@ public class GameLogic
     {
         return _gameAccess.GetAllAgeRatings();
     }
+
+    public List<GameModel> GetActiveGames()
+    {
+        return _gameAccess.GetActiveGames();
+    }
+
+    public List<GameModel> GetGamesByGenre(int genreId)
+    {
+        if (genreId <= 0) return new List<GameModel>();
+        
+        return _gameAccess.GetGamesByGenre(genreId);
+    }
 }

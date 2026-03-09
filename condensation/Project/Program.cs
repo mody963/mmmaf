@@ -8,19 +8,15 @@ using CondensationApp;
 IConfiguration config = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    // ADD THIS NEW LINE:
+    .AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true)
     .Build();
 
 string? connString = config.GetConnectionString("DefaultConnection");
+AppConfig.ConnectionString = connString ?? "";
 
-if (string.IsNullOrEmpty(connString))
-{
-    AnsiConsole.MarkupLine("[red]Error: Connection string 'DefaultConnection' is missing in appsettings.json![/]");
-    return;
-}
-AppConfig.ConnectionString = connString;
 // Initialize your data access classes
 var db = new Database(connString);
-
 try
 {
     // Test the connection before starting the UI

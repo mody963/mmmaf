@@ -5,8 +5,7 @@ using System.Linq;
 
 public class GameAccess
 {
-    private readonly string _connectionString = AppConfig.ConnectionString;
-
+    private string _connectionString => AppConfig.ConnectionString;
     public void AddGame(GameModel game)
     {
         using var connection = new NpgsqlConnection(_connectionString);
@@ -66,5 +65,20 @@ public class GameAccess
         using var connection = new NpgsqlConnection(_connectionString);
         // Ordering by ID so Age Ratings appear in their logical order (E, T, M, A)
         return connection.Query<AgeRatingModel>("SELECT * FROM age_rating ORDER BY id").ToList();
+    }
+
+    public List<GameModel> GetActiveGames()
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        //connection.Open();
+        string sql = "SELECT * FROM game WHERE is_active = true ORDER BY title";
+        return connection.Query<GameModel>(sql).ToList();
+    }
+
+    public List<GameModel> GetGamesByGenre(int genreId)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        string sql = "SELECT * FROM game WHERE genre_id = @GenreId AND is_active = true ORDER BY title";
+        return connection.Query<GameModel>(sql, new { GenreId = genreId }).ToList();
     }
 }

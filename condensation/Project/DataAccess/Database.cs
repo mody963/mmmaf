@@ -13,9 +13,17 @@ public class Database
 
     public async Task TestConnectionAsync()
     {
-        await using var conn = new NpgsqlConnection(_connectionString);
-        await conn.OpenAsync();
-        Console.WriteLine("Databaseverbinding gelukt.");
+        try
+        {
+            await using var conn = new NpgsqlConnection(_connectionString);
+            await conn.OpenAsync();
+            Console.WriteLine("Databaseverbinding gelukt.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Fout bij verbinden:");
+            Console.WriteLine(ex.ToString());
+        }
     }
 
     public async Task RunVersionQueryAsync()

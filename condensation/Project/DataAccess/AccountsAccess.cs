@@ -5,7 +5,8 @@ using System.Linq;
 
 public class AccountsAccess
 {
-    private readonly string _connectionString = AppConfig.ConnectionString;
+    //private readonly string _connectionString = AppConfig.ConnectionString;
+    private string _connectionString => AppConfig.ConnectionString;
     private const string Table = "account";
 
     public AccountModel? GetByEmail(string email)
