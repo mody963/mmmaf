@@ -86,13 +86,17 @@ public static class AdminMenu
         AnsiConsole.MarkupLine("\nPress any key to return...");
         Console.ReadKey(true);
     }
-    private static GameModel? SearchAndSelectGame(string action)
+    private static GameModel? SearchAndSelectGame(string action, bool onlyActive = false)
     {
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"\n[bold cyan]--- {action} ---[/]");
         string searchTitle = AnsiConsole.Prompt(new TextPrompt<string>("Enter game title to search for:"));
         
         var results = _gameLogic.SearchGamesByTitle(searchTitle);
+        if (onlyActive)
+        {
+            results = results.Where(g => g.IsActive).ToList();
+        }
 
         if (results.Count == 0)
         {
@@ -154,7 +158,7 @@ public static class AdminMenu
     }
     private static void DeleteGameMenu()
     {
-        var game = SearchAndSelectGame("Deactivate a Game");
+        var game = SearchAndSelectGame("Deactivate a Game", true);
         if (game == null) { Console.ReadKey(true); return; }
 
         if (AnsiConsole.Confirm($"\nAre you sure you want to deactivate (soft-delete) '[red]{game.Title}[/]'?"))
