@@ -5,8 +5,7 @@ using System.Linq;
 
 public class GameAccess
 {
-    private readonly string _connectionString = "Host=localhost;Port=5432;Username=menno;Password=test12345;Database=Condensation";
-
+    private string _connectionString => AppConfig.ConnectionString;
     public void AddGame(GameModel game)
     {
         using var connection = new NpgsqlConnection(_connectionString);
@@ -71,7 +70,7 @@ public class GameAccess
     public List<GameModel> GetActiveGames()
     {
         using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        //connection.Open();
         string sql = "SELECT * FROM game WHERE is_active = true ORDER BY title";
         return connection.Query<GameModel>(sql).ToList();
     }

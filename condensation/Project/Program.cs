@@ -13,10 +13,10 @@ IConfiguration config = new ConfigurationBuilder()
     .Build();
 
 string? connString = config.GetConnectionString("DefaultConnection");
+AppConfig.ConnectionString = connString ?? "";
 
 // Initialize your data access classes
 var db = new Database(connString);
-
 try
 {
     // Test the connection before starting the UI
