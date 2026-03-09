@@ -4,6 +4,7 @@ using Spectre.Console;
 public static class GameMenu
 {
     private static readonly GameLogic _gameLogic = new GameLogic();
+    private const string _backOption = "Back";
 
     public static void Start()
     {
@@ -30,13 +31,12 @@ public static class GameMenu
                     break;
 
                 case var c when c == Texts.Get("Game_Search"):
-                    AnsiConsole.MarkupLine("[blue]Game search not implemented.[/]");
+                    AnsiConsole.MarkupLine("[red]Game search not implemented.[/]");
                     Console.ReadKey(true);
                     break;
 
                 case var c when c == Texts.Get("Game_Filter"):
-                    AnsiConsole.MarkupLine("[blue]Game filter not implemented.[/]");
-                    Console.ReadKey(true);
+                    FilterGamesByGenre();
                     break;
 
                 case var c when c == Texts.Get("Game_Back"):
@@ -53,7 +53,7 @@ public static class GameMenu
 
         if (games.Count == 0)
         {
-            AnsiConsole.MarkupLine("[yellow]No games available.[/]");
+            AnsiConsole.MarkupLine("[red]No games available.[/]");
             Console.ReadKey(true);
             return;
         }
@@ -64,6 +64,67 @@ public static class GameMenu
         table.AddColumn("Price");
 
         foreach (var game in games)
+        {
+            table.AddRow(game.Title, $"€{game.Price:0.00}");
+        }
+
+        AnsiConsole.Write(table);
+        AnsiConsole.MarkupLine("\nPress any key to return...");
+        Console.ReadKey(true);
+    }
+
+    private static void FilterGamesByGenre()
+    {
+        AnsiConsole.Clear();
+
+        List<GenreModel> genres = _gameLogic.GetAllGenres();
+
+        if (genres.Count == 0)
+        {
+            AnsiConsole.MarkupLine("[red]No genres available.[/]");
+            Console.ReadKey(true);
+            return;
+        }
+
+        var genreChoices = genres.Select(g => g.Name).Append(_backOption).ToList();
+
+        string selectedGenreName = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[bold]Choose a genre to filter by:[/]")
+                .AddChoices(genreChoices)
+                .HighlightStyle(new Style(foreground: Color.Yellow))
+        );
+
+        if (selectedGenreName == _backOption) return;
+
+        GenreModel? selectedGenre = genres.FirstOrDefault(g => g.Name == selectedGenreName);
+
+        if (selectedGenre == null)
+        {
+            AnsiConsole.MarkupLine("[red]Invalid genre selection.[/]");
+            Console.ReadKey(true);
+            return;
+        }
+
+        List<GameModel> filteredGames = _gameLogic.GetGamesByGenre(selectedGenre.Id);
+
+        AnsiConsole.Clear();
+        AnsiConsole.MarkupLine($"[bold green]Games in genre:[/] [yellow]{selectedGenre.Name}[/]");
+
+        if (filteredGames.Count == 0)
+        {
+            AnsiConsole.MarkupLine("[red]No games were found for the selected genre.[/]");
+            AnsiConsole.MarkupLine("[grey]Press any key to return...[/]");
+            Console.ReadKey(true);
+            return;
+        }
+
+        var table = new Table().Border(TableBorder.Rounded);
+        table.AddColumn("Title");
+        table.AddColumn("Description");
+        table.AddColumn("Price");
+
+        foreach (var game in filteredGames)
         {
             table.AddRow(game.Title, $"€{game.Price:0.00}");
         }

@@ -75,4 +75,11 @@ public class GameAccess
         string sql = "SELECT * FROM game WHERE is_active = true ORDER BY title";
         return connection.Query<GameModel>(sql).ToList();
     }
+
+    public List<GameModel> GetGamesByGenre(int genreId)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        string sql = "SELECT * FROM game WHERE genre_id = @GenreId AND is_active = true ORDER BY title";
+        return connection.Query<GameModel>(sql, new { GenreId = genreId }).ToList();
+    }
 }
