@@ -257,4 +257,8 @@
     <value>Press any key to return . . .</value>
     <comment/>
   </data>
+  <data name="Search_Title" xml:space="preserve">
+    <value>Enter game title to search for:</value>
+    <comment/>
+  </data>
 </root>
