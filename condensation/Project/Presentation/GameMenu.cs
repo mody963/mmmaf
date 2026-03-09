@@ -121,7 +121,6 @@ public static class GameMenu
 
         var table = new Table().Border(TableBorder.Rounded);
         table.AddColumn("Title");
-        table.AddColumn("Description");
         table.AddColumn("Price");
 
         foreach (var game in filteredGames)
