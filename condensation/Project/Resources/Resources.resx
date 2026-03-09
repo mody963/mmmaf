@@ -185,4 +185,24 @@
     <value>Game Menu</value>
     <comment/>
   </data>
+  <data name="Login_Menu" xml:space="preserve">
+    <value>Login Menu</value>
+    <comment/>
+  </data>
+  <data name="Create_Account" xml:space="preserve">
+    <value>Create Account</value>
+    <comment/>
+  </data>
+  <data name="Log_Out" xml:space="preserve">
+    <value>Log Out</value>
+    <comment/>
+  </data>
+  <data name="Go_Back" xml:space="preserve">
+    <value>Go Back</value>
+    <comment/>
+  </data>
+  <data name="Log_In" xml:space="preserve">
+    <value>Login</value>
+    <comment/>
+  </data>
 </root>

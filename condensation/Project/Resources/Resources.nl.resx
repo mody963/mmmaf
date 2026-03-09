@@ -181,4 +181,24 @@
     <value>Terug</value>
     <comment/>
   </data>
+  <data name="Go_Back" xml:space="preserve">
+    <value>Terug</value>
+    <comment/>
+  </data>
+  <data name="Login_Menu" xml:space="preserve">
+    <value>Inlog Menu</value>
+    <comment/>
+  </data>
+  <data name="Create_Account" xml:space="preserve">
+    <value>Account Aanmaken</value>
+    <comment/>
+  </data>
+  <data name="Log_Out" xml:space="preserve">
+    <value>Uitloggen</value>
+    <comment/>
+  </data>
+  <data name="Log_In" xml:space="preserve">
+    <value>Inloggen</value>
+    <comment/>
+  </data>
 </root>

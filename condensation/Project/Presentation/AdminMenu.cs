@@ -12,12 +12,12 @@ public static class AdminMenu
             AnsiConsole.Clear();
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("[bold green]Admin Menu[/]")
+                    .Title($"[bold green]{Texts.Get("Admin Menu")}[/]")
                     .AddChoices(
-                        "Add Game",
-                        "Update Game",
-                        "Delete Game",
-                        "Log out"
+                        Texts.Get("Add_Game"),
+                        Texts.Get("Update_Game"),
+                        Texts.Get("Delete_Game"),
+                        Texts.Get("Log_out")
                     )
                     .HighlightStyle(new Style(foreground: Color.Yellow))
             );
