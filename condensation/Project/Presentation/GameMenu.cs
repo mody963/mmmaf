@@ -69,7 +69,7 @@ public static class GameMenu
         }
 
         AnsiConsole.Write(table);
-        AnsiConsole.MarkupLine("\nPress any key to return...");
+        AnsiConsole.MarkupLine("\n[grey]Press any key to return...[/]");
         Console.ReadKey(true);
     }
 
@@ -130,7 +130,7 @@ public static class GameMenu
         }
 
         AnsiConsole.Write(table);
-        AnsiConsole.MarkupLine("\nPress any key to return...");
+        AnsiConsole.MarkupLine("\n[grey]Press any key to return...[/]");
         Console.ReadKey(true);
     }
 }
