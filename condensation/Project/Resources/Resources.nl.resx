@@ -201,4 +201,60 @@
     <value>Inloggen</value>
     <comment/>
   </data>
+  <data name="Add_Game" xml:space="preserve">
+    <value>Game Toevoegen</value>
+    <comment/>
+  </data>
+  <data name="Update_Game" xml:space="preserve">
+    <value>Game Updaten</value>
+    <comment/>
+  </data>
+  <data name="Delete_Game" xml:space="preserve">
+    <value>Game Verwijderen</value>
+    <comment/>
+  </data>
+  <data name="Add_A_New_Game" xml:space="preserve">
+    <value>--- Nieuwe  Game Toeoevogen ---</value>
+    <comment/>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Titel</value>
+    <comment/>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Uitleg</value>
+    <comment/>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Prijs (voorbeeld 59.99)</value>
+    <comment/>
+  </data>
+  <data name="Publisher_ID" xml:space="preserve">
+    <value>Uitgever_ID</value>
+    <comment/>
+  </data>
+  <data name="Select_Genre" xml:space="preserve">
+    <value>Selecteer Genre</value>
+    <comment/>
+  </data>
+  <data name="Select_Age_Rating" xml:space="preserve">
+    <value>Selecteer Leeftijds Groep</value>
+    <comment/>
+  </data>
+  <data name="Add_Game_Menu_Title" xml:space="preserve">
+    <value>--- Nieuwe  Game Toeoevogen ---</value>
+    <comment/>
+  </data>
+  <data name="Successfully_Added" xml:space="preserve">
+    <value>Succesvol</value>
+    <comment/>
+  </data>
+  <data name="To_The_Database" xml:space="preserve">
+    <value>Toegevoegd aan de databaseS</value>
+    <comment/>
+  </data>
+  <data name="Press_Any_Key_To_Return" xml:space="preserve">
+    <value>Klik een toets om terug te gaan . . .</value>
+    <comment/>
+  </data>
 </root>

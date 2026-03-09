@@ -181,10 +181,6 @@
     <value>Back</value>
     <comment/>
   </data>
-  <data name="Menu_Game" xml:space="preserve">
-    <value>Game Menu</value>
-    <comment/>
-  </data>
   <data name="Login_Menu" xml:space="preserve">
     <value>Login Menu</value>
     <comment/>
@@ -203,6 +199,62 @@
   </data>
   <data name="Log_In" xml:space="preserve">
     <value>Login</value>
+    <comment/>
+  </data>
+  <data name="Add_Game" xml:space="preserve">
+    <value>Add Game</value>
+    <comment/>
+  </data>
+  <data name="Update_Game" xml:space="preserve">
+    <value>Update Game</value>
+    <comment/>
+  </data>
+  <data name="Delete_Game" xml:space="preserve">
+    <value>Delete Game</value>
+    <comment/>
+  </data>
+  <data name="Add_A_New_Game" xml:space="preserve">
+    <value>--- Add a New Game ---</value>
+    <comment/>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+    <comment/>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+    <comment/>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price (e.g. 59.99)</value>
+    <comment/>
+  </data>
+  <data name="Publisher_ID" xml:space="preserve">
+    <value>Publisher ID</value>
+    <comment/>
+  </data>
+  <data name="Select_Genre" xml:space="preserve">
+    <value>Select Genre</value>
+    <comment/>
+  </data>
+  <data name="Select_Age_Rating" xml:space="preserve">
+    <value>Select Age Rating</value>
+    <comment/>
+  </data>
+  <data name="Add_Game_Menu_Title" xml:space="preserve">
+    <value>--- Add a New Game ---</value>
+    <comment/>
+  </data>
+  <data name="Successfully_Added" xml:space="preserve">
+    <value>Successfully added</value>
+    <comment/>
+  </data>
+  <data name="To_The_Database" xml:space="preserve">
+    <value>to the database</value>
+    <comment/>
+  </data>
+  <data name="Press_Any_Key_To_Return" xml:space="preserve">
+    <value>Press any key to return . . .</value>
     <comment/>
   </data>
 </root>

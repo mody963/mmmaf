@@ -181,4 +181,80 @@
     <value>Zurück</value>
     <comment/>
   </data>
+  <data name="Login_Menu" xml:space="preserve">
+    <value>Anmeldemenü</value>
+    <comment/>
+  </data>
+  <data name="Create_Account" xml:space="preserve">
+    <value>Konto erstellen</value>
+    <comment/>
+  </data>
+  <data name="Log_Out" xml:space="preserve">
+    <value>Abmelden</value>
+    <comment/>
+  </data>
+  <data name="Go_Back" xml:space="preserve">
+    <value>Zurück</value>
+    <comment/>
+  </data>
+  <data name="Log_In" xml:space="preserve">
+    <value>Anmelden</value>
+    <comment/>
+  </data>
+  <data name="Add_Game" xml:space="preserve">
+    <value>Spiel Hinzufügen</value>
+    <comment/>
+  </data>
+  <data name="Update_Game" xml:space="preserve">
+    <value>Spiel Aktualisieren</value>
+    <comment/>
+  </data>
+  <data name="Delete_Game" xml:space="preserve">
+    <value>Spiel Löschen</value>
+    <comment/>
+  </data>
+  <data name="Add_A_New_Game" xml:space="preserve">
+    <value>--- Neues Spiel Hinzufügen ---</value>
+    <comment/>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Titel</value>
+    <comment/>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beschreibung</value>
+    <comment/>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Preis (Beispiel 59.99)</value>
+    <comment/>
+  </data>
+  <data name="Publisher_ID" xml:space="preserve">
+    <value>Publisher-ID</value>
+    <comment/>
+  </data>
+  <data name="Select_Genre" xml:space="preserve">
+    <value>Genre auswählen</value>
+    <comment/>
+  </data>
+  <data name="Select_Age_Rating" xml:space="preserve">
+    <value>Altersfreigabe auswählen</value>
+    <comment/>
+  </data>
+  <data name="Add_Game_Menu_Title" xml:space="preserve">
+    <value>--- Neues Spiel Hinzufügen ---</value>
+    <comment/>
+  </data>
+  <data name="Successfully_Added" xml:space="preserve">
+    <value>Erfolgreich hinzugefügt</value>
+    <comment/>
+  </data>
+  <data name="To_The_Database" xml:space="preserve">
+    <value>zur Datenbank</value>
+    <comment/>
+  </data>
+  <data name="Press_Any_Key_To_Return" xml:space="preserve">
+    <value>Beliebige Taste drücken, um zurückzukehren . . .</value>
+    <comment/>
+  </data>
 </root>
