@@ -6,6 +6,8 @@ using CondensationApp;
 
 public static class MainMenu
 {
+    private static Cart cart = new Cart(); // Shared cart instance
+
     // We move the language prompt here so the Main Menu can use it when "Menu_Language" is selected
     private static readonly SelectionPrompt<string> LanguagePrompt = new SelectionPrompt<string>()
         .Title("[bold]Choose your language[/]")
@@ -59,11 +61,11 @@ public static class MainMenu
                     break;
 
                 case var c when c == Texts.Get("Menu_Game"):
-                    GameMenu.Start(); // Open the new GameMenu file!
+                    GameMenu.Start(cart); // Open the new GameMenu file! cart meegegeven voor zelfde cart bij add
                     break;
 
                 case var c when c == Texts.Get("Menu_Cart"):
-                    new Cart().ShowCart(); // voor nu nog even een new cart gemaakt maar dat zal een meegegeven cart moeten zijn bij de checkout 
+                    cart.ShowCart(); // zelde cart als voorheen als je wta toevoegd want static
                     break;
 
                 case var c when c == Texts.Get("Menu_Checkout"):

@@ -50,7 +50,6 @@ public class Cart
         var table = new Table()
             .Border(TableBorder.Rounded)
             .Title("[bold yellow]🛒 Your Shopping Cart[/]")
-            .AddColumn("[cyan]ID[/]")
             .AddColumn("[cyan]Product[/]")
             .AddColumn("[cyan]Price[/]")
             .AddColumn("[cyan]Purchase Date[/]");
@@ -78,7 +77,6 @@ public class Cart
             $"[bold green]Total Price:[/] €{totalPrice:F2}"
         )
         .Border(BoxBorder.Double)
-        .Header("[yellow]Summary[/]")
         .Padding(2,1); // horizontale en verticale ruimte binnen de panel
 
         AnsiConsole.Write(totalPanel);

@@ -50,7 +50,12 @@ public static class AdminMenu
 
         string title = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Title")}:"));
         string description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:"));
-        decimal price = AnsiConsole.Prompt(new TextPrompt<decimal>($"{Texts.Get("Price")}:"));
+        double price;
+        do
+        {
+            price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:"));
+        }
+        while (price <= 0);
         // placeholder for genre, publisher and agerating till they are implemented.
         int publisherId = AnsiConsole.Prompt(new TextPrompt<int>($"{Texts.Get("Publisher_ID")}:"));
         var genres = _gameLogic.GetAllGenres();
@@ -123,7 +128,7 @@ public static class AdminMenu
 
         game.Title = AnsiConsole.Prompt(new TextPrompt<string>("Title:").DefaultValue(game.Title));
         game.Description = AnsiConsole.Prompt(new TextPrompt<string>("Description:").DefaultValue(game.Description));
-        game.Price = AnsiConsole.Prompt(new TextPrompt<decimal>("Price:").DefaultValue(game.Price));
+        game.Price = AnsiConsole.Prompt(new TextPrompt<double>("Price:").DefaultValue(game.Price));
 
         // 2. Dropdown for Genre
         var genres = _gameLogic.GetAllGenres();

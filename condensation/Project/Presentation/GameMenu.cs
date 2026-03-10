@@ -8,7 +8,7 @@ public static class GameMenu
     private static readonly GameLogic _gameLogic = new GameLogic();
     private const string _backOption = "Back";
 
-    public static void Start()
+    public static void Start(Cart cart) // cart meegegeven vanuit MainMenu zodat we dezelfde cart gebruiken
     {
         while (true)
         {
@@ -29,7 +29,7 @@ public static class GameMenu
             switch (gameChoice)
             {
                 case var c when c == Texts.Get("Game_List"):
-                    ShowGameList();
+                    ShowGameList(cart); // cart meegeven zodat het vanuit begin zelfde is
                     break;
 
                 case var c when c == Texts.Get("Game_Search"):
@@ -47,7 +47,7 @@ public static class GameMenu
         }
     }
 
-    private static void ShowGameList()
+    private static void ShowGameList(Cart cart)
     {
         while (true)
         {
@@ -112,7 +112,7 @@ public static class GameMenu
             );
             if (detailAction == "Add to cart")
             {
-                new Cart().AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
+                cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price); // cart van meegegeven
             }
             // if back or after adding to cart, simply loop again
         }
