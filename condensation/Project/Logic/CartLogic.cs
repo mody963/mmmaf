@@ -16,6 +16,11 @@ public class CartLogic
         }
     }
 
+    public void ClearCart()
+    {
+        games.Clear();
+    }
+
     public List<CartModel> GetCartItems()
     {
         return games;
