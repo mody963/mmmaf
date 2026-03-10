@@ -29,6 +29,7 @@ public static class MainMenu
 
     public static void Start()
     {
+        Console.Clear();
         // 1. Do the initial language selection
         var languageChoice = AnsiConsole.Prompt(LanguagePrompt);
         ApplyLanguage(languageChoice);
@@ -65,11 +66,11 @@ public static class MainMenu
                     break;
 
                 case var c when c == Texts.Get("Menu_Cart"):
-                    cart.ShowCart(); // zelde cart als voorheen als je wta toevoegd want static
+                    cart.CartOptions(); // zelde cart als voorheen als je wta toevoegd want static
                     break;
 
                 case var c when c == Texts.Get("Menu_Checkout"):
-                    AnsiConsole.MarkupLine("[yellow]Checkout in Sprint 2.[/]");
+                    AnsiConsole.MarkupLine("[yellow]Checkout in Sprint 3.[/]");
                     break;
 
                 case var c when c == Texts.Get("Menu_Orders"):

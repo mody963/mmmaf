@@ -1,3 +1,5 @@
+using Spectre.Console;
+
 public class CartLogic
 {
 
@@ -26,9 +28,9 @@ public class CartLogic
         return games;
     }
 
-    public void RemoveFromCart(int id)
+    public void RemoveFromCart(string name)
     {
-        games.RemoveAll(g => g.id == id); // meteen alle items met die id worden verwijdert. 
+        games.RemoveAll(g => g.Name == name); // meteen alle items met die id worden verwijdert. 
     }
 
 

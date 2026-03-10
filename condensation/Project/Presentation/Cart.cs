@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spectre.Console;
 
 public class Cart
@@ -6,12 +7,21 @@ public class Cart
 
     public void AddToCart(int id, string name, double price)
     {
-        _cartLogic.AddToCart(id, name, price);
+        if (!_cartLogic.AddToCart(id, name, price))
+        {
+            AnsiConsole.MarkupLine($"[red]Item with id {id} is already in the cart.[/]");
+            Console.ReadKey(true);
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"[green]Item {name} added to cart for €{price:F2}.[/]");
+            Console.ReadKey(true);
+        }
     }
 
-    public void RemoveFromCart(int id)
+    public void RemoveFromCart(string name)
     {
-        _cartLogic.RemoveFromCart(id);
+        _cartLogic.RemoveFromCart(name);
     }
 
     public void ClearCart()
@@ -29,9 +39,53 @@ public class Cart
         return _cartLogic.GetTotalPrice();
     }
 
+    public void CartOptions()
+    {
+        var optie = AnsiConsole.Prompt(
+        new SelectionPrompt<string>()
+        .Title("[bold yellow]Select Cart Option:[/]")
+        .AddChoices("view", "remove item", "clear cart", " back"));
 
+        switch (optie)
+        {
+            case "view":
+                ShowCart();
+                break;
+            case "remove item":
+                var items = GetCartItems();
 
-    public void ShowCart()
+                if (items.Count == 0)
+                {
+                    AnsiConsole.MarkupLine("[red]Cart is empty.[/]");
+                    Console.ReadKey(true);
+                    break;
+                }
+
+                var selectedItem = AnsiConsole.Prompt(
+                    new SelectionPrompt<CartModel>()
+                        .Title("[yellow]Select an item to remove:[/]")
+                        .UseConverter(item => $"{item.Name} - €{item.Price:F2}")
+                        .AddChoices(items)
+                        .HighlightStyle(new Style(foreground: Color.Red))
+                );
+
+                RemoveFromCart(selectedItem.Name);
+
+                AnsiConsole.MarkupLine($"[green]{selectedItem.Name} removed from cart.[/]");
+                Console.ReadKey(true);
+
+                break;
+            case "clear cart":
+                ClearCart();
+                AnsiConsole.MarkupLine("[green]Cart cleared.[/]");
+                Console.ReadKey(true);
+                break;
+            case "back":
+                return;
+        }
+    }
+
+    private void ShowCart()
     {
         Console.Clear();
 
@@ -84,5 +138,5 @@ public class Cart
         AnsiConsole.WriteLine();
         AnsiConsole.MarkupLine("[grey]Press any key to continue...[/]");
         Console.ReadKey();
-    }
-    }
+   }
+}
