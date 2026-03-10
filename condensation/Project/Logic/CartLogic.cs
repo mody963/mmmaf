@@ -1,7 +1,7 @@
 public class CartLogic
 {
 
-    public List<(int id, string Name, double Price)> games = new();
+    public List<CartModel> games = new();
 
     public bool AddToCart(int id, string name, double price)
     {
@@ -11,9 +11,14 @@ public class CartLogic
         }
         else
         {
-            games.Add((id, name, price));
+            games.Add(new CartModel(id, name, price));
             return true; 
         }
+    }
+
+    public List<CartModel> GetCartItems()
+    {
+        return games;
     }
 
     public void RemoveFromCart(int id)
