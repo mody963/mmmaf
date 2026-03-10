@@ -257,4 +257,8 @@
     <value>Beliebige Taste drücken, um zurückzukehren . . .</value>
     <comment/>
   </data>
+  <data name="Search_Title" xml:space="preserve">
+    <value>Geben Sie den Spieltitel ein, um danach zu suchen:</value>
+    <comment/>
+  </data>
 </root>

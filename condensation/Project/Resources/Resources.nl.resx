@@ -257,4 +257,8 @@
     <value>Klik een toets om terug te gaan . . .</value>
     <comment/>
   </data>
+  <data name="Search_Title" xml:space="preserve">
+    <value>Voer de game titel in die je wilt zoeken:</value>
+    <comment/>
+  </data>
 </root>
