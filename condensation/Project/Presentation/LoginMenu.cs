@@ -12,32 +12,32 @@ public static class LoginMenu
         {
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("[bold yellow]Login Menu[/]")
+                    .Title($"[bold yellow]{Texts.Get("Login_Menu")}[/]")
                     .AddChoices(
-                        "Log in",
-                        "Create account",
-                        "Log out",
-                        "Go Back"
+                        Texts.Get("Log_In"),
+                        Texts.Get("Create_Account"),
+                        Texts.Get("Log_Out"),
+                        Texts.Get("Go_Back")
                     )
                     .HighlightStyle(new Style(foreground: Color.Green))
             );
 
             switch (choice)
             {
-                case "Log in":
+                case var c when c == Texts.Get("Log_In"):
                     // 3. Pass it down into the DoLogin method
                     if (DoLogin()) exitMenu = true; 
                     break;
 
-                case "Create account":
+                case var c when c == Texts.Get("Create_Account"):
                     AnsiConsole.MarkupLine("[yellow]Registration not implemented yet.[/]");
                     break;
 
-                case "Log out":
+                case var c when c == Texts.Get("Log_Out"):
                     LogoutCurrentUser();
                     break;
 
-                case "Go Back":
+                case var c when c == Texts.Get("Go_Back"):
                     exitMenu = true;
                     break;
             }

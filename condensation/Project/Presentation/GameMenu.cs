@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Spectre.Console;
 
 public static class GameMenu
@@ -47,30 +48,77 @@ public static class GameMenu
 
     private static void ShowGameList()
     {
-        AnsiConsole.Clear();
-
-        var games = _gameLogic.GetActiveGames();
-
-        if (games.Count == 0)
+        while (true)
         {
-            AnsiConsole.MarkupLine("[red]No games available.[/]");
-            Console.ReadKey(true);
-            return;
+            AnsiConsole.Clear();
+
+            var games = _gameLogic.GetActiveGames();
+
+            if (games.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[red]No games available.[/]");
+                Console.ReadKey(true);
+                return;
+            }
+
+            // compute column widths for nice alignment
+            int maxTitleLen = games.Max(g => g.Title.Length);
+            const int priceWidth = 8; // e.g. "€1234.56"
+
+            var prompt = new SelectionPrompt<GameModel>()
+                .Title("[bold]Select a game to view details:[/]")
+                .UseConverter(g =>
+                {
+                    if (g.Id == -1) // back option
+                        return _backOption;
+                    return string.Format($"{{0,-{maxTitleLen}}}  €{{1,{priceWidth}:0.00}}", g.Title, g.Price);
+                })
+                .HighlightStyle(new Style(foreground: Color.Green));
+
+            foreach (var game in games)
+                prompt.AddChoice(game);
+
+            prompt.AddChoice(new GameModel { Id = -1, Title = _backOption, Price = 0 });
+
+            var selectedGame = AnsiConsole.Prompt(prompt);
+            if (selectedGame.Id == -1) // back option selected
+                return;
+
+            // show details in a panel or table
+            var detailsTable = new Table().Border(TableBorder.Rounded);
+            detailsTable.AddColumn("Property");
+            detailsTable.AddColumn("Value");
+            detailsTable.AddRow("Title", selectedGame.Title);
+            detailsTable.AddRow("Description", string.IsNullOrWhiteSpace(selectedGame.Description) ? "<none>" : selectedGame.Description);
+            detailsTable.AddRow("Price", $"€{selectedGame.Price:0.00}");
+
+            // look up genre and age rating names
+            var genreName = _gameLogic.GetAllGenres()
+                              .FirstOrDefault(g => g.Id == selectedGame.GenreId)?.Name ?? "<unknown>";
+            var ageName = _gameLogic.GetAllAgeRatings()
+                              .FirstOrDefault(a => a.Id == selectedGame.AgeRatingId)?.Name ?? "<unknown>";
+            detailsTable.AddRow("Genre", genreName);
+            detailsTable.AddRow("Age rating", ageName);
+
+            AnsiConsole.Clear();
+            AnsiConsole.Write(detailsTable);
+
+            // ask user what to do next: add to cart or back
+            string detailAction = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("[bold]What would you like to do?[/]")
+                    .AddChoices("Add to cart", _backOption)
+                    .HighlightStyle(new Style(foreground: Color.Green))
+            );
+            // Not implemented, but we can at least show a message and wait for a key press before going back to the list
+            if (detailAction == "Add to cart")
+            {
+                AnsiConsole.MarkupLine("\n[green]Game added to cart (not implemented).[/]");
+                AnsiConsole.MarkupLine("[grey]Press any key to return to list...[/]");
+                Console.ReadKey(true);
+            }
+            // if back or after adding to cart, simply loop again
         }
-
-        var table = new Table();
-        table.Border = TableBorder.Rounded;
-        table.AddColumn("Game Name");
-        table.AddColumn("Price");
-
-        foreach (var game in games)
-        {
-            table.AddRow(game.Title, $"€{game.Price:0.00}");
-        }
-
-        AnsiConsole.Write(table);
-        AnsiConsole.MarkupLine("\n[grey]Press any key to return...[/]");
-        Console.ReadKey(true);
     }
 
     private static void FilterGamesByGenre()

@@ -12,31 +12,31 @@ public static class AdminMenu
             AnsiConsole.Clear();
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("[bold green]Admin Menu[/]")
+                    .Title($"[bold green]{Texts.Get("Admin Menu")}[/]")
                     .AddChoices(
-                        "Add Game",
-                        "Update Game",
-                        "Delete Game",
-                        "Log out"
+                        Texts.Get("Add_Game"),
+                        Texts.Get("Update_Game"),
+                        Texts.Get("Delete_Game"),
+                        Texts.Get("Log_Out")
                     )
                     .HighlightStyle(new Style(foreground: Color.Yellow))
             );
 
             switch (choice)
             {
-                case "Add Game":
+                case var c when c == Texts.Get("Add_Game"):
                     AddGameMenu();
                     break;
 
-                case "Update Game":
+                case var c when c == Texts.Get("Update_Game"):
                     UpdateGameMenu();
                     break;
 
-                case "Delete Game":
+                case var c when c == Texts.Get("Delete_Game"):
                     DeleteGameMenu();
                     break;
 
-                case "Log out":
+                case var c when c == Texts.Get("Log_Out"):
                     Logout();
                     exitMenu = true; // Return to login/main menu
                     break;
@@ -46,18 +46,18 @@ public static class AdminMenu
     private static void AddGameMenu()
     {
         AnsiConsole.Clear();
-        AnsiConsole.MarkupLine("[bold cyan]--- Add a New Game ---[/]");
+        AnsiConsole.MarkupLine($"[bold cyan]{Texts.Get("Add_Game_Menu_Title")}[/]");
 
-        string title = AnsiConsole.Prompt(new TextPrompt<string>("Title:"));
-        string description = AnsiConsole.Prompt(new TextPrompt<string>("Description:"));
-        decimal price = AnsiConsole.Prompt(new TextPrompt<decimal>("Price (e.g. 59.99):"));
+        string title = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Title")}:"));
+        string description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:"));
+        decimal price = AnsiConsole.Prompt(new TextPrompt<decimal>($"{Texts.Get("Price")}:"));
         // placeholder for genre, publisher and agerating till they are implemented.
-        int publisherId = AnsiConsole.Prompt(new TextPrompt<int>("Publisher ID:"));
+        int publisherId = AnsiConsole.Prompt(new TextPrompt<int>($"{Texts.Get("Publisher_ID")}:"));
         var genres = _gameLogic.GetAllGenres();
         
         var selectedGenre = AnsiConsole.Prompt(
             new SelectionPrompt<GenreModel>()
-                .Title("Select a [green]Genre[/]:")
+                .Title($"{Texts.Get("Select_Genre")}:")
                 .UseConverter(g => g.Name) // Tells the menu to only display the Name text
                 .AddChoices(genres)
         );
@@ -65,7 +65,7 @@ public static class AdminMenu
         var ageRatings = _gameLogic.GetAllAgeRatings();
         var selectedAgeRating = AnsiConsole.Prompt(
             new SelectionPrompt<AgeRatingModel>()
-                .Title("Select an [green]Age Rating[/]:")
+                .Title($"{Texts.Get("Select_Age_Rating")}:")
                 .UseConverter(a => a.Name)
                 .AddChoices(ageRatings)
         );
@@ -82,8 +82,8 @@ public static class AdminMenu
 
         _gameLogic.AddGame(newGame);
 
-        AnsiConsole.MarkupLine($"[green]Successfully added '{title}' to the database![/]");
-        AnsiConsole.MarkupLine("\nPress any key to return...");
+        AnsiConsole.MarkupLine($"[green]{Texts.Get("Successfully_Added")} '{title}' {Texts.Get("To_The_Database")}![/]");
+        AnsiConsole.MarkupLine($"\n{Texts.Get("Press_Any_Key_To_Return")}");
         Console.ReadKey(true);
     }
     private static GameModel? SearchAndSelectGame(string action, bool onlyActive = false)
