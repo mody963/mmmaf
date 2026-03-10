@@ -38,6 +38,15 @@ public class Cart
         var items = GetCartItems();
         var totalPrice = GetTotalPrice();
 
+        if (items.Count == 0)
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[red]Your cart is empty.[/]");
+            AnsiConsole.MarkupLine("[grey]Press any key to return to menu...[/]");
+            Console.ReadKey(true);
+            return;
+        }
+
         var table = new Table()
             .Border(TableBorder.Rounded)
             .Title("[bold yellow]🛒 Your Shopping Cart[/]")

@@ -63,7 +63,7 @@ public static class MainMenu
                     break;
 
                 case var c when c == Texts.Get("Menu_Cart"):
-                    AnsiConsole.MarkupLine("[blue]Cart is empty.[/]");
+                    new Cart().ShowCart(); // voor nu nog even een new cart gemaakt maar dat zal een meegegeven cart moeten zijn bij de checkout 
                     break;
 
                 case var c when c == Texts.Get("Menu_Checkout"):

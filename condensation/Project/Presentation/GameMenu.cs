@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Spectre.Console;
 
 public static class GameMenu
@@ -61,9 +62,8 @@ public static class GameMenu
                 return;
             }
 
-            // compute column widths for nice alignment
             int maxTitleLen = games.Max(g => g.Title.Length);
-            const int priceWidth = 8; // e.g. "€1234.56"
+            const int priceWidth = 8;
 
             var prompt = new SelectionPrompt<GameModel>()
                 .Title("[bold]Select a game to view details:[/]")
@@ -110,12 +110,9 @@ public static class GameMenu
                     .AddChoices("Add to cart", _backOption)
                     .HighlightStyle(new Style(foreground: Color.Green))
             );
-            // Not implemented, but we can at least show a message and wait for a key press before going back to the list
             if (detailAction == "Add to cart")
             {
-                AnsiConsole.MarkupLine("\n[green]Game added to cart (not implemented).[/]");
-                AnsiConsole.MarkupLine("[grey]Press any key to return to list...[/]");
-                Console.ReadKey(true);
+                new Cart().AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
             }
             // if back or after adding to cart, simply loop again
         }
