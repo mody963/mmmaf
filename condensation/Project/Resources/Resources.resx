@@ -137,7 +137,7 @@
     <value>Login / Register</value>
     <comment/>
   </data>
-  <data name="Menu _Game" xml:space="preserve">
+  <data name="Menu_Game" xml:space="preserve">
     <value>Game Menu</value>
     <comment/>
   </data>
