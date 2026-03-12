@@ -345,4 +345,80 @@
     <value>Prijs</value>
     <comment/>
   </data>
+  <data name="Cart_SelectOption" xml:space="preserve">
+    <value>Selecteer Winkelwagenoptie:</value>
+    <comment/>
+  </data>
+  <data name="Cart_View" xml:space="preserve">
+    <value>bekijken</value>
+    <comment/>
+  </data>
+  <data name="Cart_RemoveItem" xml:space="preserve">
+    <value>artikel verwijderen</value>
+    <comment/>
+  </data>
+  <data name="Cart_ClearCart" xml:space="preserve">
+    <value>winkelwagen leegmaken</value>
+    <comment/>
+  </data>
+  <data name="Cart_Back" xml:space="preserve">
+    <value>terug</value>
+    <comment/>
+  </data>
+  <data name="Cart_IsEmpty" xml:space="preserve">
+    <value>Winkelwagen is leeg.</value>
+    <comment/>
+  </data>
+  <data name="Cart_SelectItemToRemove" xml:space="preserve">
+    <value>Selecteer een artikel om te verwijderen:</value>
+    <comment/>
+  </data>
+  <data name="Cart_RemovedFromCart" xml:space="preserve">
+    <value>verwijderd uit winkelwagen.</value>
+    <comment/>
+  </data>
+  <data name="Cart_Cleared" xml:space="preserve">
+    <value>Winkelwagen leeggemaakt.</value>
+    <comment/>
+  </data>
+  <data name="Cart_YourCartIsEmpty" xml:space="preserve">
+    <value>Uw winkelwagen is leeg.</value>
+    <comment/>
+  </data>
+  <data name="Cart_Title" xml:space="preserve">
+    <value>🛒 Uw Winkelwagen</value>
+    <comment/>
+  </data>
+  <data name="Cart_Product" xml:space="preserve">
+    <value>Product</value>
+    <comment/>
+  </data>
+  <data name="Cart_PurchaseDate" xml:space="preserve">
+    <value>Aankoopdatum</value>
+    <comment/>
+  </data>
+  <data name="Cart_TotalPrice" xml:space="preserve">
+    <value>Totale Prijs:</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAlreadyInCart" xml:space="preserve">
+    <value>Artikel met ID</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAlreadyInCartEnd" xml:space="preserve">
+    <value>is al in het winkelwagen.</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAddedToCart" xml:space="preserve">
+    <value>Artikel</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAddedToCartEnd" xml:space="preserve">
+    <value>toegevoegd aan winkelwagen voor €</value>
+    <comment/>
+  </data>
+  <data name="Cart_PressAnyKeyToContinue" xml:space="preserve">
+    <value>Druk op een toets om door te gaan...</value>
+    <comment/>
+  </data>
 </root>
