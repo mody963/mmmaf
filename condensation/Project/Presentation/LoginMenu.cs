@@ -30,7 +30,7 @@ public static class LoginMenu
                     break;
 
                 case var c when c == Texts.Get("Create_Account"):
-                    AnsiConsole.MarkupLine("[yellow]Registration not implemented yet.[/]");
+                    AnsiConsole.MarkupLine($"[yellow]{Texts.Get("Login_RegisterNotImplemented")}[/]");
                     break;
 
                 case var c when c == Texts.Get("Log_Out"):
@@ -49,7 +49,7 @@ public static class LoginMenu
     {
         if (CurrentUserModel.CurrentUser != null)
         {
-            AnsiConsole.MarkupLine($"\n[blue]Already logged in as {CurrentUserModel.CurrentUser.FirstName}.[/]");
+            AnsiConsole.MarkupLine($"\n[blue]{Texts.Get("Login_AlreadyLoggedIn")} {CurrentUserModel.CurrentUser.FirstName}.[/]");
             return true;
         }
 
@@ -61,11 +61,11 @@ public static class LoginMenu
             AnsiConsole.Clear();
 
             string email = AnsiConsole.Prompt(
-                new TextPrompt<string>("Email:")
+                new TextPrompt<string>(Texts.Get("Login_Email"))
             );
 
             string password = AnsiConsole.Prompt(
-                new TextPrompt<string>("Password:")
+                new TextPrompt<string>(Texts.Get("Login_Password"))
                     .Secret() // Masks the input
             );
 
@@ -78,27 +78,27 @@ public static class LoginMenu
 
                 if (account.Role == AccountRoles.Admin)
                 {
-                    AnsiConsole.MarkupLine($"[green]Welcome back {account.FirstName}! (Admin)[/]");
+                    AnsiConsole.MarkupLine($"[green]{Texts.Get("Login_WelcomeAdmin")} {account.FirstName}! {Texts.Get("Login_AdminSuffix")}[/]");
                     AdminMenu.Start(); // Open admin menu
                     return true;       
                 }
 
-                AnsiConsole.MarkupLine($"[green]Welcome back {account.FirstName}![/]");
+                AnsiConsole.MarkupLine($"[green]{Texts.Get("Login_Welcome")} {account.FirstName}![/]");
                 Console.ReadKey(true);
                 return true;
             }
             else
             {
                 attempts++;
-                AnsiConsole.MarkupLine($"[red]Incorrect email or password. Attempts left: {maxAttempts - attempts}[/]");
+                AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_IncorrectCredentials")} {maxAttempts - attempts}[/]");
 
                 if (attempts >= maxAttempts)
                 {
-                    AnsiConsole.MarkupLine("[red]Too many failed attempts. Returning to main menu...[/]");
+                    AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_TooManyAttempts")}[/]");
                     return true; 
                 }
 
-                AnsiConsole.MarkupLine("Press Enter to try again or ESC to go back.");
+                AnsiConsole.MarkupLine(Texts.Get("Login_PressEnterToRetry"));
                 var key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.Escape)
                     return false;
@@ -112,12 +112,12 @@ public static class LoginMenu
     {
         if (CurrentUserModel.CurrentUser != null)
         {
-            AnsiConsole.MarkupLine($"\n[blue]{CurrentUserModel.CurrentUser.FirstName} has been logged out.[/]");
+            AnsiConsole.MarkupLine($"\n[blue]{CurrentUserModel.CurrentUser.FirstName} {Texts.Get("Login_LoggedOut")}[/]");
             CurrentUserModel.CurrentUser = null;
         }
         else
         {
-            AnsiConsole.MarkupLine("\n[blue]No user is currently logged in.[/]");
+            AnsiConsole.MarkupLine($"\n[blue]{Texts.Get("Login_NoUserLoggedIn")}[/]");
         }
     }
 }

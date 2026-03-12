@@ -421,4 +421,103 @@
     <value>Press any key to continue...</value>
     <comment/>
   </data>
+  <data name="Login_Email" xml:space="preserve">
+    <value>Email:</value>
+    <comment/>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Password:</value>
+    <comment/>
+  </data>
+  <data name="Login_RegisterNotImplemented" xml:space="preserve">
+    <value>Registration not implemented yet.</value>
+    <comment/>
+  </data>
+  <data name="Login_AlreadyLoggedIn" xml:space="preserve">
+    <value>Already logged in as</value>
+    <comment/>
+  </data>
+  <data name="Login_WelcomeAdmin" xml:space="preserve">
+    <value>Welcome back</value>
+    <comment/>
+  </data>
+  <data name="Login_AdminSuffix" xml:space="preserve">
+    <value>(Admin)</value>
+    <comment/>
+  </data>
+  <data name="Login_Welcome" xml:space="preserve">
+    <value>Welcome back</value>
+    <comment/>
+  </data>
+  <data name="Login_IncorrectCredentials" xml:space="preserve">
+    <value>Incorrect email or password. Attempts left:</value>
+    <comment/>
+  </data>
+  <data name="Login_TooManyAttempts" xml:space="preserve">
+    <value>Too many failed attempts. Returning to main menu...</value>
+    <comment/>
+  </data>
+  <data name="Login_PressEnterToRetry" xml:space="preserve">
+    <value>Press Enter to try again or ESC to go back.</value>
+    <comment/>
+  </data>
+  <data name="Login_LoggedOut" xml:space="preserve">
+    <value>has been logged out.</value>
+    <comment/>
+  </data>
+  <data name="Login_NoUserLoggedIn" xml:space="preserve">
+    <value>No user is currently logged in.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SearchHeader" xml:space="preserve">
+    <value>---</n    <comment/>
+  </data>
+  <data name="Admin_UpdatingGame" xml:space="preserve">
+    <value>Updating:</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressEnterToKeep" xml:space="preserve">
+    <value>(Press Enter to keep the current text values)</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectGenreWithCurrent" xml:space="preserve">
+    <value>Select a Genre (Current:</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectAgeRatingWithCurrent" xml:space="preserve">
+    <value>Select an Age Rating (Current:</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivateGame" xml:space="preserve">
+    <value>Deactivate a Game</value>
+    <comment/>
+  </data>
+  <data name="Admin_ConfirmDeactivate" xml:space="preserve">
+    <value>Are you sure you want to deactivate (soft-delete)</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivationCancelled" xml:space="preserve">
+    <value>Deactivation cancelled.</value>
+    <comment/>
+  </data>
+  <data name="Admin_GameDeactivated" xml:space="preserve">
+    <value>has been deactivated.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SuccessfullyUpdated" xml:space="preserve">
+    <value>Successfully updated and saved</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturn" xml:space="preserve">
+    <value>Press any key to return...</value>
+    <comment/>
+  </data>
+  <data name="Admin_LoggedOut" xml:space="preserve">
+    <value>You have been logged out.</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturnToMainMenu" xml:space="preserve">
+    <value>Press any key to return to the main menu...</value>
+    <comment/>
+  </data>
 </root>

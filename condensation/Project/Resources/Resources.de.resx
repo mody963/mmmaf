@@ -421,4 +421,104 @@
     <value>Beliebige Taste zum Fortfahren drücken...</value>
     <comment/>
   </data>
+  <data name="Login_Email" xml:space="preserve">
+    <value>E-Mail:</value>
+    <comment/>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Passwort:</value>
+    <comment/>
+  </data>
+  <data name="Login_RegisterNotImplemented" xml:space="preserve">
+    <value>Registrierung noch nicht implementiert.</value>
+    <comment/>
+  </data>
+  <data name="Login_AlreadyLoggedIn" xml:space="preserve">
+    <value>Bereits angemeldet als</value>
+    <comment/>
+  </data>
+  <data name="Login_WelcomeAdmin" xml:space="preserve">
+    <value>Willkommen zurück</value>
+    <comment/>
+  </data>
+  <data name="Login_AdminSuffix" xml:space="preserve">
+    <value>(Admin)</value>
+    <comment/>
+  </data>
+  <data name="Login_Welcome" xml:space="preserve">
+    <value>Willkommen zurück</value>
+    <comment/>
+  </data>
+  <data name="Login_IncorrectCredentials" xml:space="preserve">
+    <value>Falsche E-Mail oder Passwort. Versuche übrig:</value>
+    <comment/>
+  </data>
+  <data name="Login_TooManyAttempts" xml:space="preserve">
+    <value>Zu viele fehlgeschlagene Versuche. Kehre zum Hauptmenü zurück...</value>
+    <comment/>
+  </data>
+  <data name="Login_PressEnterToRetry" xml:space="preserve">
+    <value>Drücke Enter zum erneuten Versuchen oder ESC zum Zurückgehen.</value>
+    <comment/>
+  </data>
+  <data name="Login_LoggedOut" xml:space="preserve">
+    <value>wurde abgemeldet.</value>
+    <comment/>
+  </data>
+  <data name="Login_NoUserLoggedIn" xml:space="preserve">
+    <value>Kein Benutzer ist derzeit angemeldet.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SearchHeader" xml:space="preserve">
+    <value>---
+    <comment/>
+  </data>
+  <data name="Admin_UpdatingGame" xml:space="preserve">
+    <value>Aktualisierung:</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressEnterToKeep" xml:space="preserve">
+    <value>(Drücke Enter, um die aktuellen Textwerte zu behalten)</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectGenreWithCurrent" xml:space="preserve">
+    <value>Wählen Sie ein Genre (Aktuell:</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectAgeRatingWithCurrent" xml:space="preserve">
+    <value>Wählen Sie eine Altersfreigabe (Aktuell:</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivateGame" xml:space="preserve">
+    <value>Spiel Deaktivieren</value>
+    <comment/>
+  </data>
+  <data name="Admin_ConfirmDeactivate" xml:space="preserve">
+    <value>Möchten Sie wirklich deaktivieren (soft-delete)</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivationCancelled" xml:space="preserve">
+    <value>Deaktivierung abgebrochen.</value>
+    <comment/>
+  </data>
+  <data name="Admin_GameDeactivated" xml:space="preserve">
+    <value>wurde deaktiviert.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SuccessfullyUpdated" xml:space="preserve">
+    <value>Erfolgreich aktualisiert und gespeichert</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturn" xml:space="preserve">
+    <value>Beliebige Taste zum Zurückgehen drücken...</value>
+    <comment/>
+  </data>
+  <data name="Admin_LoggedOut" xml:space="preserve">
+    <value>Sie wurden abgemeldet.</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturnToMainMenu" xml:space="preserve">
+    <value>Beliebige Taste zum Zurückgehen zum Hauptmenü drücken...</value>
+    <comment/>
+  </data>
 </root>

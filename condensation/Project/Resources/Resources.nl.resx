@@ -421,4 +421,104 @@
     <value>Druk op een toets om door te gaan...</value>
     <comment/>
   </data>
+  <data name="Login_Email" xml:space="preserve">
+    <value>E-mail:</value>
+    <comment/>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Wachtwoord:</value>
+    <comment/>
+  </data>
+  <data name="Login_RegisterNotImplemented" xml:space="preserve">
+    <value>Registratie nog niet geïmplementeerd.</value>
+    <comment/>
+  </data>
+  <data name="Login_AlreadyLoggedIn" xml:space="preserve">
+    <value>Al ingelogd als</value>
+    <comment/>
+  </data>
+  <data name="Login_WelcomeAdmin" xml:space="preserve">
+    <value>Welkom terug</value>
+    <comment/>
+  </data>
+  <data name="Login_AdminSuffix" xml:space="preserve">
+    <value>(Beheerder)</value>
+    <comment/>
+  </data>
+  <data name="Login_Welcome" xml:space="preserve">
+    <value>Welkom terug</value>
+    <comment/>
+  </data>
+  <data name="Login_IncorrectCredentials" xml:space="preserve">
+    <value>Onjuist e-mailadres of wachtwoord. Pogingen resterend:</value>
+    <comment/>
+  </data>
+  <data name="Login_TooManyAttempts" xml:space="preserve">
+    <value>Te veel mislukte pogingen. Teruggaan naar het hoofdmenu...</value>
+    <comment/>
+  </data>
+  <data name="Login_PressEnterToRetry" xml:space="preserve">
+    <value>Druk op Enter om opnieuw te proberen of op ESC om terug te gaan.</value>
+    <comment/>
+  </data>
+  <data name="Login_LoggedOut" xml:space="preserve">
+    <value>is afgelogd.</value>
+    <comment/>
+  </data>
+  <data name="Login_NoUserLoggedIn" xml:space="preserve">
+    <value>Er is momenteel geen gebruiker ingelogd.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SearchHeader" xml:space="preserve">
+    <value>---
+    <comment/>
+  </data>
+  <data name="Admin_UpdatingGame" xml:space="preserve">
+    <value>Bijwerken:</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressEnterToKeep" xml:space="preserve">
+    <value>(Druk op Enter om de huidige tekstwaarden te behouden)</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectGenreWithCurrent" xml:space="preserve">
+    <value>Selecteer een genre (Huidige:</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectAgeRatingWithCurrent" xml:space="preserve">
+    <value>Selecteer een leeftijdsclassificatie (Huidige:</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivateGame" xml:space="preserve">
+    <value>Game Deactiveren</value>
+    <comment/>
+  </data>
+  <data name="Admin_ConfirmDeactivate" xml:space="preserve">
+    <value>Weet je zeker dat je wilt deactiveren (soft-delete)</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivationCancelled" xml:space="preserve">
+    <value>Deactivering geannuleerd.</value>
+    <comment/>
+  </data>
+  <data name="Admin_GameDeactivated" xml:space="preserve">
+    <value>is gedeactiveerd.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SuccessfullyUpdated" xml:space="preserve">
+    <value>Succesvol bijgewerkt en opgeslagen</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturn" xml:space="preserve">
+    <value>Druk op een toets om terug te gaan...</value>
+    <comment/>
+  </data>
+  <data name="Admin_LoggedOut" xml:space="preserve">
+    <value>U bent afgelogd.</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturnToMainMenu" xml:space="preserve">
+    <value>Druk op een toets om terug te gaan naar het hoofdmenu...</value>
+    <comment/>
+  </data>
 </root>
