@@ -123,12 +123,12 @@ public static class AdminMenu
         if (game == null) { Console.ReadKey(true); return; }
 
         AnsiConsole.Clear();
-        AnsiConsole.MarkupLine($"\n[bold yellow]Updating: {game.Title}[/]");
-        AnsiConsole.MarkupLine("[grey](Press Enter to keep the current text values)[/]\n");
+        AnsiConsole.MarkupLine($"\n[bold yellow]{Texts.Get("Admin_UpdatingGame")} {game.Title}[/]");
+        AnsiConsole.MarkupLine($"[grey]{Texts.Get("Admin_PressEnterToKeep")}[/]\n");
 
-        game.Title = AnsiConsole.Prompt(new TextPrompt<string>("Title:").DefaultValue(game.Title));
-        game.Description = AnsiConsole.Prompt(new TextPrompt<string>("Description:").DefaultValue(game.Description));
-        game.Price = AnsiConsole.Prompt(new TextPrompt<double>("Price:").DefaultValue(game.Price));
+        game.Title = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Title")}:").DefaultValue(game.Title));
+        game.Description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:").DefaultValue(game.Description));
+        game.Price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:").DefaultValue(game.Price));
 
         // 2. Dropdown for Genre
         var genres = _gameLogic.GetAllGenres();
@@ -136,7 +136,7 @@ public static class AdminMenu
         
         var selectedGenre = AnsiConsole.Prompt(
             new SelectionPrompt<GenreModel>()
-                .Title($"Select a [green]Genre[/] (Current: [yellow]{currentGenre?.Name}[/]):")
+                .Title($"{Texts.Get("Admin_SelectGenreWithCurrent")} [yellow]{currentGenre?.Name}[/]):")
                 .UseConverter(g => g.Name)
                 .AddChoices(genres)
         );
@@ -147,7 +147,7 @@ public static class AdminMenu
         
         var selectedAgeRating = AnsiConsole.Prompt(
             new SelectionPrompt<AgeRatingModel>()
-                .Title($"Select an [green]Age Rating[/] (Current: [yellow]{currentAgeRating?.Name}[/]):")
+                .Title($"{Texts.Get("Admin_SelectAgeRatingWithCurrent")} [yellow]{currentAgeRating?.Name}[/]):")
                 .UseConverter(a => a.Name)
                 .AddChoices(ageRatings)
         );
@@ -157,26 +157,26 @@ public static class AdminMenu
 
         _gameLogic.UpdateGame(game);
 
-        AnsiConsole.MarkupLine($"\n[green]Successfully updated and saved '{game.Title}'![/]");
-        AnsiConsole.MarkupLine("Press any key to return...");
+        AnsiConsole.MarkupLine($"\n[green]{Texts.Get("Admin_SuccessfullyUpdated")} '{game.Title}'![/]");
+        AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturn"));
         Console.ReadKey(true);
     }
     private static void DeleteGameMenu()
     {
-        var game = SearchAndSelectGame("Deactivate a Game", true);
+        var game = SearchAndSelectGame(Texts.Get("Admin_DeactivateGame"), true);
         if (game == null) { Console.ReadKey(true); return; }
 
-        if (AnsiConsole.Confirm($"\nAre you sure you want to deactivate (soft-delete) '[red]{game.Title}[/]'?"))
+        if (AnsiConsole.Confirm($"\n{Texts.Get("Admin_ConfirmDeactivate")} '[red]{game.Title}[/]'?"))
         {
             _gameLogic.SoftDeleteGame(game.Id);
-            AnsiConsole.MarkupLine($"\n[green]'{game.Title}' has been deactivated.[/]");
+            AnsiConsole.MarkupLine($"\n[green]'{game.Title}' {Texts.Get("Admin_GameDeactivated")}[/]");
         }
         else
         {
-            AnsiConsole.MarkupLine("\n[grey]Deactivation cancelled.[/]");
+            AnsiConsole.MarkupLine($"\n[grey]{Texts.Get("Admin_DeactivationCancelled")}[/]");
         }
         
-        AnsiConsole.MarkupLine("Press any key to return...");
+        AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturn"));
         Console.ReadKey(true);
     }
 
@@ -184,8 +184,8 @@ public static class AdminMenu
     {
         AnsiConsole.Clear();
         CurrentUserModel.CurrentUser = null;
-        AnsiConsole.MarkupLine("\n[green]You have been logged out.[/]");
-        AnsiConsole.MarkupLine("Press any key to return to the main menu...");
+        AnsiConsole.MarkupLine($"\n[green]{Texts.Get("Admin_LoggedOut")}[/]");
+        AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturnToMainMenu"));
         Console.ReadKey(true);
     }
 }
