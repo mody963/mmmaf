@@ -345,4 +345,80 @@
     <value>Price</value>
     <comment/>
   </data>
+  <data name="Cart_SelectOption" xml:space="preserve">
+    <value>Select Cart Option:</value>
+    <comment/>
+  </data>
+  <data name="Cart_View" xml:space="preserve">
+    <value>view</value>
+    <comment/>
+  </data>
+  <data name="Cart_RemoveItem" xml:space="preserve">
+    <value>remove item</value>
+    <comment/>
+  </data>
+  <data name="Cart_ClearCart" xml:space="preserve">
+    <value>clear cart</value>
+    <comment/>
+  </data>
+  <data name="Cart_Back" xml:space="preserve">
+    <value>back</value>
+    <comment/>
+  </data>
+  <data name="Cart_IsEmpty" xml:space="preserve">
+    <value>Cart is empty.</value>
+    <comment/>
+  </data>
+  <data name="Cart_SelectItemToRemove" xml:space="preserve">
+    <value>Select an item to remove:</value>
+    <comment/>
+  </data>
+  <data name="Cart_RemovedFromCart" xml:space="preserve">
+    <value>removed from cart.</value>
+    <comment/>
+  </data>
+  <data name="Cart_Cleared" xml:space="preserve">
+    <value>Cart cleared.</value>
+    <comment/>
+  </data>
+  <data name="Cart_YourCartIsEmpty" xml:space="preserve">
+    <value>Your cart is empty.</value>
+    <comment/>
+  </data>
+  <data name="Cart_Title" xml:space="preserve">
+    <value>🛒 Your Shopping Cart</value>
+    <comment/>
+  </data>
+  <data name="Cart_Product" xml:space="preserve">
+    <value>Product</value>
+    <comment/>
+  </data>
+  <data name="Cart_PurchaseDate" xml:space="preserve">
+    <value>Purchase Date</value>
+    <comment/>
+  </data>
+  <data name="Cart_TotalPrice" xml:space="preserve">
+    <value>Total Price:</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAlreadyInCart" xml:space="preserve">
+    <value>Item with id</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAlreadyInCartEnd" xml:space="preserve">
+    <value>is already in the cart.</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAddedToCart" xml:space="preserve">
+    <value>Item</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAddedToCartEnd" xml:space="preserve">
+    <value>added to cart for €</value>
+    <comment/>
+  </data>
+  <data name="Cart_PressAnyKeyToContinue" xml:space="preserve">
+    <value>Press any key to continue...</value>
+    <comment/>
+  </data>
 </root>

@@ -4,17 +4,18 @@ using Spectre.Console;
 public class Cart
 {
     private readonly CartLogic _cartLogic = new CartLogic();
+    private static readonly string _backOption = Texts.Get("Cart_Back");
 
     public void AddToCart(int id, string name, double price)
     {
         if (!_cartLogic.AddToCart(id, name, price))
         {
-            AnsiConsole.MarkupLine($"[red]Item with id {id} is already in the cart.[/]");
+            AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_ItemAlreadyInCart")} {id} {Texts.Get("Cart_ItemAlreadyInCartEnd")}[/]");
             Console.ReadKey(true);
         }
         else
         {
-            AnsiConsole.MarkupLine($"[green]Item {name} added to cart for €{price:F2}.[/]");
+            AnsiConsole.MarkupLine($"[green]{Texts.Get("Cart_ItemAddedToCart")} {name} {Texts.Get("Cart_ItemAddedToCartEnd")}{price:F2}.[/]");
             Console.ReadKey(true);
         }
     }
@@ -43,27 +44,28 @@ public class Cart
     {
         var optie = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
-        .Title("[bold yellow]Select Cart Option:[/]")
-        .AddChoices("view", "remove item", "clear cart", " back"));
+        .Title($"[bold yellow]{Texts.Get("Cart_SelectOption")}[/]")
+        .AddChoices(Texts.Get("Cart_View"), Texts.Get("Cart_RemoveItem"), Texts.Get("Cart_ClearCart"), _backOption)
+        .HighlightStyle(new Style(foreground: Color.Green)));
 
         switch (optie)
         {
-            case "view":
+            case var c when c == Texts.Get("Cart_View"):
                 ShowCart();
                 break;
-            case "remove item":
+            case var c when c == Texts.Get("Cart_RemoveItem"):
                 var items = GetCartItems();
 
                 if (items.Count == 0)
                 {
-                    AnsiConsole.MarkupLine("[red]Cart is empty.[/]");
+                    AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_IsEmpty")}[/]");
                     Console.ReadKey(true);
                     break;
                 }
 
                 var selectedItem = AnsiConsole.Prompt(
                     new SelectionPrompt<CartModel>()
-                        .Title("[yellow]Select an item to remove:[/]")
+                        .Title($"[yellow]{Texts.Get("Cart_SelectItemToRemove")}[/]")
                         .UseConverter(item => $"{item.Name} - €{item.Price:F2}")
                         .AddChoices(items)
                         .HighlightStyle(new Style(foreground: Color.Red))
@@ -71,16 +73,16 @@ public class Cart
 
                 RemoveFromCart(selectedItem.Name);
 
-                AnsiConsole.MarkupLine($"[green]{selectedItem.Name} removed from cart.[/]");
+                AnsiConsole.MarkupLine($"[green]{selectedItem.Name} {Texts.Get("Cart_RemovedFromCart")}[/]");
                 Console.ReadKey(true);
 
                 break;
-            case "clear cart":
+            case var c when c == Texts.Get("Cart_ClearCart"):
                 ClearCart();
-                AnsiConsole.MarkupLine("[green]Cart cleared.[/]");
+                AnsiConsole.MarkupLine($"[green]{Texts.Get("Cart_Cleared")}[/]");
                 Console.ReadKey(true);
                 break;
-            case "back":
+            case var c when c == _backOption:
                 return;
         }
     }
@@ -95,18 +97,18 @@ public class Cart
         if (items.Count == 0)
         {
             AnsiConsole.Clear();
-            AnsiConsole.MarkupLine("[red]Your cart is empty.[/]");
-            AnsiConsole.MarkupLine("[grey]Press any key to return to menu...[/]");
+            AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_YourCartIsEmpty")}[/]");
+            AnsiConsole.MarkupLine($"[grey]{Texts.Get("Press_Any_Key_To_Return")}[/]");
             Console.ReadKey(true);
             return;
         }
 
         var table = new Table()
             .Border(TableBorder.Rounded)
-            .Title("[bold yellow]🛒 Your Shopping Cart[/]")
-            .AddColumn("[cyan]Product[/]")
-            .AddColumn("[cyan]Price[/]")
-            .AddColumn("[cyan]Purchase Date[/]");
+            .Title($"[bold yellow]{Texts.Get("Cart_Title")}[/]")
+            .AddColumn($"[cyan]{Texts.Get("Cart_Product")}[/]")
+            .AddColumn($"[cyan]{Texts.Get("Price_Without_E.g")}[/]")
+            .AddColumn($"[cyan]{Texts.Get("Cart_PurchaseDate")}[/]");
 
         foreach (var item in items)
         {
@@ -119,7 +121,7 @@ public class Cart
 
         if (items.Count == 0)
         {
-            AnsiConsole.MarkupLine("[red]Your cart is empty.[/]");
+            AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_YourCartIsEmpty")}[/]");
             return;
         }
 
@@ -128,15 +130,15 @@ public class Cart
         AnsiConsole.WriteLine();
 
         var totalPanel = new Panel(
-            $"[bold green]Total Price:[/] €{totalPrice:F2}"
+            $"[bold green]{Texts.Get("Cart_TotalPrice")}[/] €{totalPrice:F2}"
         )
         .Border(BoxBorder.Double)
-        .Padding(2,1); // horizontale en verticale ruimte binnen de panel
+        .Padding(2,1);
 
         AnsiConsole.Write(totalPanel);
 
         AnsiConsole.WriteLine();
-        AnsiConsole.MarkupLine("[grey]Press any key to continue...[/]");
+        AnsiConsole.MarkupLine($"[grey]{Texts.Get("Cart_PressAnyKeyToContinue")}[/]");
         Console.ReadKey();
    }
 }
