@@ -33,8 +33,7 @@ public static class GameMenu
                     break;
 
                 case var c when c == Texts.Get("Game_Search"):
-                    AnsiConsole.MarkupLine("[red]Game search not implemented.[/]");
-                    Console.ReadKey(true);
+                    SearchAndDisplayGames(cart, onlyActive: true);
                     break;
 
                 case var c when c == Texts.Get("Game_Filter"):
@@ -176,5 +175,85 @@ public static class GameMenu
         AnsiConsole.Write(table);
         AnsiConsole.MarkupLine("\n[grey]Press any key to return...[/]");
         Console.ReadKey(true);
+    }
+
+        private static void SearchAndDisplayGames(Cart cart, bool onlyActive = false)
+    {
+        while (true)
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine($"\n[bold cyan]--- Search for a game ---[/]");
+            string searchTitle = AnsiConsole.Prompt(new TextPrompt<string>("Enter game title to search for:"));
+            
+            var results = _gameLogic.SearchGamesByTitle(searchTitle);
+            if (onlyActive)
+            {
+                results = results.Where(g => g.IsActive).ToList();
+            }
+
+            if (results.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[red]No games found matching that title.[/]");
+                AnsiConsole.MarkupLine("[grey]Press any key to return...[/]");
+                Console.ReadKey(true);
+                continue;
+            }
+
+            // Inner loop: browse search results
+            while (true)
+            {
+                AnsiConsole.Clear();
+
+                // Display search results in a selectable list like game_list
+                int maxTitleLen = results.Max(g => g.Title.Length);
+                const int priceWidth = 8;
+
+                var prompt = new SelectionPrompt<GameModel>()
+                    .Title("[bold]Select a game to view details:[/]")
+                    .UseConverter(g =>
+                    {
+                        if (g.Id == -1) // New Search option
+                            return "New Search";
+                        if (g.Id == -2) // Back to Game Menu option
+                            return "Back to Game Menu";
+                        return string.Format($"{{0,-{maxTitleLen}}}  €{{1,{priceWidth}:0.00}}", g.Title, g.Price);
+                    })
+                    .HighlightStyle(new Style(foreground: Color.Green));
+
+                foreach (var game in results)
+                    prompt.AddChoice(game);
+
+                prompt.AddChoice(new GameModel { Id = -1, Title = "New Search", Price = 0 });
+                prompt.AddChoice(new GameModel { Id = -2, Title = "Back to Game Menu", Price = 0 });
+
+                var selectedGame = AnsiConsole.Prompt(prompt);
+                if (selectedGame.Id == -1) // New Search selected
+                    break; // Break inner loop to go back to search prompt
+                if (selectedGame.Id == -2) // Back to Game Menu selected
+                    return;
+
+                // Show details in a table (same as game_list)
+                var detailsTable = new Table().Border(TableBorder.Rounded);
+                detailsTable.AddColumn("Property");
+                detailsTable.AddColumn("Value");
+                detailsTable.AddRow("Title", selectedGame.Title);
+                detailsTable.AddRow("Description", string.IsNullOrWhiteSpace(selectedGame.Description) ? "<none>" : selectedGame.Description);
+                detailsTable.AddRow("Price", $"€{selectedGame.Price:0.00}");
+
+                // Ask user what to do next: add to cart or back to results
+                string detailAction = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("[bold]What would you like to do?[/]")
+                        .AddChoices("Add to cart", "Back to results")
+                        .HighlightStyle(new Style(foreground: Color.Green))
+                );
+                if (detailAction == "Add to cart")
+                {
+                    cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
+                    // Continue inner loop to show results again
+                }
+                // else "Back to results" - continue inner loop
+            }
+        }
     }
 }
