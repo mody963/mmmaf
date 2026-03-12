@@ -261,4 +261,88 @@
     <value>Recherche par titre</value>
     <comment/>
   </data>
+  <data name="No_Games_Available" xml:space="preserve">
+    <value>Aucun jeu disponible.</value>
+    <comment/>
+  </data>
+  <data name="Game_SelectDetails" xml:space="preserve">
+    <value>Sélectionnez un jeu pour voir les détails :</value>
+    <comment/>
+  </data>
+  <data name="Game_Property" xml:space="preserve">
+    <value>Propriété</value>
+    <comment/>
+  </data>
+  <data name="Game_Value" xml:space="preserve">
+    <value>Valeur</value>
+    <comment/>
+  </data>
+  <data name="Game_Genre" xml:space="preserve">
+    <value>Genre</value>
+    <comment/>
+  </data>
+  <data name="Game_AgeRating" xml:space="preserve">
+    <value>Classification d'âge</value>
+    <comment/>
+  </data>
+  <data name="Game_WhatWouldYouLikeToDo" xml:space="preserve">
+    <value>Que souhaitez-vous faire ?</value>
+    <comment/>
+  </data>
+  <data name="Game_AddToCart" xml:space="preserve">
+    <value>Ajouter au panier</value>
+    <comment/>
+  </data>
+  <data name="Game_BackToResults" xml:space="preserve">
+    <value>Retour aux résultats</value>
+    <comment/>
+  </data>
+  <data name="Game_NewSearch" xml:space="preserve">
+    <value>Nouvelle recherche</value>
+    <comment/>
+  </data>
+  <data name="Game_BackToMenu" xml:space="preserve">
+    <value>Retour au menu des jeux</value>
+    <comment/>
+  </data>
+  <data name="Game_SearchHeader" xml:space="preserve">
+    <value>--- Rechercher un jeu ---</value>
+    <comment/>
+  </data>
+  <data name="No_games_found" xml:space="preserve">
+    <value>Aucun jeu trouvé correspondant à ce titre.</value>
+    <comment/>
+  </data>
+  <data name="Game_ChooseGenre" xml:space="preserve">
+    <value>Choisissez un genre pour filtrer :</value>
+    <comment/>
+  </data>
+  <data name="No_genres_available" xml:space="preserve">
+    <value>Aucun genre disponible.</value>
+    <comment/>
+  </data>
+  <data name="Invalid_genre_selection" xml:space="preserve">
+    <value>Sélection de genre invalide.</value>
+    <comment/>
+  </data>
+  <data name="Games_in_genre" xml:space="preserve">
+    <value>Jeux par genre :</value>
+    <comment/>
+  </data>
+  <data name="No_games_for_genre" xml:space="preserve">
+    <value>Aucun jeu trouvé pour le genre sélectionné.</value>
+    <comment/>
+  </data>
+  <data name="Admin_Menu" xml:space="preserve">
+    <value>Menu Admin</value>
+    <comment/>
+  </data>
+  <data name="Admin_GameActivePrompt" xml:space="preserve">
+    <value>Ce jeu est-il actif ?</value>
+    <comment/>
+  </data>
+  <data name="Price_Without_E.g" xml:space="preserve">
+    <value>Prix</value>
+    <comment/>
+  </data>
 </root>

@@ -12,7 +12,7 @@ public static class AdminMenu
             AnsiConsole.Clear();
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title($"[bold green]{Texts.Get("Admin Menu")}[/]")
+                    .Title($"[bold green]{Texts.Get("Admin_Menu")}[/]")
                     .AddChoices(
                         Texts.Get("Add_Game"),
                         Texts.Get("Update_Game"),
@@ -95,7 +95,7 @@ public static class AdminMenu
     {
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"\n[bold cyan]--- {action} ---[/]");
-        string searchTitle = AnsiConsole.Prompt(new TextPrompt<string>("Enter game title to search for:"));
+        string searchTitle = AnsiConsole.Prompt(new TextPrompt<string>(Texts.Get("Search_Title"))); 
         
         var results = _gameLogic.SearchGamesByTitle(searchTitle);
         if (onlyActive)
@@ -105,14 +105,14 @@ public static class AdminMenu
 
         if (results.Count == 0)
         {
-            AnsiConsole.MarkupLine("[red]No games found matching that title.[/]");
+            AnsiConsole.MarkupLine($"[red]{Texts.Get("No_games_found")}[/]");
             return null;
         }
 
         // Let them pick from the search results
         return AnsiConsole.Prompt(
             new SelectionPrompt<GameModel>()
-                .Title($"Select a game to {action.ToLower()}:")
+                .Title($"{Texts.Get("Game_SelectDetails")} {action.ToLower()}")
                 .UseConverter(g => $"{g.Title} (${g.Price}) - Active: {g.IsActive}")
                 .AddChoices(results)
         );
@@ -153,7 +153,7 @@ public static class AdminMenu
         );
         game.AgeRatingId = selectedAgeRating.Id;
 
-        game.IsActive = AnsiConsole.Confirm("Is this game active?", defaultValue: game.IsActive);
+        game.IsActive = AnsiConsole.Confirm(Texts.Get("Admin_GameActivePrompt"), defaultValue: game.IsActive);
 
         _gameLogic.UpdateGame(game);
 
