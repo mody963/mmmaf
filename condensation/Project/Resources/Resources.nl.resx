@@ -261,4 +261,88 @@
     <value>Voer de game titel in die je wilt zoeken:</value>
     <comment/>
   </data>
+  <data name="No_Games_Available" xml:space="preserve">
+    <value>Geen games beschikbaar.</value>
+    <comment/>
+  </data>
+  <data name="Game_SelectDetails" xml:space="preserve">
+    <value>Selecteer een game om details te zien:</value>
+    <comment/>
+  </data>
+  <data name="Game_Property" xml:space="preserve">
+    <value>Eigenschap</value>
+    <comment/>
+  </data>
+  <data name="Game_Value" xml:space="preserve">
+    <value>Waarde</value>
+    <comment/>
+  </data>
+  <data name="Game_Genre" xml:space="preserve">
+    <value>Genre</value>
+    <comment/>
+  </data>
+  <data name="Game_AgeRating" xml:space="preserve">
+    <value>Leeftijdsbeoordeling</value>
+    <comment/>
+  </data>
+  <data name="Game_WhatWouldYouLikeToDo" xml:space="preserve">
+    <value>Wat wil je doen?</value>
+    <comment/>
+  </data>
+  <data name="Game_AddToCart" xml:space="preserve">
+    <value>Toevoegen aan winkelwagen</value>
+    <comment/>
+  </data>
+  <data name="Game_BackToResults" xml:space="preserve">
+    <value>Terug naar resultaten</value>
+    <comment/>
+  </data>
+  <data name="Game_NewSearch" xml:space="preserve">
+    <value>Nieuwe zoekopdracht</value>
+    <comment/>
+  </data>
+  <data name="Game_BackToMenu" xml:space="preserve">
+    <value>Terug naar gamemenu</value>
+    <comment/>
+  </data>
+  <data name="Game_SearchHeader" xml:space="preserve">
+    <value>--- Zoek een game ---</value>
+    <comment/>
+  </data>
+  <data name="No_games_found" xml:space="preserve">
+    <value>Geen games gevonden die overeenkomen met die titel.</value>
+    <comment/>
+  </data>
+  <data name="Game_ChooseGenre" xml:space="preserve">
+    <value>Kies een genre om op te filteren:</value>
+    <comment/>
+  </data>
+  <data name="No_genres_available" xml:space="preserve">
+    <value>Geen genres beschikbaar.</value>
+    <comment/>
+  </data>
+  <data name="Invalid_genre_selection" xml:space="preserve">
+    <value>Ongeldige genselectie.</value>
+    <comment/>
+  </data>
+  <data name="Games_in_genre" xml:space="preserve">
+    <value>Games in genre:</value>
+    <comment/>
+  </data>
+  <data name="No_games_for_genre" xml:space="preserve">
+    <value>Er zijn geen games gevonden voor het geselecteerde genre.</value>
+    <comment/>
+  </data>
+  <data name="Admin_Menu" xml:space="preserve">
+    <value>Admin Menu</value>
+    <comment/>
+  </data>
+  <data name="Admin_GameActivePrompt" xml:space="preserve">
+    <value>Is dit spel actief?</value>
+    <comment/>
+  </data>
+  <data name="Price_Without_E.g" xml:space="preserve">
+    <value>Prijs</value>
+    <comment/>
+  </data>
 </root>
