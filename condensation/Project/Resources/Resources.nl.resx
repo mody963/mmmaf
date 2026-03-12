@@ -421,4 +421,52 @@
     <value>Druk op een toets om door te gaan...</value>
     <comment/>
   </data>
+  <data name="Login_Email" xml:space="preserve">
+    <value>E-mail:</value>
+    <comment/>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Wachtwoord:</value>
+    <comment/>
+  </data>
+  <data name="Login_RegisterNotImplemented" xml:space="preserve">
+    <value>Registratie nog niet geïmplementeerd.</value>
+    <comment/>
+  </data>
+  <data name="Login_AlreadyLoggedIn" xml:space="preserve">
+    <value>Al ingelogd als</value>
+    <comment/>
+  </data>
+  <data name="Login_WelcomeAdmin" xml:space="preserve">
+    <value>Welkom terug</value>
+    <comment/>
+  </data>
+  <data name="Login_AdminSuffix" xml:space="preserve">
+    <value>(Beheerder)</value>
+    <comment/>
+  </data>
+  <data name="Login_Welcome" xml:space="preserve">
+    <value>Welkom terug</value>
+    <comment/>
+  </data>
+  <data name="Login_IncorrectCredentials" xml:space="preserve">
+    <value>Onjuist e-mailadres of wachtwoord. Pogingen resterend:</value>
+    <comment/>
+  </data>
+  <data name="Login_TooManyAttempts" xml:space="preserve">
+    <value>Te veel mislukte pogingen. Teruggaan naar het hoofdmenu...</value>
+    <comment/>
+  </data>
+  <data name="Login_PressEnterToRetry" xml:space="preserve">
+    <value>Druk op Enter om opnieuw te proberen of op ESC om terug te gaan.</value>
+    <comment/>
+  </data>
+  <data name="Login_LoggedOut" xml:space="preserve">
+    <value>is afgelogd.</value>
+    <comment/>
+  </data>
+  <data name="Login_NoUserLoggedIn" xml:space="preserve">
+    <value>Er is momenteel geen gebruiker ingelogd.</value>
+    <comment/>
+  </data>
 </root>

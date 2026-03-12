@@ -421,4 +421,52 @@
     <value>Appuyez sur n'importe quelle touche pour continuer...</value>
     <comment/>
   </data>
+  <data name="Login_Email" xml:space="preserve">
+    <value>E-mail :</value>
+    <comment/>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Mot de passe :</value>
+    <comment/>
+  </data>
+  <data name="Login_RegisterNotImplemented" xml:space="preserve">
+    <value>L'enregistrement n'est pas encore implémenté.</value>
+    <comment/>
+  </data>
+  <data name="Login_AlreadyLoggedIn" xml:space="preserve">
+    <value>Déjà connecté en tant que</value>
+    <comment/>
+  </data>
+  <data name="Login_WelcomeAdmin" xml:space="preserve">
+    <value>Bienvenue</value>
+    <comment/>
+  </data>
+  <data name="Login_AdminSuffix" xml:space="preserve">
+    <value>(Admin)</value>
+    <comment/>
+  </data>
+  <data name="Login_Welcome" xml:space="preserve">
+    <value>Bienvenue</value>
+    <comment/>
+  </data>
+  <data name="Login_IncorrectCredentials" xml:space="preserve">
+    <value>E-mail ou mot de passe incorrect. Tentatives restantes :</value>
+    <comment/>
+  </data>
+  <data name="Login_TooManyAttempts" xml:space="preserve">
+    <value>Trop de tentatives échouées. Retour au menu principal...</value>
+    <comment/>
+  </data>
+  <data name="Login_PressEnterToRetry" xml:space="preserve">
+    <value>Appuyez sur Entrée pour réessayer ou sur Échap pour revenir.</value>
+    <comment/>
+  </data>
+  <data name="Login_LoggedOut" xml:space="preserve">
+    <value>a été déconnecté.</value>
+    <comment/>
+  </data>
+  <data name="Login_NoUserLoggedIn" xml:space="preserve">
+    <value>Aucun utilisateur n'est actuellement connecté.</value>
+    <comment/>
+  </data>
 </root>
