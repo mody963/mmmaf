@@ -11,7 +11,6 @@ public class AccountsLogic
         var account = _accounts.GetByEmail(email);
         if (account == null || !account.IsActive) return null;
         
-        // Note: Storing plain-text passwords isn't secure, but we'll stick to your current logic for now!
         return account.Password == password ? account : null;
     }
 

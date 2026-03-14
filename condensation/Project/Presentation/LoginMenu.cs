@@ -157,7 +157,6 @@ public static class LoginMenu
                     .Secret() // Masks the input
             );
 
-            // 5. Now it uses the fully connected accountsLogic!
             var account = accountsLogic.CheckLogin(email, password); 
 
             if (account != null)
