@@ -470,8 +470,7 @@
     <comment/>
   </data>
   <data name="Admin_SearchHeader" xml:space="preserve">
-    <value>---</n    <comment/>
-  </data>
+    <value>Your translated text here</value> </data>
   <data name="Admin_UpdatingGame" xml:space="preserve">
     <value>Updating:</value>
     <comment/>
@@ -481,11 +480,11 @@
     <comment/>
   </data>
   <data name="Admin_SelectGenreWithCurrent" xml:space="preserve">
-    <value>Select a Genre (Current:</value>
+    <value>Select a Genre Current:</value>
     <comment/>
   </data>
   <data name="Admin_SelectAgeRatingWithCurrent" xml:space="preserve">
-    <value>Select an Age Rating (Current:</value>
+    <value>Select an Age Rating Current:</value>
     <comment/>
   </data>
   <data name="Admin_DeactivateGame" xml:space="preserve">

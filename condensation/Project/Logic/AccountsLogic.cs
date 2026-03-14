@@ -30,6 +30,34 @@ public class AccountsLogic
         return _accounts.Create(account);
     }
 
+    public bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email) || !email.Contains("@") || !email.Contains("."))
+            return false;
+
+        bool seenAt = false;
+
+        foreach (char c in email)
+        {
+            if (c == '@') seenAt = true;
+            if (c == '.' && seenAt) return true;
+        }
+
+        return false;
+    }
+    public bool IsValidName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return false;
+
+        foreach (char c in name)
+        {
+            if (!char.IsLetter(c) && c != ' ' && c != '-' && c != '\'')
+                return false;
+        }
+
+        return true;
+    }
     public bool IsValidPassword(string password)
     {
         if (string.IsNullOrEmpty(password) || password.Length < 8) return false;

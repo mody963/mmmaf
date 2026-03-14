@@ -470,9 +470,7 @@
     <comment/>
   </data>
   <data name="Admin_SearchHeader" xml:space="preserve">
-    <value>---
-    <comment/>
-  </data>
+    <value>Your translated text here</value> </data>
   <data name="Admin_UpdatingGame" xml:space="preserve">
     <value>Bijwerken:</value>
     <comment/>
@@ -482,11 +480,11 @@
     <comment/>
   </data>
   <data name="Admin_SelectGenreWithCurrent" xml:space="preserve">
-    <value>Selecteer een genre (Huidige:</value>
+    <value>Selecteer een genre Huidige:</value>
     <comment/>
   </data>
   <data name="Admin_SelectAgeRatingWithCurrent" xml:space="preserve">
-    <value>Selecteer een leeftijdsclassificatie (Huidige:</value>
+    <value>Selecteer een leeftijdsclassificatie Huidige:</value>
     <comment/>
   </data>
   <data name="Admin_DeactivateGame" xml:space="preserve">
