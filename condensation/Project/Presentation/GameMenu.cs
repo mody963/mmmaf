@@ -26,6 +26,7 @@ public static class GameMenu
                 .HighlightStyle(new Style(foreground: Color.Green));
 
             var gameChoice = AnsiConsole.Prompt(gameMenu);
+            SoundEffects.PlayMenuClick();
 
             switch (gameChoice)
             {
@@ -81,6 +82,7 @@ public static class GameMenu
             prompt.AddChoice(new GameModel { Id = -1, Title = _backOption, Price = 0 });
 
             var selectedGame = AnsiConsole.Prompt(prompt);
+            SoundEffects.PlayMenuClick();
             if (selectedGame.Id == -1)
                 return;
 
@@ -107,6 +109,7 @@ public static class GameMenu
                     .AddChoices(Texts.Get("Game_AddToCart"), _backOption)
                     .HighlightStyle(new Style(foreground: Color.Green))
             );
+            SoundEffects.PlayMenuClick();
             if (detailAction == Texts.Get("Game_AddToCart"))
             {
                 cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
@@ -123,6 +126,7 @@ public static class GameMenu
 
         if (genres.Count == 0)
         {
+            SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]{Texts.Get("No_genres_available")}[/]");
             Console.ReadKey(true);
             return;
@@ -136,6 +140,7 @@ public static class GameMenu
                 .AddChoices(genreChoices)
                 .HighlightStyle(new Style(foreground: Color.Yellow))
         );
+        SoundEffects.PlayMenuClick();
 
         if (selectedGenreName == _backOption) return;
 
@@ -155,6 +160,7 @@ public static class GameMenu
 
         if (filteredGames.Count == 0)
         {
+            SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]{Texts.Get("No_games_for_genre")}[/]");
             AnsiConsole.MarkupLine($"[grey]{Texts.Get("Press_Any_Key_To_Return")}[/]");
             Console.ReadKey(true);
@@ -191,6 +197,7 @@ public static class GameMenu
 
             if (results.Count == 0)
             {
+                SoundEffects.PlayErrorSound();
                 AnsiConsole.MarkupLine($"[red]{Texts.Get("No_games_found")}[/]");
                 AnsiConsole.MarkupLine($"[grey]{Texts.Get("Press_Any_Key_To_Return")}[/]");
                 Console.ReadKey(true);
@@ -225,6 +232,7 @@ public static class GameMenu
                 prompt.AddChoice(new GameModel { Id = -2, Title = Texts.Get("Game_BackToMenu"), Price = 0 });
 
                 var selectedGame = AnsiConsole.Prompt(prompt);
+                SoundEffects.PlayMenuClick();
                 if (selectedGame.Id == -1) // New Search selected
                     break; // Break inner loop to go back to search prompt
                 if (selectedGame.Id == -2) // Back to Game Menu selected
@@ -254,6 +262,7 @@ public static class GameMenu
                         .AddChoices(Texts.Get("Game_AddToCart"), Texts.Get("Game_BackToResults"))
                         .HighlightStyle(new Style(foreground: Color.Green))
                 );
+                SoundEffects.PlayMenuClick();
                 if (detailAction == Texts.Get("Game_AddToCart"))
                 {
                     cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);

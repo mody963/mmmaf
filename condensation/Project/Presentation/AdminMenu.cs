@@ -22,6 +22,8 @@ public static class AdminMenu
                     .HighlightStyle(new Style(foreground: Color.Yellow))
             );
 
+            SoundEffects.PlayMenuClick();
+
             switch (choice)
             {
                 case var c when c == Texts.Get("Add_Game"):
@@ -49,15 +51,26 @@ public static class AdminMenu
         AnsiConsole.MarkupLine($"[bold cyan]{Texts.Get("Add_Game_Menu_Title")}[/]");
 
         string title = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Title")}:"));
+        SoundEffects.PlayMenuClick();
         string description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:"));
+        SoundEffects.PlayMenuClick();
         double price;
         do
         {
             price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:"));
+            if (price <= 0)
+            {
+                SoundEffects.PlayErrorSound();
+            }
+            else
+            {
+                SoundEffects.PlayMenuClick();
+            }
         }
         while (price <= 0);
         // placeholder for genre, publisher and agerating till they are implemented.
         int publisherId = AnsiConsole.Prompt(new TextPrompt<int>($"{Texts.Get("Publisher_ID")}:"));
+        SoundEffects.PlayMenuClick();
         var genres = _gameLogic.GetAllGenres();
         
         var selectedGenre = AnsiConsole.Prompt(
@@ -66,6 +79,7 @@ public static class AdminMenu
                 .UseConverter(g => g.Name) // Tells the menu to only display the Name text
                 .AddChoices(genres)
         );
+        SoundEffects.PlayMenuClick();
 
         var ageRatings = _gameLogic.GetAllAgeRatings();
         var selectedAgeRating = AnsiConsole.Prompt(
@@ -74,6 +88,7 @@ public static class AdminMenu
                 .UseConverter(a => a.Name)
                 .AddChoices(ageRatings)
         );
+        SoundEffects.PlayMenuClick();
 
         GameModel newGame = new GameModel
         {
@@ -96,6 +111,7 @@ public static class AdminMenu
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"\n[bold cyan]--- {action} ---[/]");
         string searchTitle = AnsiConsole.Prompt(new TextPrompt<string>(Texts.Get("Search_Title"))); 
+        SoundEffects.PlayMenuClick();
         
         var results = _gameLogic.SearchGamesByTitle(searchTitle);
         if (onlyActive)
@@ -105,30 +121,36 @@ public static class AdminMenu
 
         if (results.Count == 0)
         {
+            SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]{Texts.Get("No_games_found")}[/]");
             return null;
         }
 
         // Let them pick from the search results
-        return AnsiConsole.Prompt(
+        var selectedGame = AnsiConsole.Prompt(
             new SelectionPrompt<GameModel>()
                 .Title($"{Texts.Get("Game_SelectDetails")} {action.ToLower()}")
                 .UseConverter(g => $"{g.Title} (${g.Price}) - Active: {g.IsActive}")
                 .AddChoices(results)
         );
+        SoundEffects.PlayMenuClick();
+        return selectedGame;
     }
     private static void UpdateGameMenu()
     {
         var game = SearchAndSelectGame("Update a Game");
-        if (game == null) { Console.ReadKey(true); return; }
+        if (game == null) { SoundEffects.PlayErrorSound(); Console.ReadKey(true); return; }
 
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"\n[bold yellow]{Texts.Get("Admin_UpdatingGame")} {game.Title}[/]");
         AnsiConsole.MarkupLine($"[grey]{Texts.Get("Admin_PressEnterToKeep")}[/]\n");
 
         game.Title = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Title")}:").DefaultValue(game.Title));
-        game.Description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:").DefaultValue(game.Description));
-        game.Price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:").DefaultValue(game.Price));
+        SoundEffects.PlayMenuClick();
+        game.Description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:" ).DefaultValue(game.Description));
+        SoundEffects.PlayMenuClick();
+        game.Price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:" ).DefaultValue(game.Price));
+        SoundEffects.PlayMenuClick();
 
         // 2. Dropdown for Genre
         var genres = _gameLogic.GetAllGenres();
@@ -140,6 +162,7 @@ public static class AdminMenu
                 .UseConverter(g => g.Name)
                 .AddChoices(genres)
         );
+        SoundEffects.PlayMenuClick();
         game.GenreId = selectedGenre.Id;
 
         var ageRatings = _gameLogic.GetAllAgeRatings();
@@ -151,9 +174,11 @@ public static class AdminMenu
                 .UseConverter(a => a.Name)
                 .AddChoices(ageRatings)
         );
+        SoundEffects.PlayMenuClick();
         game.AgeRatingId = selectedAgeRating.Id;
 
         game.IsActive = AnsiConsole.Confirm(Texts.Get("Admin_GameActivePrompt"), defaultValue: game.IsActive);
+        SoundEffects.PlayMenuClick();
 
         _gameLogic.UpdateGame(game);
 
@@ -164,9 +189,11 @@ public static class AdminMenu
     private static void DeleteGameMenu()
     {
         var game = SearchAndSelectGame(Texts.Get("Admin_DeactivateGame"), true);
-        if (game == null) { Console.ReadKey(true); return; }
+        if (game == null) { SoundEffects.PlayErrorSound(); Console.ReadKey(true); return; }
 
-        if (AnsiConsole.Confirm($"\n{Texts.Get("Admin_ConfirmDeactivate")} '[red]{game.Title}[/]'?"))
+        var confirmed = AnsiConsole.Confirm($"\n{Texts.Get("Admin_ConfirmDeactivate")} '[red]{game.Title}[/]'?");
+        SoundEffects.PlayMenuClick();
+        if (confirmed)
         {
             _gameLogic.SoftDeleteGame(game.Id);
             AnsiConsole.MarkupLine($"\n[green]'{game.Title}' {Texts.Get("Admin_GameDeactivated")}[/]");

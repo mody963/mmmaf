@@ -31,18 +31,18 @@ public class AccountsLogic
 
     public bool IsValidEmail(string email)
     {
-        if (string.IsNullOrEmpty(email) || !email.Contains("@") || !email.Contains("."))
-            return false;
+        if (string.IsNullOrWhiteSpace(email)) return false;
 
-        bool seenAt = false;
+        int atIndex = email.IndexOf('@');
+        if (atIndex <= 0 || atIndex >= email.Length - 1) return false; // @ not at start or end
 
-        foreach (char c in email)
-        {
-            if (c == '@') seenAt = true;
-            if (c == '.' && seenAt) return true;
-        }
+        int dotIndex = email.LastIndexOf('.');
+        if (dotIndex <= atIndex || dotIndex >= email.Length - 1) return false; // . after @ and not at end
 
-        return false;
+        // Ensure there's at least one char after the last .
+        if (dotIndex == email.Length - 1) return false;
+
+        return true;
     }
     public bool IsValidName(string name)
     {

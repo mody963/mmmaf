@@ -10,12 +10,14 @@ public class Cart
     {
         if (!_cartLogic.AddToCart(id, name, price))
         {
+            SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_ItemAlreadyInCart")} {id} {Texts.Get("Cart_ItemAlreadyInCartEnd")}[/]");
             Console.ReadKey(true);
         }
         else
         {
             AnsiConsole.MarkupLine($"[green]{Texts.Get("Cart_ItemAddedToCart")} {name} {Texts.Get("Cart_ItemAddedToCartEnd")}{price:F2}.[/]");
+            SoundEffects.PlayKaching();
             Console.ReadKey(true);
         }
     }
@@ -47,6 +49,7 @@ public class Cart
         .Title($"[bold yellow]{Texts.Get("Cart_SelectOption")}[/]")
         .AddChoices(Texts.Get("Cart_View"), Texts.Get("Cart_RemoveItem"), Texts.Get("Cart_ClearCart"), _backOption)
         .HighlightStyle(new Style(foreground: Color.Green)));
+        SoundEffects.PlayMenuClick();
 
         switch (optie)
         {
@@ -59,6 +62,7 @@ public class Cart
                 if (items.Count == 0)
                 {
                     AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_IsEmpty")}[/]");
+                    SoundEffects.PlayErrorSound();
                     Console.ReadKey(true);
                     break;
                 }
@@ -70,6 +74,7 @@ public class Cart
                         .AddChoices(items)
                         .HighlightStyle(new Style(foreground: Color.Red))
                 );
+                SoundEffects.PlayMenuClick();
 
                 RemoveFromCart(selectedItem.Name);
 
@@ -133,12 +138,12 @@ public class Cart
             $"[bold green]{Texts.Get("Cart_TotalPrice")}[/] €{totalPrice:F2}"
         )
         .Border(BoxBorder.Double)
-        .Padding(2,1);
+        .Padding(2, 1);
 
         AnsiConsole.Write(totalPanel);
 
         AnsiConsole.WriteLine();
         AnsiConsole.MarkupLine($"[grey]{Texts.Get("Cart_PressAnyKeyToContinue")}[/]");
         Console.ReadKey();
-   }
+    }
 }
