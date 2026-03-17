@@ -62,6 +62,7 @@ public class Cart
                 if (items.Count == 0)
                 {
                     AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_IsEmpty")}[/]");
+                    AnsiConsole.MarkupLine($"[grey]{Texts.Get("Press_Any_Key_To_Return")}[/]");
                     SoundEffects.PlayErrorSound();
                     Console.ReadKey(true);
                     break;
@@ -102,6 +103,7 @@ public class Cart
         if (items.Count == 0)
         {
             AnsiConsole.Clear();
+            SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_YourCartIsEmpty")}[/]");
             AnsiConsole.MarkupLine($"[grey]{Texts.Get("Press_Any_Key_To_Return")}[/]");
             Console.ReadKey(true);
