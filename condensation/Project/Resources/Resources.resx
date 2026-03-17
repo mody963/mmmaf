@@ -137,7 +137,7 @@
     <value>Login / Register</value>
     <comment/>
   </data>
-  <data name="Menu _Game" xml:space="preserve">
+  <data name="Menu_Game" xml:space="preserve">
     <value>Game Menu</value>
     <comment/>
   </data>
@@ -181,8 +181,342 @@
     <value>Back</value>
     <comment/>
   </data>
-  <data name="Menu_Game" xml:space="preserve">
-    <value>Game Menu</value>
+  <data name="Login_Menu" xml:space="preserve">
+    <value>Login Menu</value>
+    <comment/>
+  </data>
+  <data name="Create_Account" xml:space="preserve">
+    <value>Create Account</value>
+    <comment/>
+  </data>
+  <data name="Log_Out" xml:space="preserve">
+    <value>Log Out</value>
+    <comment/>
+  </data>
+  <data name="Go_Back" xml:space="preserve">
+    <value>Go Back</value>
+    <comment/>
+  </data>
+  <data name="Log_In" xml:space="preserve">
+    <value>Login</value>
+    <comment/>
+  </data>
+  <data name="Add_Game" xml:space="preserve">
+    <value>Add Game</value>
+    <comment/>
+  </data>
+  <data name="Update_Game" xml:space="preserve">
+    <value>Update Game</value>
+    <comment/>
+  </data>
+  <data name="Delete_Game" xml:space="preserve">
+    <value>Delete Game</value>
+    <comment/>
+  </data>
+  <data name="Add_A_New_Game" xml:space="preserve">
+    <value>--- Add a New Game ---</value>
+    <comment/>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+    <comment/>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+    <comment/>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price (e.g. 59.99)</value>
+    <comment/>
+  </data>
+  <data name="Publisher_ID" xml:space="preserve">
+    <value>Publisher ID</value>
+    <comment/>
+  </data>
+  <data name="Select_Genre" xml:space="preserve">
+    <value>Select Genre</value>
+    <comment/>
+  </data>
+  <data name="Select_Age_Rating" xml:space="preserve">
+    <value>Select Age Rating</value>
+    <comment/>
+  </data>
+  <data name="Add_Game_Menu_Title" xml:space="preserve">
+    <value>--- Add a New Game ---</value>
+    <comment/>
+  </data>
+  <data name="Successfully_Added" xml:space="preserve">
+    <value>Successfully added</value>
+    <comment/>
+  </data>
+  <data name="To_The_Database" xml:space="preserve">
+    <value>to the database</value>
+    <comment/>
+  </data>
+  <data name="Press_Any_Key_To_Return" xml:space="preserve">
+    <value>Press any key to return . . .</value>
+    <comment/>
+  </data>
+  <data name="Search_Title" xml:space="preserve">
+    <value>Enter game title to search for:</value>
+    <comment/>
+  </data>
+  <data name="No_Games_Available" xml:space="preserve">
+    <value>No games available.</value>
+    <comment/>
+  </data>
+  <data name="Game_SelectDetails" xml:space="preserve">
+    <value>Select a game to view details:</value>
+    <comment/>
+  </data>
+  <data name="Game_Property" xml:space="preserve">
+    <value>Property</value>
+    <comment/>
+  </data>
+  <data name="Game_Value" xml:space="preserve">
+    <value>Value</value>
+    <comment/>
+  </data>
+  <data name="Game_Genre" xml:space="preserve">
+    <value>Genre</value>
+    <comment/>
+  </data>
+  <data name="Game_AgeRating" xml:space="preserve">
+    <value>Age rating</value>
+    <comment/>
+  </data>
+  <data name="Game_WhatWouldYouLikeToDo" xml:space="preserve">
+    <value>What would you like to do?</value>
+    <comment/>
+  </data>
+  <data name="Game_AddToCart" xml:space="preserve">
+    <value>Add to cart</value>
+    <comment/>
+  </data>
+  <data name="Game_BackToResults" xml:space="preserve">
+    <value>Back to results</value>
+    <comment/>
+  </data>
+  <data name="Game_NewSearch" xml:space="preserve">
+    <value>New Search</value>
+    <comment/>
+  </data>
+  <data name="Game_BackToMenu" xml:space="preserve">
+    <value>Back to Game Menu</value>
+    <comment/>
+  </data>
+  <data name="Game_SearchHeader" xml:space="preserve">
+    <value>--- Search for a game ---</value>
+    <comment/>
+  </data>
+  <data name="No_games_found" xml:space="preserve">
+    <value>No games found matching that title.</value>
+    <comment/>
+  </data>
+  <data name="Game_ChooseGenre" xml:space="preserve">
+    <value>Choose a genre to filter by:</value>
+    <comment/>
+  </data>
+  <data name="No_genres_available" xml:space="preserve">
+    <value>No genres available.</value>
+    <comment/>
+  </data>
+  <data name="Invalid_genre_selection" xml:space="preserve">
+    <value>Invalid genre selection.</value>
+    <comment/>
+  </data>
+  <data name="Games_in_genre" xml:space="preserve">
+    <value>Games in genre:</value>
+    <comment/>
+  </data>
+  <data name="No_games_for_genre" xml:space="preserve">
+    <value>No games were found for the selected genre.</value>
+    <comment/>
+  </data>
+  <data name="Admin_Menu" xml:space="preserve">
+    <value>Admin Menu</value>
+    <comment/>
+  </data>
+  <data name="Admin_GameActivePrompt" xml:space="preserve">
+    <value>Is this game active?</value>
+    <comment/>
+  </data>
+  <data name="Price_Without_E.g" xml:space="preserve">
+    <value>Price</value>
+    <comment/>
+  </data>
+  <data name="Cart_SelectOption" xml:space="preserve">
+    <value>Select Cart Option:</value>
+    <comment/>
+  </data>
+  <data name="Cart_View" xml:space="preserve">
+    <value>view</value>
+    <comment/>
+  </data>
+  <data name="Cart_RemoveItem" xml:space="preserve">
+    <value>remove item</value>
+    <comment/>
+  </data>
+  <data name="Cart_ClearCart" xml:space="preserve">
+    <value>clear cart</value>
+    <comment/>
+  </data>
+  <data name="Cart_Back" xml:space="preserve">
+    <value>back</value>
+    <comment/>
+  </data>
+  <data name="Cart_IsEmpty" xml:space="preserve">
+    <value>Cart is empty.</value>
+    <comment/>
+  </data>
+  <data name="Cart_SelectItemToRemove" xml:space="preserve">
+    <value>Select an item to remove:</value>
+    <comment/>
+  </data>
+  <data name="Cart_RemovedFromCart" xml:space="preserve">
+    <value>removed from cart.</value>
+    <comment/>
+  </data>
+  <data name="Cart_Cleared" xml:space="preserve">
+    <value>Cart cleared.</value>
+    <comment/>
+  </data>
+  <data name="Cart_YourCartIsEmpty" xml:space="preserve">
+    <value>Your cart is empty.</value>
+    <comment/>
+  </data>
+  <data name="Cart_Title" xml:space="preserve">
+    <value>🛒 Your Shopping Cart</value>
+    <comment/>
+  </data>
+  <data name="Cart_Product" xml:space="preserve">
+    <value>Product</value>
+    <comment/>
+  </data>
+  <data name="Cart_PurchaseDate" xml:space="preserve">
+    <value>Purchase Date</value>
+    <comment/>
+  </data>
+  <data name="Cart_TotalPrice" xml:space="preserve">
+    <value>Total Price:</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAlreadyInCart" xml:space="preserve">
+    <value>Item with id</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAlreadyInCartEnd" xml:space="preserve">
+    <value>is already in the cart.</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAddedToCart" xml:space="preserve">
+    <value>Item</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAddedToCartEnd" xml:space="preserve">
+    <value>added to cart for €</value>
+    <comment/>
+  </data>
+  <data name="Cart_PressAnyKeyToContinue" xml:space="preserve">
+    <value>Press any key to continue...</value>
+    <comment/>
+  </data>
+  <data name="Login_Email" xml:space="preserve">
+    <value>Email:</value>
+    <comment/>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Password:</value>
+    <comment/>
+  </data>
+  <data name="Login_RegisterNotImplemented" xml:space="preserve">
+    <value>Registration not implemented yet.</value>
+    <comment/>
+  </data>
+  <data name="Login_AlreadyLoggedIn" xml:space="preserve">
+    <value>Already logged in as</value>
+    <comment/>
+  </data>
+  <data name="Login_WelcomeAdmin" xml:space="preserve">
+    <value>Welcome back</value>
+    <comment/>
+  </data>
+  <data name="Login_AdminSuffix" xml:space="preserve">
+    <value>(Admin)</value>
+    <comment/>
+  </data>
+  <data name="Login_Welcome" xml:space="preserve">
+    <value>Welcome back</value>
+    <comment/>
+  </data>
+  <data name="Login_IncorrectCredentials" xml:space="preserve">
+    <value>Incorrect email or password. Attempts left:</value>
+    <comment/>
+  </data>
+  <data name="Login_TooManyAttempts" xml:space="preserve">
+    <value>Too many failed attempts. Returning to main menu...</value>
+    <comment/>
+  </data>
+  <data name="Login_PressEnterToRetry" xml:space="preserve">
+    <value>Press Enter to try again or ESC to go back.</value>
+    <comment/>
+  </data>
+  <data name="Login_LoggedOut" xml:space="preserve">
+    <value>has been logged out.</value>
+    <comment/>
+  </data>
+  <data name="Login_NoUserLoggedIn" xml:space="preserve">
+    <value>No user is currently logged in.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SearchHeader" xml:space="preserve">
+    <value>Your translated text here</value> </data>
+  <data name="Admin_UpdatingGame" xml:space="preserve">
+    <value>Updating:</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressEnterToKeep" xml:space="preserve">
+    <value>(Press Enter to keep the current text values)</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectGenreWithCurrent" xml:space="preserve">
+    <value>Select a Genre Current:</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectAgeRatingWithCurrent" xml:space="preserve">
+    <value>Select an Age Rating Current:</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivateGame" xml:space="preserve">
+    <value>Deactivate a Game</value>
+    <comment/>
+  </data>
+  <data name="Admin_ConfirmDeactivate" xml:space="preserve">
+    <value>Are you sure you want to deactivate (soft-delete)</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivationCancelled" xml:space="preserve">
+    <value>Deactivation cancelled.</value>
+    <comment/>
+  </data>
+  <data name="Admin_GameDeactivated" xml:space="preserve">
+    <value>has been deactivated.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SuccessfullyUpdated" xml:space="preserve">
+    <value>Successfully updated and saved</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturn" xml:space="preserve">
+    <value>Press any key to return...</value>
+    <comment/>
+  </data>
+  <data name="Admin_LoggedOut" xml:space="preserve">
+    <value>You have been logged out.</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturnToMainMenu" xml:space="preserve">
+    <value>Press any key to return to the main menu...</value>
     <comment/>
   </data>
 </root>

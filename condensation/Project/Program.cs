@@ -37,4 +37,5 @@ catch (Exception ex)
 // 2. LAUNCH THE APP
 // Hand over control to the MainMenu, passing along the database logic!
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
 MainMenu.Start();
