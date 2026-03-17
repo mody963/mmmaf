@@ -58,7 +58,14 @@ public static class AdminMenu
         do
         {
             price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:"));
-            SoundEffects.PlayMenuClick();
+            if (price <= 0)
+            {
+                SoundEffects.PlayErrorSound();
+            }
+            else
+            {
+                SoundEffects.PlayMenuClick();
+            }
         }
         while (price <= 0);
         // placeholder for genre, publisher and agerating till they are implemented.
@@ -114,6 +121,7 @@ public static class AdminMenu
 
         if (results.Count == 0)
         {
+            SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]{Texts.Get("No_games_found")}[/]");
             return null;
         }
@@ -131,7 +139,7 @@ public static class AdminMenu
     private static void UpdateGameMenu()
     {
         var game = SearchAndSelectGame("Update a Game");
-        if (game == null) { Console.ReadKey(true); return; }
+        if (game == null) { SoundEffects.PlayErrorSound(); Console.ReadKey(true); return; }
 
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"\n[bold yellow]{Texts.Get("Admin_UpdatingGame")} {game.Title}[/]");
@@ -181,7 +189,7 @@ public static class AdminMenu
     private static void DeleteGameMenu()
     {
         var game = SearchAndSelectGame(Texts.Get("Admin_DeactivateGame"), true);
-        if (game == null) { Console.ReadKey(true); return; }
+        if (game == null) { SoundEffects.PlayErrorSound(); Console.ReadKey(true); return; }
 
         var confirmed = AnsiConsole.Confirm($"\n{Texts.Get("Admin_ConfirmDeactivate")} '[red]{game.Title}[/]'?");
         SoundEffects.PlayMenuClick();

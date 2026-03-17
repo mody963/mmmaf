@@ -52,40 +52,70 @@ public static class LoginMenu
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"[bold cyan]--- {Texts.Get("Create_Account")} ---[/]\n");
 
-        // 1. Spectre.Console's built-in validation linked to Logic layer)
-        string email = AnsiConsole.Prompt(
-            new TextPrompt<string>("Email:")
-                .Validate(e => accountsLogic.IsValidEmail(e) 
-                    ? ValidationResult.Success() 
-                    : ValidationResult.Error("[red]Invalid email format.[/]")));
+        // 1. Email
+        string email;
+        do
+        {
+            email = AnsiConsole.Prompt(new TextPrompt<string>("Email:"));
+            if (!accountsLogic.IsValidEmail(email))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Invalid email format.[/]");
+            }
+        } while (!accountsLogic.IsValidEmail(email));
 
-        string firstName = AnsiConsole.Prompt(
-            new TextPrompt<string>("First Name:")
-                .Validate(n => accountsLogic.IsValidName(n) 
-                    ? ValidationResult.Success() 
-                    : ValidationResult.Error("[red]Invalid name format.[/]")));
+        // 2. First Name
+        string firstName;
+        do
+        {
+            firstName = AnsiConsole.Prompt(new TextPrompt<string>("First Name:"));
+            if (!accountsLogic.IsValidName(firstName))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Invalid name format.[/]");
+            }
+        } while (!accountsLogic.IsValidName(firstName));
 
-        string lastName = AnsiConsole.Prompt(
-            new TextPrompt<string>("Last Name:")
-                .Validate(n => accountsLogic.IsValidName(n) 
-                    ? ValidationResult.Success() 
-                    : ValidationResult.Error("[red]Invalid name format.[/]")));
+        // 3. Last Name
+        string lastName;
+        do
+        {
+            lastName = AnsiConsole.Prompt(new TextPrompt<string>("Last Name:"));
+            if (!accountsLogic.IsValidName(lastName))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Invalid name format.[/]");
+            }
+        } while (!accountsLogic.IsValidName(lastName));
 
-        string password = AnsiConsole.Prompt(
-            new TextPrompt<string>("Password (min 8 chars, 1 special char):")
-                .Secret() // Masks the input
-                .Validate(p => accountsLogic.IsValidPassword(p) 
-                    ? ValidationResult.Success() 
-                    : ValidationResult.Error("[red]Password must be 8+ chars and contain a special character (!@#$%^&*()).[/]")));
+        // 4. Password
+        string password;
+        do
+        {
+            password = AnsiConsole.Prompt(
+                new TextPrompt<string>("Password (min 8 chars, 1 special char):")
+                    .Secret() // Masks the input
+            );
+            if (!accountsLogic.IsValidPassword(password))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Password must be 8+ chars and contain a special character (!@#$%^&*()).[/]");
+            }
+        } while (!accountsLogic.IsValidPassword(password));
 
-        // 2. Customer Info
-        string address = AnsiConsole.Prompt(
-            new TextPrompt<string>("Address:")
-                .Validate(a => customerLogic.IsValidAddress(a) 
-                    ? ValidationResult.Success() 
-                    : ValidationResult.Error("[red]Address must be at least 6 characters.[/]")));
+        // 5. Address
+        string address;
+        do
+        {
+            address = AnsiConsole.Prompt(new TextPrompt<string>("Address:"));
+            if (!customerLogic.IsValidAddress(address))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Address must be at least 6 characters.[/]");
+            }
+        } while (!customerLogic.IsValidAddress(address));
 
-        // SelectionPrompt no validation needed
+        // 6. Payment Method
         string paymentMethod = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("Select your preferred [green]Payment Method[/]:")
@@ -154,6 +184,26 @@ public static class LoginMenu
                 new TextPrompt<string>(Texts.Get("Login_Email"))
             );
 
+            if (!accountsLogic.IsValidEmail(email))
+            {
+                SoundEffects.PlayErrorSound();
+                attempts++;
+                AnsiConsole.MarkupLine($"[red]Invalid email format. Attempts left: {maxAttempts - attempts}[/]");
+
+                if (attempts >= maxAttempts)
+                {
+                    SoundEffects.PlayErrorSound();
+                    AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_TooManyAttempts")}[/]");
+                    return true;
+                }
+
+                AnsiConsole.MarkupLine(Texts.Get("Login_PressEnterToRetry"));
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape)
+                    return false;
+                continue;
+            }
+
             string password = AnsiConsole.Prompt(
                 new TextPrompt<string>(Texts.Get("Login_Password"))
                     .Secret() // Masks the input
@@ -178,11 +228,13 @@ public static class LoginMenu
             }
             else
             {
+                SoundEffects.PlayErrorSound();
                 attempts++;
                 AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_IncorrectCredentials")} {maxAttempts - attempts}[/]");
 
                 if (attempts >= maxAttempts)
                 {
+                    SoundEffects.PlayErrorSound();
                     AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_TooManyAttempts")}[/]");
                     return true; 
                 }

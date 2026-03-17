@@ -126,6 +126,7 @@ public static class GameMenu
 
         if (genres.Count == 0)
         {
+            SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]{Texts.Get("No_genres_available")}[/]");
             Console.ReadKey(true);
             return;
@@ -159,6 +160,7 @@ public static class GameMenu
 
         if (filteredGames.Count == 0)
         {
+            SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]{Texts.Get("No_games_for_genre")}[/]");
             AnsiConsole.MarkupLine($"[grey]{Texts.Get("Press_Any_Key_To_Return")}[/]");
             Console.ReadKey(true);
@@ -195,6 +197,7 @@ public static class GameMenu
 
             if (results.Count == 0)
             {
+                SoundEffects.PlayErrorSound();
                 AnsiConsole.MarkupLine($"[red]{Texts.Get("No_games_found")}[/]");
                 AnsiConsole.MarkupLine($"[grey]{Texts.Get("Press_Any_Key_To_Return")}[/]");
                 Console.ReadKey(true);

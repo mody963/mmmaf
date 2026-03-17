@@ -10,6 +10,7 @@ public class Cart
     {
         if (!_cartLogic.AddToCart(id, name, price))
         {
+            SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_ItemAlreadyInCart")} {id} {Texts.Get("Cart_ItemAlreadyInCartEnd")}[/]");
             Console.ReadKey(true);
         }
@@ -60,6 +61,7 @@ public class Cart
 
                 if (items.Count == 0)
                 {
+                    SoundEffects.PlayErrorSound();
                     AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_IsEmpty")}[/]");
                     Console.ReadKey(true);
                     break;
