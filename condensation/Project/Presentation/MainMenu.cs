@@ -32,6 +32,7 @@ public static class MainMenu
         Console.Clear();
         // 1. Do the initial language selection
         var languageChoice = AnsiConsole.Prompt(LanguagePrompt);
+        SoundEffects.PlayMenuClick();
         ApplyLanguage(languageChoice);
         AnsiConsole.MarkupLine($"[green]{Texts.Get("Welcome")}[/]");
 
@@ -54,6 +55,7 @@ public static class MainMenu
                 .HighlightStyle(new Style(foreground: Color.Yellow));
 
             var choice = AnsiConsole.Prompt(mainMenu);
+            SoundEffects.PlayMenuClick();
 
             switch (choice)
             {

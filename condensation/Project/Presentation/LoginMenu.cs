@@ -23,6 +23,7 @@ public static class LoginMenu
                     )
                     .HighlightStyle(new Style(foreground: Color.Green))
             );
+            SoundEffects.PlayMenuClick();
 
             switch (choice)
             {
@@ -90,6 +91,7 @@ public static class LoginMenu
                 .Title("Select your preferred [green]Payment Method[/]:")
                 .AddChoices("IBAN", "CreditCard", "PayPal")
         );
+        SoundEffects.PlayMenuClick();
 
         // 3. Save the Account
         AccountModel newAccount = new AccountModel

@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using Spectre.Console;
-using System.Media;
 
 public class Cart
 {
@@ -17,10 +16,7 @@ public class Cart
         else
         {
             AnsiConsole.MarkupLine($"[green]{Texts.Get("Cart_ItemAddedToCart")} {name} {Texts.Get("Cart_ItemAddedToCartEnd")}{price:F2}.[/]");
-            using (var player = new SoundPlayer("Sounds/Cash Register (Kaching) - Sound Effect (HD) - Gaming Sound FX (youtube).wav"))
-            {
-                player.PlaySync();
-            }
+            SoundEffects.PlayKaching();
             Console.ReadKey(true);
         }
     }
@@ -52,6 +48,7 @@ public class Cart
         .Title($"[bold yellow]{Texts.Get("Cart_SelectOption")}[/]")
         .AddChoices(Texts.Get("Cart_View"), Texts.Get("Cart_RemoveItem"), Texts.Get("Cart_ClearCart"), _backOption)
         .HighlightStyle(new Style(foreground: Color.Green)));
+        SoundEffects.PlayMenuClick();
 
         switch (optie)
         {
@@ -75,6 +72,7 @@ public class Cart
                         .AddChoices(items)
                         .HighlightStyle(new Style(foreground: Color.Red))
                 );
+                SoundEffects.PlayMenuClick();
 
                 RemoveFromCart(selectedItem.Name);
 
