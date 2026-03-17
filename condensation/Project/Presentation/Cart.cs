@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Spectre.Console;
+using System.Media;
 
 public class Cart
 {
@@ -16,6 +17,10 @@ public class Cart
         else
         {
             AnsiConsole.MarkupLine($"[green]{Texts.Get("Cart_ItemAddedToCart")} {name} {Texts.Get("Cart_ItemAddedToCartEnd")}{price:F2}.[/]");
+            using (var player = new SoundPlayer("Sounds/Cash Register (Kaching) - Sound Effect (HD) - Gaming Sound FX (youtube).wav"))
+            {
+                player.PlaySync();
+            }
             Console.ReadKey(true);
         }
     }
@@ -133,12 +138,12 @@ public class Cart
             $"[bold green]{Texts.Get("Cart_TotalPrice")}[/] €{totalPrice:F2}"
         )
         .Border(BoxBorder.Double)
-        .Padding(2,1);
+        .Padding(2, 1);
 
         AnsiConsole.Write(totalPanel);
 
         AnsiConsole.WriteLine();
         AnsiConsole.MarkupLine($"[grey]{Texts.Get("Cart_PressAnyKeyToContinue")}[/]");
         Console.ReadKey();
-   }
+    }
 }
