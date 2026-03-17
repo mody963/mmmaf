@@ -61,8 +61,8 @@ public class Cart
 
                 if (items.Count == 0)
                 {
-                    SoundEffects.PlayErrorSound();
                     AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_IsEmpty")}[/]");
+                    SoundEffects.PlayErrorSound();
                     Console.ReadKey(true);
                     break;
                 }
