@@ -27,7 +27,7 @@ CREATE TABLE customer (
     payment_method VARCHAR(100),
     address VARCHAR(255),
     CONSTRAINT fk_customer_account
-        FOREIGN KEY (account_id) REFERENCES account(id) -- enforces 1:1 relationship with account
+        FOREIGN KEY (account_id) REFERENCES account(id) -- enforces 1:1 relationship with account, points to an existing, real ID
 );
 
 -- Publisher table (1:1 with account)
