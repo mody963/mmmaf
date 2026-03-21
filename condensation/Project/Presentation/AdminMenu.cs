@@ -17,6 +17,7 @@ public static class AdminMenu
                         Texts.Get("Add_Game"),
                         Texts.Get("Update_Game"),
                         Texts.Get("Delete_Game"),
+                        Texts.Get("Admin_Analytics"),
                         Texts.Get("Log_Out")
                     )
                     .HighlightStyle(new Style(foreground: Color.Yellow))
@@ -34,6 +35,10 @@ public static class AdminMenu
 
                 case var c when c == Texts.Get("Delete_Game"):
                     DeleteGameMenu();
+                    break;
+
+                case var c when c == Texts.Get("Admin_Analytics"):
+                    AnalyticsMenu.AdminAnalytics();
                     break;
 
                 case var c when c == Texts.Get("Log_Out"):

@@ -46,6 +46,7 @@ public static class MainMenu
                     Texts.Get("Menu_Cart"),
                     Texts.Get("Menu_Checkout"),
                     Texts.Get("Menu_Orders"),
+                    Texts.Get("Menu_Analytics"),
                     Texts.Get("Menu_About"),
                     Texts.Get("Menu_Language"),
                     Texts.Get("Menu_Exit")
@@ -74,6 +75,10 @@ public static class MainMenu
 
                 case var c when c == Texts.Get("Menu_Orders"):
                     AnsiConsole.MarkupLine("[yellow]Orders in Sprint 3.[/]");
+                    break;
+
+                case var c when c == Texts.Get("Menu_Analytics"):
+                    AnalyticsMenu.StartUserAnalytics();
                     break;
 
                 case var c when c == Texts.Get("Menu_About"):

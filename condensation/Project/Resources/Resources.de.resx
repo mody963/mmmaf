@@ -226,7 +226,7 @@
     <comment/>
   </data>
   <data name="Price" xml:space="preserve">
-    <value>Preis (Beispiel 59.99)</value>
+    <value>Preis</value>
     <comment/>
   </data>
   <data name="Publisher_ID" xml:space="preserve">
@@ -254,11 +254,79 @@
     <comment/>
   </data>
   <data name="Press_Any_Key_To_Return" xml:space="preserve">
-    <value>Beliebige Taste drücken, um zurückzukehren . . .</value>
+    <value>Beliebige Taste drücken, um zurückzukehren...</value>
     <comment/>
   </data>
   <data name="Search_Title" xml:space="preserve">
     <value>Geben Sie den Spieltitel ein, um danach zu suchen:</value>
+    <comment/>
+  </data>
+  <data name="Menu_Analytics" xml:space="preserve">
+    <value>Analytik</value>
+    <comment/>
+  </data>
+  <data name="User_Analytics" xml:space="preserve">
+    <value>Benutzeranalyse</value>
+    <comment/>
+  </data>
+  <data name="Admin_Analytics" xml:space="preserve">
+    <value>Admin-Analyse</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Month" xml:space="preserve">
+    <value>Umsatz des letzten Monats</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Year" xml:space="preserve">
+    <value>Umsatz des letzten Jahres</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Most_Expensive_Games" xml:space="preserve">
+    <value>3 teuerste Spiele</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Cheapest_Games" xml:space="preserve">
+    <value>3 günstigste Spiele</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_3_Genres_Most_Sold" xml:space="preserve">
+    <value>Top 3 Genres mit den meisten Verkäufen</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Games_Last_Month" xml:space="preserve">
+    <value>Top 10 meistverkaufte Spiele des letzten Monats</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Genres" xml:space="preserve">
+    <value>Top 10 beliebteste Genres</value>
+    <comment/>
+  </data>
+  <data name="Period_Start" xml:space="preserve">
+    <value>Beginn des Zeitraums</value>
+    <comment/>
+  </data>
+  <data name="Period_End" xml:space="preserve">
+    <value>Ende des Zeitraums</value>
+    <comment/>
+  </data>
+  <data name="Total_Revenue" xml:space="preserve">
+    <value>Gesamtumsatz</value>
+    <comment/>
+  </data>
+  <data name="Sold_Copies" xml:space="preserve">
+    <value>Verkaufte Exemplare</value>
+    <comment/>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Zurück</value>
+    <comment/>
+  </data>
+  <data name="Game" xml:space="preserve">
+    <value>Spiel</value>
+    <comment/>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
     <comment/>
   </data>
 </root>

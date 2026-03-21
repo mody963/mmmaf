@@ -226,7 +226,7 @@
     <comment/>
   </data>
   <data name="Price" xml:space="preserve">
-    <value>Price (e.g. 59.99)</value>
+    <value>Price</value>
     <comment/>
   </data>
   <data name="Publisher_ID" xml:space="preserve">
@@ -254,11 +254,79 @@
     <comment/>
   </data>
   <data name="Press_Any_Key_To_Return" xml:space="preserve">
-    <value>Press any key to return . . .</value>
+    <value>Press any key to return...</value>
     <comment/>
   </data>
   <data name="Search_Title" xml:space="preserve">
     <value>Enter game title to search for:</value>
+    <comment/>
+  </data>
+  <data name="Menu_Analytics" xml:space="preserve">
+    <value>Analytics</value>
+    <comment/>
+  </data>
+  <data name="User_Analytics" xml:space="preserve">
+    <value>User analytics</value>
+    <comment/>
+  </data>
+  <data name="Admin_Analytics" xml:space="preserve">
+    <value>Admin analytics</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Month" xml:space="preserve">
+    <value>Revenue last month</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Year" xml:space="preserve">
+    <value>Revenue last year</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Most_Expensive_Games" xml:space="preserve">
+    <value>3 most expensive games</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Cheapest_Games" xml:space="preserve">
+    <value>3 cheapest games</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_3_Genres_Most_Sold" xml:space="preserve">
+    <value>Top 3 genres with most sold games</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Games_Last_Month" xml:space="preserve">
+    <value>Top 10 most sold games of last month</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Genres" xml:space="preserve">
+    <value>Top 10 most popular genres</value>
+    <comment/>
+  </data>
+  <data name="Period_Start" xml:space="preserve">
+    <value>Period start</value>
+    <comment/>
+  </data>
+  <data name="Period_End" xml:space="preserve">
+    <value>Period end</value>
+    <comment/>
+  </data>
+  <data name="Total_Revenue" xml:space="preserve">
+    <value>Total revenue</value>
+    <comment/>
+  </data>
+  <data name="Sold_Copies" xml:space="preserve">
+    <value>Sold copies</value>
+    <comment/>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+    <comment/>
+  </data>
+  <data name="Game" xml:space="preserve">
+    <value>Game</value>
+    <comment/>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
     <comment/>
   </data>
 </root>
