@@ -11,7 +11,6 @@ public class AccountsLogic
         var account = _accounts.GetByEmail(email);
         if (account == null || !account.IsActive) return null;
         
-        // Note: Storing plain-text passwords isn't secure, but we'll stick to your current logic for now!
         return account.Password == password ? account : null;
     }
 
@@ -30,6 +29,34 @@ public class AccountsLogic
         return _accounts.Create(account);
     }
 
+    public bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email)) return false;
+
+        int atIndex = email.IndexOf('@');
+        if (atIndex <= 0 || atIndex >= email.Length - 1) return false; // @ not at start or end
+
+        int dotIndex = email.LastIndexOf('.');
+        if (dotIndex <= atIndex || dotIndex >= email.Length - 1) return false; // . after @ and not at end
+
+        // Ensure there's at least one char after the last .
+        if (dotIndex == email.Length - 1) return false;
+
+        return true;
+    }
+    public bool IsValidName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return false;
+
+        foreach (char c in name)
+        {
+            if (!char.IsLetter(c) && c != ' ' && c != '-' && c != '\'')
+                return false;
+        }
+
+        return true;
+    }
     public bool IsValidPassword(string password)
     {
         if (string.IsNullOrEmpty(password) || password.Length < 8) return false;

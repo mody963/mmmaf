@@ -261,4 +261,262 @@
     <value>Voer de game titel in die je wilt zoeken:</value>
     <comment/>
   </data>
+  <data name="No_Games_Available" xml:space="preserve">
+    <value>Geen games beschikbaar.</value>
+    <comment/>
+  </data>
+  <data name="Game_SelectDetails" xml:space="preserve">
+    <value>Selecteer een game om details te zien:</value>
+    <comment/>
+  </data>
+  <data name="Game_Property" xml:space="preserve">
+    <value>Eigenschap</value>
+    <comment/>
+  </data>
+  <data name="Game_Value" xml:space="preserve">
+    <value>Waarde</value>
+    <comment/>
+  </data>
+  <data name="Game_Genre" xml:space="preserve">
+    <value>Genre</value>
+    <comment/>
+  </data>
+  <data name="Game_AgeRating" xml:space="preserve">
+    <value>Leeftijdsbeoordeling</value>
+    <comment/>
+  </data>
+  <data name="Game_WhatWouldYouLikeToDo" xml:space="preserve">
+    <value>Wat wil je doen?</value>
+    <comment/>
+  </data>
+  <data name="Game_AddToCart" xml:space="preserve">
+    <value>Toevoegen aan winkelwagen</value>
+    <comment/>
+  </data>
+  <data name="Game_BackToResults" xml:space="preserve">
+    <value>Terug naar resultaten</value>
+    <comment/>
+  </data>
+  <data name="Game_NewSearch" xml:space="preserve">
+    <value>Nieuwe zoekopdracht</value>
+    <comment/>
+  </data>
+  <data name="Game_BackToMenu" xml:space="preserve">
+    <value>Terug naar gamemenu</value>
+    <comment/>
+  </data>
+  <data name="Game_SearchHeader" xml:space="preserve">
+    <value>--- Zoek een game ---</value>
+    <comment/>
+  </data>
+  <data name="No_games_found" xml:space="preserve">
+    <value>Geen games gevonden die overeenkomen met die titel.</value>
+    <comment/>
+  </data>
+  <data name="Game_ChooseGenre" xml:space="preserve">
+    <value>Kies een genre om op te filteren:</value>
+    <comment/>
+  </data>
+  <data name="No_genres_available" xml:space="preserve">
+    <value>Geen genres beschikbaar.</value>
+    <comment/>
+  </data>
+  <data name="Invalid_genre_selection" xml:space="preserve">
+    <value>Ongeldige genselectie.</value>
+    <comment/>
+  </data>
+  <data name="Games_in_genre" xml:space="preserve">
+    <value>Games in genre:</value>
+    <comment/>
+  </data>
+  <data name="No_games_for_genre" xml:space="preserve">
+    <value>Er zijn geen games gevonden voor het geselecteerde genre.</value>
+    <comment/>
+  </data>
+  <data name="Admin_Menu" xml:space="preserve">
+    <value>Admin Menu</value>
+    <comment/>
+  </data>
+  <data name="Admin_GameActivePrompt" xml:space="preserve">
+    <value>Is dit spel actief?</value>
+    <comment/>
+  </data>
+  <data name="Price_Without_E.g" xml:space="preserve">
+    <value>Prijs</value>
+    <comment/>
+  </data>
+  <data name="Cart_SelectOption" xml:space="preserve">
+    <value>Selecteer Winkelwagenoptie:</value>
+    <comment/>
+  </data>
+  <data name="Cart_View" xml:space="preserve">
+    <value>bekijken</value>
+    <comment/>
+  </data>
+  <data name="Cart_RemoveItem" xml:space="preserve">
+    <value>artikel verwijderen</value>
+    <comment/>
+  </data>
+  <data name="Cart_ClearCart" xml:space="preserve">
+    <value>winkelwagen leegmaken</value>
+    <comment/>
+  </data>
+  <data name="Cart_Back" xml:space="preserve">
+    <value>terug</value>
+    <comment/>
+  </data>
+  <data name="Cart_IsEmpty" xml:space="preserve">
+    <value>Winkelwagen is leeg.</value>
+    <comment/>
+  </data>
+  <data name="Cart_SelectItemToRemove" xml:space="preserve">
+    <value>Selecteer een artikel om te verwijderen:</value>
+    <comment/>
+  </data>
+  <data name="Cart_RemovedFromCart" xml:space="preserve">
+    <value>verwijderd uit winkelwagen.</value>
+    <comment/>
+  </data>
+  <data name="Cart_Cleared" xml:space="preserve">
+    <value>Winkelwagen leeggemaakt.</value>
+    <comment/>
+  </data>
+  <data name="Cart_YourCartIsEmpty" xml:space="preserve">
+    <value>Uw winkelwagen is leeg.</value>
+    <comment/>
+  </data>
+  <data name="Cart_Title" xml:space="preserve">
+    <value>🛒 Uw Winkelwagen</value>
+    <comment/>
+  </data>
+  <data name="Cart_Product" xml:space="preserve">
+    <value>Product</value>
+    <comment/>
+  </data>
+  <data name="Cart_PurchaseDate" xml:space="preserve">
+    <value>Aankoopdatum</value>
+    <comment/>
+  </data>
+  <data name="Cart_TotalPrice" xml:space="preserve">
+    <value>Totale Prijs:</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAlreadyInCart" xml:space="preserve">
+    <value>Artikel met ID</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAlreadyInCartEnd" xml:space="preserve">
+    <value>is al in het winkelwagen.</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAddedToCart" xml:space="preserve">
+    <value>Artikel</value>
+    <comment/>
+  </data>
+  <data name="Cart_ItemAddedToCartEnd" xml:space="preserve">
+    <value>toegevoegd aan winkelwagen voor €</value>
+    <comment/>
+  </data>
+  <data name="Cart_PressAnyKeyToContinue" xml:space="preserve">
+    <value>Druk op een toets om door te gaan...</value>
+    <comment/>
+  </data>
+  <data name="Login_Email" xml:space="preserve">
+    <value>E-mail:</value>
+    <comment/>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Wachtwoord:</value>
+    <comment/>
+  </data>
+  <data name="Login_RegisterNotImplemented" xml:space="preserve">
+    <value>Registratie nog niet geïmplementeerd.</value>
+    <comment/>
+  </data>
+  <data name="Login_AlreadyLoggedIn" xml:space="preserve">
+    <value>Al ingelogd als</value>
+    <comment/>
+  </data>
+  <data name="Login_WelcomeAdmin" xml:space="preserve">
+    <value>Welkom terug</value>
+    <comment/>
+  </data>
+  <data name="Login_AdminSuffix" xml:space="preserve">
+    <value>(Beheerder)</value>
+    <comment/>
+  </data>
+  <data name="Login_Welcome" xml:space="preserve">
+    <value>Welkom terug</value>
+    <comment/>
+  </data>
+  <data name="Login_IncorrectCredentials" xml:space="preserve">
+    <value>Onjuist e-mailadres of wachtwoord. Pogingen resterend:</value>
+    <comment/>
+  </data>
+  <data name="Login_TooManyAttempts" xml:space="preserve">
+    <value>Te veel mislukte pogingen. Teruggaan naar het hoofdmenu...</value>
+    <comment/>
+  </data>
+  <data name="Login_PressEnterToRetry" xml:space="preserve">
+    <value>Druk op Enter om opnieuw te proberen of op ESC om terug te gaan.</value>
+    <comment/>
+  </data>
+  <data name="Login_LoggedOut" xml:space="preserve">
+    <value>is afgelogd.</value>
+    <comment/>
+  </data>
+  <data name="Login_NoUserLoggedIn" xml:space="preserve">
+    <value>Er is momenteel geen gebruiker ingelogd.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SearchHeader" xml:space="preserve">
+    <value>Your translated text here</value> </data>
+  <data name="Admin_UpdatingGame" xml:space="preserve">
+    <value>Bijwerken:</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressEnterToKeep" xml:space="preserve">
+    <value>(Druk op Enter om de huidige tekstwaarden te behouden)</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectGenreWithCurrent" xml:space="preserve">
+    <value>Selecteer een genre Huidige:</value>
+    <comment/>
+  </data>
+  <data name="Admin_SelectAgeRatingWithCurrent" xml:space="preserve">
+    <value>Selecteer een leeftijdsclassificatie Huidige:</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivateGame" xml:space="preserve">
+    <value>Game Deactiveren</value>
+    <comment/>
+  </data>
+  <data name="Admin_ConfirmDeactivate" xml:space="preserve">
+    <value>Weet je zeker dat je wilt deactiveren (soft-delete)</value>
+    <comment/>
+  </data>
+  <data name="Admin_DeactivationCancelled" xml:space="preserve">
+    <value>Deactivering geannuleerd.</value>
+    <comment/>
+  </data>
+  <data name="Admin_GameDeactivated" xml:space="preserve">
+    <value>is gedeactiveerd.</value>
+    <comment/>
+  </data>
+  <data name="Admin_SuccessfullyUpdated" xml:space="preserve">
+    <value>Succesvol bijgewerkt en opgeslagen</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturn" xml:space="preserve">
+    <value>Druk op een toets om terug te gaan...</value>
+    <comment/>
+  </data>
+  <data name="Admin_LoggedOut" xml:space="preserve">
+    <value>U bent afgelogd.</value>
+    <comment/>
+  </data>
+  <data name="Admin_PressAnyKeyToReturnToMainMenu" xml:space="preserve">
+    <value>Druk op een toets om terug te gaan naar het hoofdmenu...</value>
+    <comment/>
+  </data>
 </root>

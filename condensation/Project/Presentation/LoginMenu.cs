@@ -4,6 +4,8 @@ using Spectre.Console;
 public static class LoginMenu
 { 
     private static readonly AccountsLogic accountsLogic = new AccountsLogic();
+    private static readonly CustomersLogic customerLogic = new CustomersLogic();
+
     public static void Start() 
     {
         bool exitMenu = false;
@@ -21,20 +23,21 @@ public static class LoginMenu
                     )
                     .HighlightStyle(new Style(foreground: Color.Green))
             );
+            SoundEffects.PlayMenuClick();
 
             switch (choice)
             {
                 case var c when c == Texts.Get("Log_In"):
-                    // 3. Pass it down into the DoLogin method
                     if (DoLogin()) exitMenu = true; 
                     break;
 
                 case var c when c == Texts.Get("Create_Account"):
-                    AnsiConsole.MarkupLine("[yellow]Registration not implemented yet.[/]");
+                    DoRegister();
                     break;
 
                 case var c when c == Texts.Get("Log_Out"):
                     LogoutCurrentUser();
+                    Console.ReadKey(true);
                     break;
 
                 case var c when c == Texts.Get("Go_Back"):
@@ -44,12 +47,129 @@ public static class LoginMenu
         }
     }
 
-    // 4. Ask for it here too!
+    private static void DoRegister()
+    {
+        AnsiConsole.Clear();
+        AnsiConsole.MarkupLine($"[bold cyan]--- {Texts.Get("Create_Account")} ---[/]\n");
+
+        // 1. Email
+        string email;
+        do
+        {
+            email = AnsiConsole.Prompt(new TextPrompt<string>("Email:"));
+            if (!accountsLogic.IsValidEmail(email))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Invalid email format.[/]");
+            }
+        } while (!accountsLogic.IsValidEmail(email));
+
+        // 2. First Name
+        string firstName;
+        do
+        {
+            firstName = AnsiConsole.Prompt(new TextPrompt<string>("First Name:"));
+            if (!accountsLogic.IsValidName(firstName))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Invalid name format.[/]");
+            }
+        } while (!accountsLogic.IsValidName(firstName));
+
+        // 3. Last Name
+        string lastName;
+        do
+        {
+            lastName = AnsiConsole.Prompt(new TextPrompt<string>("Last Name:"));
+            if (!accountsLogic.IsValidName(lastName))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Invalid name format.[/]");
+            }
+        } while (!accountsLogic.IsValidName(lastName));
+
+        // 4. Password
+        string password;
+        do
+        {
+            password = AnsiConsole.Prompt(
+                new TextPrompt<string>("Password (min 8 chars, 1 special char):")
+                    .Secret() // Masks the input
+            );
+            if (!accountsLogic.IsValidPassword(password))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Password must be 8+ chars and contain a special character (!@#$%^&*()).[/]");
+            }
+        } while (!accountsLogic.IsValidPassword(password));
+
+        // 5. Address
+        string address;
+        do
+        {
+            address = AnsiConsole.Prompt(new TextPrompt<string>("Address:"));
+            if (!customerLogic.IsValidAddress(address))
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Address must be at least 6 characters.[/]");
+            }
+        } while (!customerLogic.IsValidAddress(address));
+
+        // 6. Payment Method
+        string paymentMethod = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Select your preferred [green]Payment Method[/]:")
+                .AddChoices("IBAN", "CreditCard", "PayPal")
+        );
+        SoundEffects.PlayMenuClick();
+
+        // 3. Save the Account
+        AccountModel newAccount = new AccountModel
+        {
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            Password = password,
+            Role = AccountRoles.Customer, // Default to Customer
+            IsActive = true
+        };
+
+        int accountId;
+        try
+        {
+            // accountsLogic checks if email exists and throws an error if it does
+            accountId = accountsLogic.CreateAccount(newAccount);
+        }
+        catch (InvalidOperationException ex)
+        {
+            AnsiConsole.MarkupLine($"\n[red]Registration failed: {ex.Message}[/]");
+            AnsiConsole.MarkupLine("Press any key to return...");
+            Console.ReadKey(true);
+            return; // cancels registration if email already used
+        }
+
+        // 4. Save the Customer details linked to the new Account ID
+        CustomerModel newCustomer = new CustomerModel
+        {
+            AccountId = accountId,
+            Address = address,
+            PaymentMethod = paymentMethod.ToLower()
+        };
+        
+        customerLogic.CreateCustomer(newCustomer);
+
+        AnsiConsole.MarkupLine($"\n[green]Account successfully created! You can now log in, {firstName}.[/]");
+        AnsiConsole.MarkupLine("Press any key to return to the menu...");
+        Console.ReadKey(true);
+    }
+
+
+
     private static bool DoLogin() 
     {
         if (CurrentUserModel.CurrentUser != null)
         {
-            AnsiConsole.MarkupLine($"\n[blue]Already logged in as {CurrentUserModel.CurrentUser.FirstName}.[/]");
+            AnsiConsole.MarkupLine($"\n[blue]{Texts.Get("Login_AlreadyLoggedIn")} {CurrentUserModel.CurrentUser.FirstName}.[/]");
             return true;
         }
 
@@ -61,16 +181,35 @@ public static class LoginMenu
             AnsiConsole.Clear();
 
             string email = AnsiConsole.Prompt(
-                new TextPrompt<string>("Email:")
+                new TextPrompt<string>(Texts.Get("Login_Email"))
             );
 
+            if (!accountsLogic.IsValidEmail(email))
+            {
+                SoundEffects.PlayErrorSound();
+                attempts++;
+                AnsiConsole.MarkupLine($"[red]Invalid email format. Attempts left: {maxAttempts - attempts}[/]");
+
+                if (attempts >= maxAttempts)
+                {
+                    SoundEffects.PlayErrorSound();
+                    AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_TooManyAttempts")}[/]");
+                    return true;
+                }
+
+                AnsiConsole.MarkupLine(Texts.Get("Login_PressEnterToRetry"));
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Escape)
+                    return false;
+                continue;
+            }
+
             string password = AnsiConsole.Prompt(
-                new TextPrompt<string>("Password:")
+                new TextPrompt<string>(Texts.Get("Login_Password"))
                     .Secret() // Masks the input
             );
 
-            // 5. Now it uses the fully connected accountsLogic!
-            var account = accountsLogic.CheckAdminLogin(email, password); 
+            var account = accountsLogic.CheckLogin(email, password); 
 
             if (account != null)
             {
@@ -78,27 +217,29 @@ public static class LoginMenu
 
                 if (account.Role == AccountRoles.Admin)
                 {
-                    AnsiConsole.MarkupLine($"[green]Welcome back {account.FirstName}! (Admin)[/]");
+                    AnsiConsole.MarkupLine($"[green]{Texts.Get("Login_WelcomeAdmin")} {account.FirstName}! {Texts.Get("Login_AdminSuffix")}[/]");
                     AdminMenu.Start(); // Open admin menu
                     return true;       
                 }
 
-                AnsiConsole.MarkupLine($"[green]Welcome back {account.FirstName}![/]");
+                AnsiConsole.MarkupLine($"[green]{Texts.Get("Login_Welcome")} {account.FirstName}![/]");
                 Console.ReadKey(true);
                 return true;
             }
             else
             {
+                SoundEffects.PlayErrorSound();
                 attempts++;
-                AnsiConsole.MarkupLine($"[red]Incorrect email or password. Attempts left: {maxAttempts - attempts}[/]");
+                AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_IncorrectCredentials")} {maxAttempts - attempts}[/]");
 
                 if (attempts >= maxAttempts)
                 {
-                    AnsiConsole.MarkupLine("[red]Too many failed attempts. Returning to main menu...[/]");
+                    SoundEffects.PlayErrorSound();
+                    AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_TooManyAttempts")}[/]");
                     return true; 
                 }
 
-                AnsiConsole.MarkupLine("Press Enter to try again or ESC to go back.");
+                AnsiConsole.MarkupLine(Texts.Get("Login_PressEnterToRetry"));
                 var key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.Escape)
                     return false;
@@ -112,12 +253,12 @@ public static class LoginMenu
     {
         if (CurrentUserModel.CurrentUser != null)
         {
-            AnsiConsole.MarkupLine($"\n[blue]{CurrentUserModel.CurrentUser.FirstName} has been logged out.[/]");
+            AnsiConsole.MarkupLine($"\n[blue]{CurrentUserModel.CurrentUser.FirstName} {Texts.Get("Login_LoggedOut")}[/]");
             CurrentUserModel.CurrentUser = null;
         }
         else
         {
-            AnsiConsole.MarkupLine("\n[blue]No user is currently logged in.[/]");
+            AnsiConsole.MarkupLine($"\n[blue]{Texts.Get("Login_NoUserLoggedIn")}[/]");
         }
     }
 }
