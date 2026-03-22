@@ -180,16 +180,16 @@ public static class AnalyticsMenu
 
         AnsiConsole.WriteLine();
 
-        var table = new Table().Border(TableBorder.Rounded);
-        table.AddColumn(Texts.Get("Name"));
-        table.AddColumn(Texts.Get("Sold_Copies"));
-
-        foreach (var item in items)
-        {
-            table.AddRow(item.Name, item.SoldCopies.ToString());
-        }
-
-        AnsiConsole.Write(table);
+        // var table = new Table().Border(TableBorder.Rounded);
+        // table.AddColumn(Texts.Get("Name"));
+        // table.AddColumn(Texts.Get("Sold_Copies"));
+// 
+        // foreach (var item in items)
+        // {
+            // table.AddRow(item.Name, item.SoldCopies.ToString());
+        // }
+// 
+        // AnsiConsole.Write(table);
         Pause();
     }
 
