@@ -18,8 +18,8 @@ public static class AnalyticsMenu
                     .AddChoices(
                         "Revenue last month",
                         "Revenue last year",
-                        "3 most expensive games",
-                        "3 cheapest games",
+                        "Top 3 most expensive games",
+                        "Top 3 cheapest games",
                         "Top 3 genres with most sold games",
                         "Back")
                     .HighlightStyle(new Style(foreground: Color.Yellow))
@@ -35,12 +35,12 @@ public static class AnalyticsMenu
                     ShowRevenue("Revenue last year", _analyticsLogic.GetRevenueLastYear());
                     break;
 
-                case "3 most expensive games":
-                    ShowPriceChart("3 most expensive games", _analyticsLogic.GetMostExpensiveGames());
+                case "Top 3 most expensive games":
+                    ShowPriceChart("Top3 most expensive games", _analyticsLogic.GetMostExpensiveGames());
                     break;
 
-                case "3 cheapest games":
-                    ShowPriceChart("3 cheapest games", _analyticsLogic.GetCheapestGames());
+                case "Top 3 cheapest games":
+                    ShowPriceChart("Top 3 cheapest games", _analyticsLogic.GetCheapestGames());
                     break;
 
                 case "Top 3 genres with most sold games":
