@@ -14,14 +14,14 @@ public static class AnalyticsMenu
 
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("[bold green]User analytics[/]")
+                    .Title($"[bold green]{Texts.Get("Analytics_UserAnalytics")}[/]")
                     .AddChoices(
-                        "Revenue last month",
-                        "Revenue last year",
-                        "Top 3 most expensive games",
-                        "Top 3 cheapest games",
-                        "Top 3 genres with most sold games",
-                        "Back")
+                        $"{Texts.Get("Analytics_Revenue_Last_Month")}",
+                        $"{Texts.Get("Analytics_Revenue_Last_Year")}",
+                        $"{Texts.Get("Analytics_Top_3_Most_Expensive_Games")}",
+                        $"{Texts.Get("Analytics_Top_3_Cheapest_Games")}",
+                        $"{Texts.Get("Analytics_Top_3_Genres_Most_Sold")}",
+                        $"{Texts.Get("Back")}")
                     .HighlightStyle(new Style(foreground: Color.Yellow))
             );
 
