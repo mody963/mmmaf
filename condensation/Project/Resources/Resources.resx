@@ -327,6 +327,7 @@
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
+  </data>
   <data name="No_Games_Available" xml:space="preserve">
     <value>No games available.</value>
     <comment/>
