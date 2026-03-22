@@ -1,0 +1,103 @@
+-- Lookup tables
+CREATE TABLE genre (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE age_rating (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Base account table
+CREATE TABLE account (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role INT NOT NULL, -- 0 = customer, 1 = publisher, 2 = admin
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+-- Customer table (1:1 with account)
+CREATE TABLE customer (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    account_id INT NOT NULL UNIQUE, -- has to ensure 1:1 relationship with account
+    payment_method VARCHAR(100),
+    address VARCHAR(255),
+    CONSTRAINT fk_customer_account
+        FOREIGN KEY (account_id) REFERENCES account(id) -- enforces 1:1 relationship with account, points to an existing, real ID
+);
+
+-- Publisher table (1:1 with account)
+CREATE TABLE publisher (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    account_id INT NOT NULL UNIQUE,
+    studio_name VARCHAR(255) NOT NULL,
+    amount_of_games INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_publisher_account
+        FOREIGN KEY (account_id) REFERENCES account(id)
+);
+
+-- Game table
+CREATE TABLE game (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    publisher_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    genre_id INT NOT NULL,
+    age_rating_id INT NOT NULL,
+    price NUMERIC(5,2) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+    CONSTRAINT fk_game_publisher
+        FOREIGN KEY (publisher_id) REFERENCES publisher(id),
+    CONSTRAINT fk_game_genre
+        FOREIGN KEY (genre_id) REFERENCES genre(id),
+    CONSTRAINT fk_game_age_rating
+        FOREIGN KEY (age_rating_id) REFERENCES age_rating(id)
+);
+
+-- Orders table
+CREATE TABLE orders (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    customer_id INT NOT NULL,
+    order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    total_price NUMERIC(5,2) NOT NULL DEFAULT 0,
+
+    CONSTRAINT fk_orders_customer
+        FOREIGN KEY (customer_id) REFERENCES customer(id)
+);
+
+-- Junction table for games in orders
+CREATE TABLE order_games (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    game_id INT NOT NULL,
+    order_id INT NOT NULL,
+    quantity INT NOT NULL,
+
+    CONSTRAINT fk_order_games_game
+        FOREIGN KEY (game_id) REFERENCES game(id),
+    CONSTRAINT fk_order_games_order
+        FOREIGN KEY (order_id) REFERENCES orders(id),
+
+    CONSTRAINT ck_order_games_quantity CHECK (quantity >= 1),
+    CONSTRAINT uq_order_games UNIQUE (game_id, order_id)
+);
+
+-- Reviews table
+CREATE TABLE reviews (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    game_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    rating INT NOT NULL,
+
+    CONSTRAINT fk_reviews_game
+        FOREIGN KEY (game_id) REFERENCES game(id),
+    CONSTRAINT fk_reviews_customer
+        FOREIGN KEY (customer_id) REFERENCES customer(id),
+
+    CONSTRAINT ck_reviews_rating CHECK (rating BETWEEN 1 AND 10),
+    CONSTRAINT uq_reviews UNIQUE (game_id, customer_id)
+);
