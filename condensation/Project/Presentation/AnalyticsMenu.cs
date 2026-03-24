@@ -110,31 +110,43 @@ public static class AnalyticsMenu
     private static void ShowPriceChart(string title, List<PriceChartItem> items)
     {
         AnsiConsole.Clear();
-
+    
         if (items == null || items.Count == 0)
         {
             AnsiConsole.MarkupLine("[red]No data available.[/]");
             Pause();
             return;
         }
-
+    
+        var colors = new[]
+        {
+            Color.Red,
+            Color.Green,
+            Color.Blue,
+            Color.Yellow,
+            Color.Cyan1,
+            Color.Orange1,
+            Color.HotPink,
+            Color.Purple,
+            Color.Aqua,
+            Color.White
+        };
+    
         var chart = new BarChart()
             .Width(100)
             .Label($"[bold]{title}[/]")
             .CenterLabel();
-
-        foreach (var item in items)
+    
+        for (int i = 0; i < items.Count; i++)
         {
+            var item = items[i];
             var shortName = item.GameName.Length > 18
                 ? item.GameName[..18] + "..."
                 : item.GameName;
-
-            chart.AddItem(shortName, (double)item.Price, Color.Green);
+    
+            var color = colors[i % colors.Length];
+            chart.AddItem(shortName, (double)item.Price, color);
         }
-
-        AnsiConsole.Write(new Panel(chart).Header($"[bold]{title}[/]").Border(BoxBorder.Rounded));
-
-        AnsiConsole.WriteLine();
 
         //var table = new Table().Border(TableBorder.Rounded);
         //table.AddColumn(Texts.Get("Game"));
@@ -148,6 +160,9 @@ public static class AnalyticsMenu
         //}
 
         //AnsiConsole.Write(table);
+    
+        AnsiConsole.Write(new Panel(chart).Header($"[bold]{title}[/]").Border(BoxBorder.Rounded));
+        AnsiConsole.WriteLine();
         Pause();
     }
 
@@ -162,23 +177,35 @@ public static class AnalyticsMenu
             return;
         }
 
+        var colors = new[]
+        {
+            Color.Red,
+            Color.Green,
+            Color.Blue,
+            Color.Yellow,
+            Color.Cyan1,
+            Color.Orange1,
+            Color.HotPink,
+            Color.Purple,
+            Color.Aqua,
+            Color.White
+        };
+
         var chart = new BarChart()
             .Width(60)
             .Label($"[bold]{title}[/]")
             .CenterLabel();
 
-        foreach (var item in items)
+        for (int i = 0; i < items.Count; i++)
         {
+            var item = items[i];
             var shortName = item.Name.Length > 18
                 ? item.Name[..18] + "..."
                 : item.Name;
 
-            chart.AddItem(shortName, item.SoldCopies, Color.Blue);
+            var color = colors[i % colors.Length];
+            chart.AddItem(shortName, item.SoldCopies, color);
         }
-
-        AnsiConsole.Write(new Panel(chart).Header($"[bold]{title}[/]").Border(BoxBorder.Rounded));
-
-        AnsiConsole.WriteLine();
 
         // var table = new Table().Border(TableBorder.Rounded);
         // table.AddColumn(Texts.Get("Name"));
@@ -190,6 +217,9 @@ public static class AnalyticsMenu
         // }
 // 
         // AnsiConsole.Write(table);
+
+        AnsiConsole.Write(new Panel(chart).Header($"[bold]{title}[/]").Border(BoxBorder.Rounded));
+        AnsiConsole.WriteLine();
         Pause();
     }
 
