@@ -110,6 +110,6 @@ public class Database
     await conn.OpenAsync();
 
     await using var cmd = new NpgsqlCommand(sql, conn);
-    await cmd.ExecuteNonQueryAsync();
+    await cmd.ExecuteNonQueryAsync(); // ExecuteNonQueryAsync is used for commands that don't return results (like CREATE VIEW)
     }
 }
