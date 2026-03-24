@@ -265,6 +265,10 @@
     <value>Geen games beschikbaar.</value>
     <comment/>
   </data>
+  <data name="No_Data_Available" xml:space="preserve">
+    <value>Geen gegevens beschikbaar.</value>
+    <comment/>
+  </data>
   <data name="Game_SelectDetails" xml:space="preserve">
     <value>Selecteer een game om details te zien:</value>
     <comment/>
@@ -337,8 +341,60 @@
     <value>Admin Menu</value>
     <comment/>
   </data>
-  <data name="Admin_GameActivePrompt" xml:space="preserve">
-    <value>Is dit spel actief?</value>
+  <data name="Menu_Analytics" xml:space="preserve">
+    <value>Analytics</value>
+    <comment/>
+  </data>
+  <data name="User_Analytics" xml:space="preserve">
+    <value>Gebruikersanalyse</value>
+    <comment/>
+  </data>
+  <data name="Admin_Analytics" xml:space="preserve">
+    <value>Admin-analyse</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Month" xml:space="preserve">
+    <value>Omzet vorige maand</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Year" xml:space="preserve">
+    <value>Omzet vorig jaar</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Most_Expensive_Games" xml:space="preserve">
+    <value>Top 3 duurste games</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Cheapest_Games" xml:space="preserve">
+    <value>Top 3 goedkoopste games</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_3_Genres_Most_Sold" xml:space="preserve">
+    <value>Top 3 genres met meest verkochte games</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Games_Last_Month" xml:space="preserve">
+    <value>Top 10 meest verkochte games vorige maand</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Genres" xml:space="preserve">
+    <value>Top 10 populairste genres</value>
+    <comment/>
+  </data>
+  <data name="Period_Start" xml:space="preserve">
+    <value>Begindatum periode</value>
+    <comment/>
+  </data>
+  <data name="Period_End" xml:space="preserve">
+    <value>Einddatum periode</value>
+    <comment/>
+  </data>
+  <data name="Total_Revenue" xml:space="preserve">
+    <value>Totale omzet</value>
+    <comment/>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Terug</value>
     <comment/>
   </data>
   <data name="Price_Without_E.g" xml:space="preserve">

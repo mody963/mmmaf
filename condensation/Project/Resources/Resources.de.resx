@@ -282,11 +282,11 @@
     <comment/>
   </data>
   <data name="Analytics_3_Most_Expensive_Games" xml:space="preserve">
-    <value>3 teuerste Spiele</value>
+    <value>Top 3 teuerste Spiele</value>
     <comment/>
   </data>
   <data name="Analytics_3_Cheapest_Games" xml:space="preserve">
-    <value>3 günstigste Spiele</value>
+    <value>Top 3 günstigste Spiele</value>
     <comment/>
   </data>
   <data name="Analytics_Top_3_Genres_Most_Sold" xml:space="preserve">
@@ -330,6 +330,10 @@
   </data>
   <data name="No_Games_Available" xml:space="preserve">
     <value>Keine Spiele verfügbar.</value>
+    <comment/>
+  </data>
+  <data name="No_Data_Available" xml:space="preserve">
+    <value>Keine Daten verfügbar.</value>
     <comment/>
   </data>
   <data name="Game_SelectDetails" xml:space="preserve">
