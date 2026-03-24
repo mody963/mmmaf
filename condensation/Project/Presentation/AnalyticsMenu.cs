@@ -14,40 +14,41 @@ public static class AnalyticsMenu
 
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("[bold green]User analytics[/]")
+                    .Title($"[bold green]{Texts.Get("User_Analytics")}[/]")
                     .AddChoices(
-                        "Revenue last month",
-                        "Revenue last year",
-                        "Top 3 most expensive games",
-                        "Top 3 cheapest games",
-                        "Top 3 genres with most sold games",
-                        "Back")
+                        Texts.Get("Analytics_Revenue_Last_Month"),
+                        Texts.Get("Analytics_Revenue_Last_Year"),
+                        Texts.Get("Analytics_3_Most_Expensive_Games"),
+                        Texts.Get("Analytics_3_Cheapest_Games"),
+                        Texts.Get("Analytics_Top_3_Genres_Most_Sold"),
+                        Texts.Get("Back"))
                     .HighlightStyle(new Style(foreground: Color.Yellow))
             );
+            SoundEffects.PlayMenuClick();
 
             switch (choice)
             {
-                case "Revenue last month":
-                    ShowRevenue("Revenue last month", _analyticsLogic.GetRevenueLastMonth());
+                case var c when c == Texts.Get("Analytics_Revenue_Last_Month"):
+                    ShowRevenue(Texts.Get("Analytics_Revenue_Last_Month"), _analyticsLogic.GetRevenueLastMonth());
                     break;
 
-                case "Revenue last year":
-                    ShowRevenue("Revenue last year", _analyticsLogic.GetRevenueLastYear());
+                case var c when c == Texts.Get("Analytics_Revenue_Last_Year"):
+                    ShowRevenue(Texts.Get("Analytics_Revenue_Last_Year"), _analyticsLogic.GetRevenueLastYear());
                     break;
 
-                case "Top 3 most expensive games":
-                    ShowPriceChart("Top3 most expensive games", _analyticsLogic.GetMostExpensiveGames());
+                case var c when c == Texts.Get("Analytics_3_Most_Expensive_Games"):
+                    ShowPriceChart(Texts.Get("Analytics_3_Most_Expensive_Games"), _analyticsLogic.GetMostExpensiveGames());
                     break;
 
-                case "Top 3 cheapest games":
-                    ShowPriceChart("Top 3 cheapest games", _analyticsLogic.GetCheapestGames());
+                case var c when c == Texts.Get("Analytics_3_Cheapest_Games"):
+                    ShowPriceChart(Texts.Get("Analytics_3_Cheapest_Games"), _analyticsLogic.GetCheapestGames());
                     break;
 
-                case "Top 3 genres with most sold games":
-                    ShowSoldChart("Top 3 genres with most sold games", _analyticsLogic.GetTop3GenresMostSold());
+                case var c when c == Texts.Get("Analytics_Top_3_Genres_Most_Sold"):
+                    ShowSoldChart(Texts.Get("Analytics_Top_3_Genres_Most_Sold"), _analyticsLogic.GetTop3GenresMostSold());
                     break;
 
-                case "Back":
+                case var c when c == Texts.Get("Back"):
                     back = true;
                     break;
             }
@@ -64,25 +65,26 @@ public static class AnalyticsMenu
 
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("[bold red]Admin analytics[/]")
+                    .Title($"[bold red]{Texts.Get("Admin_Analytics")}[/]")
                     .AddChoices(
-                        "Top 10 most sold games of last month",
-                        "Top 10 most popular genres",
-                        "Back")
+                        Texts.Get("Analytics_Top_10_Games_Last_Month"),
+                        Texts.Get("Analytics_Top_10_Genres"),
+                        Texts.Get("Back"))
                     .HighlightStyle(new Style(foreground: Color.Yellow))
             );
+            SoundEffects.PlayMenuClick();
 
             switch (choice)
             {
-                case "Top 10 most sold games of last month":
-                    ShowSoldChart("Top 10 most sold games of last month", _analyticsLogic.GetTop10GamesLastMonth());
+                case var c when c == Texts.Get("Analytics_Top_10_Games_Last_Month"):
+                    ShowSoldChart(Texts.Get("Analytics_Top_10_Games_Last_Month"), _analyticsLogic.GetTop10GamesLastMonth());
                     break;
 
-                case "Top 10 most popular genres":
-                    ShowSoldChart("Top 10 most popular genres", _analyticsLogic.GetTop10Genres());
+                case var c when c == Texts.Get("Analytics_Top_10_Genres"):
+                    ShowSoldChart(Texts.Get("Analytics_Top_10_Genres"), _analyticsLogic.GetTop10Genres());
                     break;
 
-                case "Back":
+                case var c when c == Texts.Get("Back"):
                     back = true;
                     break;
             }
@@ -94,9 +96,9 @@ public static class AnalyticsMenu
         AnsiConsole.Clear();
 
         var table = new Table().Border(TableBorder.Rounded);
-        table.AddColumn("Period start");
-        table.AddColumn("Period end");
-        table.AddColumn("Total revenue");
+        table.AddColumn(Texts.Get("Period_Start"));
+        table.AddColumn(Texts.Get("Period_End"));
+        table.AddColumn(Texts.Get("Total_Revenue"));
 
         table.AddRow(
             result.PeriodStart.ToString("d"),
@@ -110,14 +112,14 @@ public static class AnalyticsMenu
     private static void ShowPriceChart(string title, List<PriceChartItem> items)
     {
         AnsiConsole.Clear();
-    
+
         if (items == null || items.Count == 0)
         {
-            AnsiConsole.MarkupLine("[red]No data available.[/]");
+            AnsiConsole.MarkupLine($"[red]{Texts.Get("No_Data_Available")}[/]");
             Pause();
             return;
         }
-    
+
         var colors = new[]
         {
             Color.Red,
@@ -131,19 +133,19 @@ public static class AnalyticsMenu
             Color.Aqua,
             Color.White
         };
-    
+
         var chart = new BarChart()
             .Width(100)
             .Label($"[bold]{title}[/]")
             .CenterLabel();
-    
+
         for (int i = 0; i < items.Count; i++)
         {
             var item = items[i];
             var shortName = item.GameName.Length > 18
                 ? item.GameName[..18] + "..."
                 : item.GameName;
-    
+
             var color = colors[i % colors.Length];
             chart.AddItem(shortName, (double)item.Price, color);
         }
@@ -154,13 +156,13 @@ public static class AnalyticsMenu
 
         //foreach (var item in items)
         //{
-            //table.AddRow(
-                //item.GameName,
-                //$"€ {item.Price:0.00}");
+        //table.AddRow(
+        //item.GameName,
+        //$"€ {item.Price:0.00}");
         //}
 
         //AnsiConsole.Write(table);
-    
+
         AnsiConsole.Write(new Panel(chart).Header($"[bold]{title}[/]").Border(BoxBorder.Rounded));
         AnsiConsole.WriteLine();
         Pause();
@@ -172,7 +174,7 @@ public static class AnalyticsMenu
 
         if (items == null || items.Count == 0)
         {
-            AnsiConsole.MarkupLine("[red]No data available.[/]");
+            AnsiConsole.MarkupLine($"[red]{Texts.Get("No_Data_Available")}[/]");
             Pause();
             return;
         }
@@ -210,12 +212,12 @@ public static class AnalyticsMenu
         // var table = new Table().Border(TableBorder.Rounded);
         // table.AddColumn(Texts.Get("Name"));
         // table.AddColumn(Texts.Get("Sold_Copies"));
-// 
+        // 
         // foreach (var item in items)
         // {
-            // table.AddRow(item.Name, item.SoldCopies.ToString());
+        // table.AddRow(item.Name, item.SoldCopies.ToString());
         // }
-// 
+        // 
         // AnsiConsole.Write(table);
 
         AnsiConsole.Write(new Panel(chart).Header($"[bold]{title}[/]").Border(BoxBorder.Rounded));
@@ -225,7 +227,7 @@ public static class AnalyticsMenu
 
     private static void Pause()
     {
-        AnsiConsole.MarkupLine("\n[grey]Press any key to return...[/]");
+        AnsiConsole.MarkupLine($"\n[grey]{Texts.Get("Press_Any_Key_To_Return")}[/]");
         Console.ReadKey(true);
     }
 }

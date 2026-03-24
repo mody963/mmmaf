@@ -265,6 +265,10 @@
     <value>Aucun jeu disponible.</value>
     <comment/>
   </data>
+  <data name="No_Data_Available" xml:space="preserve">
+    <value>Aucune donnée disponible.</value>
+    <comment/>
+  </data>
   <data name="Game_SelectDetails" xml:space="preserve">
     <value>Sélectionnez un jeu pour voir les détails :</value>
     <comment/>
@@ -337,10 +341,63 @@
     <value>Menu Admin</value>
     <comment/>
   </data>
-  <data name="Admin_GameActivePrompt" xml:space="preserve">
-    <value>Ce jeu est-il actif ?</value>
+  <data name="Menu_Analytics" xml:space="preserve">
+    <value>Analytique</value>
     <comment/>
   </data>
+  <data name="User_Analytics" xml:space="preserve">
+    <value>Analytique utilisateur</value>
+    <comment/>
+  </data>
+  <data name="Admin_Analytics" xml:space="preserve">
+    <value>Analytique admin</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Month" xml:space="preserve">
+    <value>Revenu le mois dernier</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Year" xml:space="preserve">
+    <value>Revenu l'année dernière</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Most_Expensive_Games" xml:space="preserve">
+    <value>Top 3 jeux les plus chers</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Cheapest_Games" xml:space="preserve">
+    <value>Top 3 jeux les moins chers</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_3_Genres_Most_Sold" xml:space="preserve">
+    <value>Top 3 genres avec le plus de jeux vendus</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Games_Last_Month" xml:space="preserve">
+    <value>Top 10 jeux les plus vendus le mois dernier</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Genres" xml:space="preserve">
+    <value>Top 10 genres les plus populaires</value>
+    <comment/>
+  </data>
+  <data name="Period_Start" xml:space="preserve">
+    <value>Début de la période</value>
+    <comment/>
+  </data>
+  <data name="Period_End" xml:space="preserve">
+    <value>Fin de la période</value>
+    <comment/>
+  </data>
+  <data name="Total_Revenue" xml:space="preserve">
+    <value>Revenu total</value>
+    <comment/>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Retour</value>
+    <comment/>
+  </data>
+
   <data name="Price_Without_E.g" xml:space="preserve">
     <value>Prix</value>
     <comment/>
