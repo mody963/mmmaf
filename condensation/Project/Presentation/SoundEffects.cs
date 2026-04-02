@@ -1,104 +1,32 @@
-using System;
-using System.IO;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using Project.Services;
 
 public static class SoundEffects
 {
-    private static readonly string MenuClickSoundPath =
-        Path.Combine(AppContext.BaseDirectory, "Sounds", "sound-4.wav");
+    private static IUiSoundPlayer _player = new NoOpUiSoundPlayer();
 
-    private static readonly string KachingSoundPath =
-        Path.Combine(AppContext.BaseDirectory, "Sounds", "Cash Register (Kaching) - Sound Effect (HD) - Gaming Sound FX (youtube).wav");
-
-    private static readonly string ErrorSoundPath =
-        Path.Combine(AppContext.BaseDirectory, "Sounds", "universfield-error-08-206492.wav");
-
-    public static void PlayMenuClick()
+    public static void Configure(IUiSoundPlayer player)
     {
-        PlaySound(MenuClickSoundPath);
+        _player = player ?? new NoOpUiSoundPlayer();
     }
 
-    public static void PlayKaching()
+    public static void PlayMenuClick() => _player.PlayMenuClick();
+
+    public static void PlayErrorSound() => _player.PlayErrorSound();
+
+    public static void PlayKaching() => _player.PlayKaching();
+
+    private sealed class NoOpUiSoundPlayer : IUiSoundPlayer
     {
-        PlaySound(KachingSoundPath);
-    }
-
-    public static void PlayErrorSound()
-    {
-        PlaySound(ErrorSoundPath);
-    }
-
-    private static void PlaySound(string path)
-    {
-        try
+        public void PlayMenuClick()
         {
-            if (!File.Exists(path))
-            {
-                return;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                // Use PowerShell's SoundPlayer on Windows.
-                var windowsCommand =
-                    "Add-Type -AssemblyName System.Media; " +
-                    "$player = New-Object System.Media.SoundPlayer('" + path.Replace("'", "''") + "'); " +
-                    "$player.PlaySync()";
-
-                RunProcess("powershell", "-NoProfile", "-Command", windowsCommand);
-                return;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                RunProcess("afplay", path);
-                return;
-            }
-
-            // Linux fallback: try common audio players in order.
-            if (TryRunProcess("paplay", path))
-            {
-                return;
-            }
-
-            TryRunProcess("aplay", path);
-        }
-        catch
-        {
-            // ignore errors playing sound so it doesn't crash the app
-        }
-    }
-
-    private static void RunProcess(string fileName, params string[] arguments)
-    {
-        using var process = new Process();
-        process.StartInfo = new ProcessStartInfo
-        {
-            FileName = fileName,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-
-        foreach (var argument in arguments)
-        {
-            process.StartInfo.ArgumentList.Add(argument);
         }
 
-        process.Start();
-        process.WaitForExit();
-    }
-
-    private static bool TryRunProcess(string fileName, params string[] arguments)
-    {
-        try
+        public void PlayErrorSound()
         {
-            RunProcess(fileName, arguments);
-            return true;
         }
-        catch
+
+        public void PlayKaching()
         {
-            return false;
         }
     }
 }
