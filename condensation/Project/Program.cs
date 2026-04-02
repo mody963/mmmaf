@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using CondensationApp;
 using System.Text;
+using Project.Services;
 
 // Fix euro sign
 Console.OutputEncoding = Encoding.UTF8;
@@ -27,6 +28,9 @@ var db = new Database(connectionString);
 
 await db.TestConnectionAsync();
 await db.EnsureAnalyticsViewsAsync();
+
+var uiSoundPlayer = new UiSoundPlayer(AppContext.BaseDirectory);
+SoundEffects.Configure(uiSoundPlayer);
 
 // Start app
 MainMenu.Start();
