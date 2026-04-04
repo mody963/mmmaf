@@ -3,6 +3,8 @@ using Spectre.Console;
 public static class AdminMenu
 {
     private static readonly GameLogic _gameLogic = new GameLogic();
+    private static readonly AccountsLogic _accountsLogic = new AccountsLogic();
+    private static readonly PublisherLogic _publisherLogic = new PublisherLogic();
     public static void Start()
     {
         bool exitMenu = false;
@@ -17,6 +19,7 @@ public static class AdminMenu
                         Texts.Get("Add_Game"),
                         Texts.Get("Update_Game"),
                         Texts.Get("Delete_Game"),
+                        "Approve Publishers",
                         Texts.Get("Admin_Analytics"),
                         Texts.Get("Log_Out")
                     )
@@ -41,6 +44,9 @@ public static class AdminMenu
 
                 case var c when c == Texts.Get("Admin_Analytics"):
                     AnalyticsMenu.AdminAnalytics();
+                    break;
+                case "Approve Publishers":
+                    ApprovePublishersMenu();
                     break;
 
                 case var c when c == Texts.Get("Log_Out"):
@@ -209,6 +215,59 @@ public static class AdminMenu
         }
         
         AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturn"));
+        Console.ReadKey(true);
+    }
+    private static void ApprovePublishersMenu()
+    {
+        AnsiConsole.Clear();
+        AnsiConsole.MarkupLine("[bold cyan]--- Approve Pending Publishers ---[/]\n");
+
+        var pendingAccounts = _accountsLogic.GetPendingPublisherAccounts();
+
+        if (pendingAccounts.Count == 0)
+        {
+            AnsiConsole.MarkupLine("[green]There are no pending publishers waiting for approval![/]");
+            AnsiConsole.MarkupLine("Press any key to return...");
+            Console.ReadKey(true);
+            return;
+        }
+
+        // We use a dictionary so we can show a nice string in the menu
+        // but still easily grab the actual AccountModel when they select it
+        var choices = new Dictionary<string, AccountModel?>();
+        
+        foreach (var account in pendingAccounts)
+        {
+            var publisher = _publisherLogic.GetByAccountId(account.Id);
+            string displayName = $"{publisher?.StudioName ?? "Unknown Studio"} ({account.Email}) - Rep: {account.FirstName}";
+            choices.Add(displayName, account);
+        }
+        
+        choices.Add("Go Back", null);
+
+        var choiceStr = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Select a Publisher to [green]Approve[/]:")
+                .AddChoices(choices.Keys)
+        );
+
+        if (choiceStr == "Go Back") return;
+
+        var selectedAccount = choices[choiceStr];
+
+        if (AnsiConsole.Confirm($"\nAre you sure you want to approve [yellow]{choiceStr}[/]?", defaultValue: true))
+        {
+            selectedAccount!.IsActive = true;
+            _accountsLogic.UpdateAccount(selectedAccount);
+            
+            AnsiConsole.MarkupLine("\n[green]Successfully approved publisher![/] They can now log in.");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine("\n[grey]Approval cancelled.[/]");
+        }
+
+        AnsiConsole.MarkupLine("Press any key to return...");
         Console.ReadKey(true);
     }
 

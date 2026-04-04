@@ -9,9 +9,17 @@ public class AccountsLogic
     public AccountModel? CheckLogin(string email, string password)
     {
         var account = _accounts.GetByEmail(email);
-        if (account == null || !account.IsActive) return null;
         
-        return account.Password == password ? account : null;
+        // 1. something is wrong
+        if (account == null || account.Password != password) 
+            return null;
+            
+        // 2. inactive account
+        if (!account.IsActive)
+        {
+            throw new UnauthorizedAccessException("Your account is currently inactive or pending Admin approval.");
+        }
+        return account;
     }
 
     public AccountModel? CheckAdminLogin(string email, string password)
@@ -76,5 +84,12 @@ public class AccountsLogic
     public void DeleteAccount(int id)
     {
         _accounts.Delete(id);
+    }
+    public List<AccountModel> GetPendingPublisherAccounts()
+    {
+        // Grabs all accounts, then filters for Publishers (Role 2) that are currently inactive
+        return _accounts.GetAll()
+            .Where(a => a.Role == AccountRoles.Publisher && !a.IsActive)
+            .ToList();
     }
 }

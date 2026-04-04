@@ -5,6 +5,7 @@ public static class LoginMenu
 { 
     private static readonly AccountsLogic accountsLogic = new AccountsLogic();
     private static readonly CustomersLogic customerLogic = new CustomersLogic();
+    private static readonly PublisherLogic publisherLogic = new PublisherLogic();
 
     public static void Start() 
     {
@@ -18,6 +19,7 @@ public static class LoginMenu
                     .AddChoices(
                         Texts.Get("Log_In"),
                         Texts.Get("Create_Account"),
+                        "Apply as Publisher",
                         Texts.Get("Log_Out"),
                         Texts.Get("Go_Back")
                     )
@@ -39,7 +41,9 @@ public static class LoginMenu
                     LogoutCurrentUser();
                     Console.ReadKey(true);
                     break;
-
+                case "Apply as Publisher":
+                    DoPublisherRegister();
+                    break;
                 case var c when c == Texts.Get("Go_Back"):
                     exitMenu = true;
                     break;
@@ -163,6 +167,73 @@ public static class LoginMenu
         Console.ReadKey(true);
     }
 
+    private static void DoPublisherRegister()
+    {
+        AnsiConsole.Clear();
+        AnsiConsole.MarkupLine("[bold cyan]--- Apply as a Publisher ---[/]\n");
+
+        string email = AnsiConsole.Prompt(
+            new TextPrompt<string>("Contact Email:")
+                .Validate(e => accountsLogic.IsValidEmail(e) 
+                    ? ValidationResult.Success() 
+                    : ValidationResult.Error("[red]Invalid email format.[/]")));
+
+        string firstName = AnsiConsole.Prompt(new TextPrompt<string>("Representative First Name:"));
+        string lastName = AnsiConsole.Prompt(new TextPrompt<string>("Representative Last Name:"));
+
+        string password = AnsiConsole.Prompt(
+            new TextPrompt<string>("Password (min 8 chars, 1 special char):")
+                .Secret() 
+                .Validate(p => accountsLogic.IsValidPassword(p) 
+                    ? ValidationResult.Success() 
+                    : ValidationResult.Error("[red]Password must be 8+ chars and contain a special character (!@#$%^&*()).[/]")));
+
+        // 2. Publisher specific info
+        string studioName = AnsiConsole.Prompt(
+            new TextPrompt<string>("Studio Name:")
+                .Validate(s => publisherLogic.IsValidStudioName(s) 
+                    ? ValidationResult.Success() 
+                    : ValidationResult.Error("[red]Invalid or already taken Studio Name.[/]")));
+
+        // 3. Create Account: starts with isactive false cause we need approval from admin
+        AccountModel newAccount = new AccountModel
+        {
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            Password = password,
+            Role = AccountRoles.Publisher, 
+            IsActive = false
+        };
+
+        int accountId;
+        try
+        {
+            accountId = accountsLogic.CreateAccount(newAccount);
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLine($"\n[red]Registration failed: {ex.Message}[/]");
+            AnsiConsole.MarkupLine("Press any key to return...");
+            Console.ReadKey(true);
+            return;
+        }
+
+        // 4. Create the Publisher profile
+        PublisherModel newPublisher = new PublisherModel
+        {
+            AccountId = accountId,
+            StudioName = studioName,
+            AmountOfGames = 0
+        };
+        
+        publisherLogic.CreatePublisher(newPublisher);
+
+        AnsiConsole.MarkupLine("\n[green]A request has been sent to the admin for approval.[/]");
+        AnsiConsole.MarkupLine("[grey]You will be able to log in once an administrator approves your studio.[/]");
+        AnsiConsole.MarkupLine("Press any key to return to the menu...");
+        Console.ReadKey(true);
+    }
 
 
     private static bool DoLogin() 
@@ -209,7 +280,18 @@ public static class LoginMenu
                     .Secret() // Masks the input
             );
 
-            var account = accountsLogic.CheckLogin(email, password); 
+            AccountModel? account = null;
+            try
+            {
+                account = accountsLogic.CheckLogin(email, password); 
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                AnsiConsole.MarkupLine($"\n[yellow]{ex.Message}[/]");
+                AnsiConsole.MarkupLine("Press any key to return to the menu...");
+                Console.ReadKey(true);
+                return false;
+            }
 
             if (account != null)
             {
