@@ -50,71 +50,114 @@ public static class GameMenu
 
     private static void ShowGameList(Cart cart)
     {
+        const int pageSize = 10;
+
+        AnsiConsole.Clear();
+        var games = _gameLogic.GetActiveGames();
+
+        if (games.Count == 0)
+        {
+            AnsiConsole.MarkupLine($"[red]{Texts.Get("No_Games_Available")}[/]");
+            Console.ReadKey(true);
+            return;
+        }
+
+        int currentPage = 0;
+        int totalPages = (int)Math.Ceiling(games.Count / (double)pageSize);
+        int maxTitleLen = games.Max(g => g.Title.Length);
+        const int priceWidth = 8;
+        int selectedIndex = 0;
+
         while (true)
         {
             AnsiConsole.Clear();
+            var pageGames = games.Skip(currentPage * pageSize).Take(pageSize).ToList();
 
-            var games = _gameLogic.GetActiveGames();
+            if (selectedIndex >= pageGames.Count)
+                selectedIndex = pageGames.Count - 1;
 
-            if (games.Count == 0)
+            AnsiConsole.MarkupLine($"[bold]{Texts.Get("Game_SelectDetails")}[/] [grey](Page {currentPage + 1} / {totalPages})[/]\n");
+
+            for (int i = 0; i < pageGames.Count; i++)
             {
-                AnsiConsole.MarkupLine($"[red]{Texts.Get("No_Games_Available")}[/]");
-                Console.ReadKey(true);
-                return;
+                var g = pageGames[i];
+                string line = Markup.Escape(string.Format($"{{0,-{maxTitleLen}}}  €{{1,{priceWidth}:0.00}}", g.Title, g.Price));
+                if (i == selectedIndex)
+                    AnsiConsole.MarkupLine($"[bold green]> {line}[/]");
+                else
+                    AnsiConsole.MarkupLine($"  {line}");
             }
 
-            int maxTitleLen = games.Max(g => g.Title.Length);
-            const int priceWidth = 8;
+            AnsiConsole.MarkupLine("\n[grey]↑ ↓  Select   ← →  Page   Enter: Open   Esc: Back[/]");
 
-            var prompt = new SelectionPrompt<GameModel>()
-                .Title($"[bold]{Texts.Get("Game_SelectDetails")}[/]")
-                .UseConverter(g =>
-                {
-                    if (g.Id == -1) // back option
-                        return _backOption;
-                    return string.Format($"{{0,-{maxTitleLen}}}  €{{1,{priceWidth}:0.00}}", g.Title, g.Price);
-                })
-                .HighlightStyle(new Style(foreground: Color.Green));
+            var key = Console.ReadKey(true).Key;
 
-            foreach (var game in games)
-                prompt.AddChoice(game);
-
-            prompt.AddChoice(new GameModel { Id = -1, Title = _backOption, Price = 0 });
-
-            var selectedGame = AnsiConsole.Prompt(prompt);
-            SoundEffects.PlayMenuClick();
-            if (selectedGame.Id == -1)
-                return;
-
-            var detailsTable = new Table().Border(TableBorder.Rounded);
-            detailsTable.AddColumn(Texts.Get("Game_Property"));
-            detailsTable.AddColumn(Texts.Get("Game_Value"));
-            detailsTable.AddRow(Texts.Get("Title"), selectedGame.Title);
-            detailsTable.AddRow(Texts.Get("Description"), string.IsNullOrWhiteSpace(selectedGame.Description) ? "<none>" : selectedGame.Description);
-            detailsTable.AddRow(Texts.Get("Price"), $"€{selectedGame.Price:0.00}");
-
-            var genreName = _gameLogic.GetAllGenres()
-                              .FirstOrDefault(g => g.Id == selectedGame.GenreId)?.Name ?? "<unknown>";
-            var ageName = _gameLogic.GetAllAgeRatings()
-                              .FirstOrDefault(a => a.Id == selectedGame.AgeRatingId)?.Name ?? "<unknown>";
-            detailsTable.AddRow(Texts.Get("Game_Genre"), genreName);
-            detailsTable.AddRow(Texts.Get("Game_AgeRating"), ageName);
-
-            AnsiConsole.Clear();
-            AnsiConsole.Write(detailsTable);
-
-            string detailAction = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title($"[bold]{Texts.Get("Game_WhatWouldYouLikeToDo")}[/]")
-                    .AddChoices(Texts.Get("Game_AddToCart"), _backOption)
-                    .HighlightStyle(new Style(foreground: Color.Green))
-            );
-            SoundEffects.PlayMenuClick();
-            if (detailAction == Texts.Get("Game_AddToCart"))
+            switch (key)
             {
-                cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
+                case ConsoleKey.UpArrow:
+                    selectedIndex = (selectedIndex - 1 + pageGames.Count) % pageGames.Count;
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    selectedIndex = (selectedIndex + 1) % pageGames.Count;
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    if (currentPage > 0)
+                    {
+                        currentPage--;
+                        selectedIndex = 0;
+                        SoundEffects.PlayMenuClick();
+                    }
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    if (currentPage < totalPages - 1)
+                    {
+                        currentPage++;
+                        selectedIndex = 0;
+                        SoundEffects.PlayMenuClick();
+                    }
+                    break;
+
+                case ConsoleKey.Escape:
+                    return;
+
+                case ConsoleKey.Enter:
+                    {
+                        SoundEffects.PlayMenuClick();
+                        var selectedGame = pageGames[selectedIndex];
+
+                        var detailsTable = new Table().Border(TableBorder.Rounded);
+                        detailsTable.AddColumn(Texts.Get("Game_Property"));
+                        detailsTable.AddColumn(Texts.Get("Game_Value"));
+                        detailsTable.AddRow(Texts.Get("Title"), selectedGame.Title);
+                        detailsTable.AddRow(Texts.Get("Description"), string.IsNullOrWhiteSpace(selectedGame.Description) ? "<none>" : selectedGame.Description);
+                        detailsTable.AddRow(Texts.Get("Price"), $"€{selectedGame.Price:0.00}");
+
+                        var genreName = _gameLogic.GetAllGenres()
+                                          .FirstOrDefault(g => g.Id == selectedGame.GenreId)?.Name ?? "<unknown>";
+                        var ageName = _gameLogic.GetAllAgeRatings()
+                                          .FirstOrDefault(a => a.Id == selectedGame.AgeRatingId)?.Name ?? "<unknown>";
+                        detailsTable.AddRow(Texts.Get("Game_Genre"), genreName);
+                        detailsTable.AddRow(Texts.Get("Game_AgeRating"), ageName);
+
+                        AnsiConsole.Clear();
+                        AnsiConsole.Write(detailsTable);
+
+                        string detailAction = AnsiConsole.Prompt(
+                            new SelectionPrompt<string>()
+                                .Title($"[bold]{Texts.Get("Game_WhatWouldYouLikeToDo")}[/]")
+                                .AddChoices(Texts.Get("Game_AddToCart"), _backOption)
+                                .HighlightStyle(new Style(foreground: Color.Green))
+                        );
+                        SoundEffects.PlayMenuClick();
+                        if (detailAction == Texts.Get("Game_AddToCart"))
+                            cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
+
+                        break; // return to paged list
+                    }
             }
-            // loop again after add or back
         }
     }
 
@@ -181,14 +224,14 @@ public static class GameMenu
         Console.ReadKey(true);
     }
 
-        private static void SearchAndDisplayGames(Cart cart, bool onlyActive = false)
+    private static void SearchAndDisplayGames(Cart cart, bool onlyActive = false)
     {
         while (true)
         {
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine($"\n[bold cyan]{Texts.Get("Game_SearchHeader")}[/]");
             string searchTitle = AnsiConsole.Prompt(new TextPrompt<string>(Texts.Get("Search_Title")));
-            
+
             var results = _gameLogic.SearchGamesByTitle(searchTitle);
             if (onlyActive)
             {
