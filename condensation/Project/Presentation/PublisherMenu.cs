@@ -150,6 +150,9 @@ public static class PublisherMenu
 
     private static void ShowPublisherRatings(int publisherId)
     {
+
+        AnsiConsole.MarkupLine("[red]DEBUG: entering ShowPublisherRatings[/]");
+        Console.ReadKey();
         const int pageSize = 10;
 
         AnsiConsole.Clear();
