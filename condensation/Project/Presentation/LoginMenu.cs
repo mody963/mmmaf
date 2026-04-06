@@ -304,6 +304,24 @@ public static class LoginMenu
                     return true;       
                 }
 
+                if (account.Role == AccountRoles.Publisher)
+                {
+                    var publisher = publisherLogic.GetByAccountId(account.Id);
+                    if (publisher != null && !account.IsActive)
+                    {
+                        AnsiConsole.MarkupLine($"\n[yellow]{Texts.Get("Login_PublisherPending")}[/]");
+                        AnsiConsole.MarkupLine("Press any key to return to the menu...");
+                        Console.ReadKey(true);
+                        return false;
+                    }
+                    else if (publisher != null && account.IsActive)
+                    {
+                        AnsiConsole.MarkupLine($"[green]{Texts.Get("Login_WelcomePublisher")} {account.FirstName}! {Texts.Get("Login_PublisherSuffix")}[/]");
+                        PublisherMenu.Start();
+                        return true;       
+                    }
+                }
+
                 AnsiConsole.MarkupLine($"[green]{Texts.Get("Login_Welcome")} {account.FirstName}![/]");
                 Console.ReadKey(true);
                 return true;

@@ -51,4 +51,6 @@ public class GameLogic
         
         return _gameAccess.GetGamesByGenre(genreId);
     }
+
+    
 }

@@ -56,7 +56,7 @@ public static class AdminMenu
             }
         }
     }
-    private static void AddGameMenu()
+    internal static void AddGameMenu(int publishersid = -200)
     {
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"[bold cyan]{Texts.Get("Add_Game_Menu_Title")}[/]");
@@ -80,7 +80,7 @@ public static class AdminMenu
         }
         while (price <= 0);
         // placeholder for genre, publisher and agerating till they are implemented.
-        int publisherId = AnsiConsole.Prompt(new TextPrompt<int>($"{Texts.Get("Publisher_ID")}:"));
+        int publisherId = publishersid != -200 ? publishersid : AnsiConsole.Prompt(new TextPrompt<int>($"{Texts.Get("Publisher_ID")}:"));
         SoundEffects.PlayMenuClick();
         var genres = _gameLogic.GetAllGenres();
         
@@ -197,7 +197,7 @@ public static class AdminMenu
         AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturn"));
         Console.ReadKey(true);
     }
-    private static void DeleteGameMenu()
+    internal static void DeleteGameMenu()
     {
         var game = SearchAndSelectGame(Texts.Get("Admin_DeactivateGame"), true);
         if (game == null) { SoundEffects.PlayErrorSound(); Console.ReadKey(true); return; }
