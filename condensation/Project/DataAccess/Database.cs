@@ -112,4 +112,21 @@ public class Database
     await using var cmd = new NpgsqlCommand(sql, conn);
     await cmd.ExecuteNonQueryAsync(); // ExecuteNonQueryAsync is used for commands that don't return results (like CREATE VIEW)
     }
+
+    public async Task EnsureReviewSchemaAsync()
+    {
+        string sql = @"
+    ALTER TABLE reviews
+    ADD COLUMN IF NOT EXISTS comment TEXT NOT NULL DEFAULT '';
+
+    ALTER TABLE reviews
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+    ";
+
+        await using var conn = new NpgsqlConnection(_connectionString);
+        await conn.OpenAsync();
+
+        await using var cmd = new NpgsqlCommand(sql, conn);
+        await cmd.ExecuteNonQueryAsync();
+    }
 }

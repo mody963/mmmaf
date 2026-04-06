@@ -28,6 +28,7 @@ var db = new Database(connectionString);
 
 await db.TestConnectionAsync();
 await db.EnsureAnalyticsViewsAsync();
+await db.EnsureReviewSchemaAsync();
 
 var uiSoundPlayer = new UiSoundPlayer(AppContext.BaseDirectory);
 SoundEffects.Configure(uiSoundPlayer);

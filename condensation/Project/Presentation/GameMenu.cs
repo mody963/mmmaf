@@ -6,6 +6,7 @@ using Spectre.Console;
 public static class GameMenu
 {
     private static readonly GameLogic _gameLogic = new GameLogic();
+    private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
     // we use a readonly field so the value is pulled from resources once the class is loaded
     private static readonly string _backOption = Texts.Get("Go_Back");
 
@@ -144,6 +145,7 @@ public static class GameMenu
 
                         AnsiConsole.Clear();
                         AnsiConsole.Write(detailsTable);
+                        RenderReviewsForGame(selectedGame.Id);
 
                         string detailAction = AnsiConsole.Prompt(
                             new SelectionPrompt<string>()
@@ -297,6 +299,7 @@ public static class GameMenu
                 detailsTable.AddRow(Texts.Get("Game_AgeRating"), ageName);
 
                 AnsiConsole.Write(detailsTable);
+                RenderReviewsForGame(selectedGame.Id);
 
                 // Ask user what to do next: add to cart or back to results
                 string detailAction = AnsiConsole.Prompt(
@@ -314,5 +317,36 @@ public static class GameMenu
                 // else "Back to results" - continue inner loop
             }
         }
+    }
+
+    private static void RenderReviewsForGame(int gameId)
+    {
+        var reviews = _reviewLogic.GetReviewsForGame(gameId);
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine($"[bold cyan]{Texts.Get("MyGames_ReviewsHeader")}[/]");
+
+        if (reviews.Count == 0)
+        {
+            AnsiConsole.MarkupLine($"[grey]{Texts.Get("MyGames_NoReviewsYet")}[/]");
+            return;
+        }
+
+        var reviewTable = new Table().Border(TableBorder.Rounded);
+        reviewTable.AddColumn(Texts.Get("MyGames_Reviewer"));
+        reviewTable.AddColumn(Texts.Get("MyGames_Rating"));
+        reviewTable.AddColumn(Texts.Get("MyGames_Comment"));
+        reviewTable.AddColumn(Texts.Get("MyGames_ReviewDate"));
+
+        foreach (var review in reviews)
+        {
+            reviewTable.AddRow(
+                Markup.Escape(string.IsNullOrWhiteSpace(review.ReviewerName) ? "Unknown" : review.ReviewerName),
+                review.Rating.ToString(),
+                Markup.Escape(string.IsNullOrWhiteSpace(review.Comment) ? "-" : review.Comment),
+                review.CreatedAt.ToString("yyyy-MM-dd")
+            );
+        }
+
+        AnsiConsole.Write(reviewTable);
     }
 }
