@@ -36,4 +36,12 @@ public class CustomersLogic
 
         return address.Length >= 6;
     }
+
+    public bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+
+        return email.Contains("@") && email.Contains(".");
+    }
 }

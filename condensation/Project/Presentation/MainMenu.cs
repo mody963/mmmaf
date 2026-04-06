@@ -73,7 +73,7 @@ public static class MainMenu
                     break;
 
                 case var c when c == Texts.Get("Menu_Checkout"):
-                    AnsiConsole.MarkupLine("[yellow]Checkout in Sprint 3.[/]");
+                    CheckoutMenu.Start(cart);
                     break;
 
                 case var c when c == Texts.Get("Menu_Orders"):
