@@ -92,6 +92,8 @@ CREATE TABLE reviews (
     game_id INT NOT NULL,
     customer_id INT NOT NULL,
     rating INT NOT NULL,
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_reviews_game
         FOREIGN KEY (game_id) REFERENCES game(id),
