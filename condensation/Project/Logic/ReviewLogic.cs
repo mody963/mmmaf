@@ -1,6 +1,16 @@
 public class ReviewLogic
 {
-    private readonly ReviewAccess _reviewAccess = new ReviewAccess();
+    private readonly IReviewAccess _reviewAccess;
+
+    public ReviewLogic()
+    {
+        _reviewAccess = new ReviewAccess();
+    }
+
+    public ReviewLogic(IReviewAccess reviewAccess)
+    {
+        _reviewAccess = reviewAccess;
+    }
 
     public List<GameModel> GetOwnedGames(int customerId)
     {

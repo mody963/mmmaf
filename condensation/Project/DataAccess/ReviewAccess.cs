@@ -1,7 +1,7 @@
 using Dapper;
 using Npgsql;
 
-public class ReviewAccess
+public class ReviewAccess : IReviewAccess
 {
     private string _connectionString => AppConfig.ConnectionString;
 
