@@ -71,4 +71,9 @@ public class ReviewLogic
         review.Comment = review.Comment.Trim();
         _reviewAccess.UpsertReview(review);
     }
+
+        public List<ReviewModel> GetPublisherReviews(int publisherId)
+        {
+            return _reviewAccess.GetReviewsByPublisherId(publisherId);
+        }
 }

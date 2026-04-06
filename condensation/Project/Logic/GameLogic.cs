@@ -52,5 +52,11 @@ public class GameLogic
         return _gameAccess.GetGamesByGenre(genreId);
     }
 
+    public GameModel GetGameById(int id)
+    {
+        if (id <= 0) return null;
+        return _gameAccess.GetGameById(id);
+    }
+
     
 }

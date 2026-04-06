@@ -5,4 +5,5 @@ public interface IReviewAccess
     List<ReviewModel> GetReviewsForGame(int gameId);
     ReviewModel? GetCustomerReviewForGame(int customerId, int gameId);
     void UpsertReview(ReviewModel review);
+    List<ReviewModel> GetReviewsByPublisherId(int publisherId);
 }

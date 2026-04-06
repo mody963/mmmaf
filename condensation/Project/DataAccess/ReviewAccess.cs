@@ -91,4 +91,28 @@ public class ReviewAccess : IReviewAccess
 
         connection.Execute(sql, review);
     }
+
+
+    public List<ReviewModel> GetReviewsByPublisherId(int publisherId)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        const string sql = @"
+            SELECT 
+                r.id, 
+                r.game_id AS GameId, 
+                r.customer_id AS CustomerId, 
+                r.rating, 
+                r.comment, 
+                r.created_at AS CreatedAt,
+                g.title AS GameTitle, -- Handig om de gamenaam erbij te hebben
+                CONCAT(a.first_name, ' ', a.last_name) AS ReviewerName
+            FROM reviews r
+            JOIN game g ON g.id = r.game_id
+            JOIN customer c ON c.id = r.customer_id
+            JOIN account a ON a.id = c.account_id
+            WHERE g.publisher_id = @PublisherId
+            ORDER BY r.created_at DESC;";
+
+        return connection.Query<ReviewModel>(sql, new { PublisherId = publisherId }).ToList();
+    }
 }
