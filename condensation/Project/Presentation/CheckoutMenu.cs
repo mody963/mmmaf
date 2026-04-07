@@ -223,6 +223,8 @@ public static class CheckoutMenu
         {
             Pause();
         }
+        
+        AnsiConsole.Clear();
     }
 
     private static void Pause()
