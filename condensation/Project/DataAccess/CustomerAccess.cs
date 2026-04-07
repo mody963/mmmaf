@@ -6,12 +6,11 @@ using System.Linq;
 public class CustomerAccess
 {
     private string _connectionString => AppConfig.ConnectionString;
-    private const string Table = "customer";
     public int CreateCustomer(CustomerModel customer)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         string sql = $@"
-        INSERT INTO {Table} (account_id, payment_method, address)
+        INSERT INTO customer (account_id, payment_method, address)
         VALUES (@AccountId, @PaymentMethod, @Address)
         RETURNING id;";
         return connection.ExecuteScalar<int>(sql, customer);
