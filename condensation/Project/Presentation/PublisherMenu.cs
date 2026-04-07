@@ -47,7 +47,7 @@ public static class PublisherMenu
                     UpdateGameMenu();
                     break;
                 case "Delete My Game":
-                    AdminMenu.DeleteGameMenu();
+                    DeleteGameMenu();
                     break;
                 case "View My Ratings":
                     ShowPublisherRatings(publisher.Id);
@@ -60,14 +60,23 @@ public static class PublisherMenu
 
 
 
-    private static GameModel? SearchAndSelectGame(string action, bool onlyActive = false)
+    private static GameModel? SearchAndSelectGame(string action)
     {
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"\n[bold cyan]--- {action} ---[/]");
-        string searchTitle = AnsiConsole.Prompt(new TextPrompt<string>(Texts.Get("Search_Title"))); 
+
+        string searchTitle = AnsiConsole.Prompt(
+            new TextPrompt<string>(Texts.Get("Search_Title"))
+        );
+
         SoundEffects.PlayMenuClick();
-        
-        List<GameModel> results = _gameLogic.SearchGamesByTitle(searchTitle);
+
+        var publisher = _publisherLogic.GetByAccountId(CurrentUserModel.CurrentUser.Id);
+
+        var results = _gameLogic.SearchGamesByTitle(searchTitle)
+        .Where(g => g.PublisherId == publisher.Id && g.IsActive)
+        .ToList();
+
         if (results.Count == 0)
         {
             SoundEffects.PlayErrorSound();
@@ -75,22 +84,15 @@ public static class PublisherMenu
             return null;
         }
 
-        foreach (var game in results)
-        {
-            List<GameModel> publishergames = _gameLogic.GetActiveGames().Where(g => g.PublisherId == CurrentUserModel.CurrentUser.Id).ToList();
-            var selectedGame = AnsiConsole.Prompt(
-                new SelectionPrompt<GameModel>()
-                    .Title($"{Texts.Get("Game_SelectDetails")} {action.ToLower()}")
-                    .UseConverter(g => $"{g.Title} (${g.Price}) - Active: {g.IsActive}")
-                    .AddChoices(publishergames)
-            );
-            SoundEffects.PlayMenuClick();
-            return selectedGame;
-        }
+        var selectedGame = AnsiConsole.Prompt(
+            new SelectionPrompt<GameModel>()
+                .Title($"{Texts.Get("Game_SelectDetails")} {action.ToLower()}")
+                .UseConverter(g => $"{g.Title} (${g.Price}) - Active: {g.IsActive}")
+                .AddChoices(results)
+        );
 
-        AnsiConsole.MarkupLine($"[red]{Texts.Get("No_games_found")}[/]");
-        return null;
- 
+        SoundEffects.PlayMenuClick();
+        return selectedGame;
     }
 
     private static void UpdateGameMenu()
@@ -143,8 +145,6 @@ public static class PublisherMenu
         AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturn"));
         Console.ReadKey(true);
     }
-
-
 
     private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
 
@@ -320,5 +320,42 @@ public static class PublisherMenu
         }
     }
 
+    private static void DeleteGameMenu()
+    {
+        var publisher = _publisherLogic.GetByAccountId(CurrentUserModel.CurrentUser.Id);
 
+        var game = SearchAndSelectGame(Texts.Get("Admin_DeactivateGame"));
+
+        if (game == null)
+        {
+            SoundEffects.PlayErrorSound();
+            Console.ReadKey(true);
+            return;
+        }
+
+        
+        if (game.PublisherId != publisher.Id)
+        {
+            SoundEffects.PlayErrorSound();
+            AnsiConsole.MarkupLine("[red]Je mag alleen je eigen games verwijderen![/]");
+            Console.ReadKey(true);
+            return;
+        }
+
+        var confirmed = AnsiConsole.Confirm($"\n{Texts.Get("Admin_ConfirmDeactivate")} '[red]{game.Title}[/]'?");
+        SoundEffects.PlayMenuClick();
+
+        if (confirmed)
+        {
+            _gameLogic.SoftDeleteGame(game.Id);
+            AnsiConsole.MarkupLine($"\n[green]'{game.Title}' {Texts.Get("Admin_GameDeactivated")}[/]");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"\n[grey]{Texts.Get("Admin_DeactivationCancelled")}[/]");
+        }
+
+        AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturn"));
+        Console.ReadKey(true);
+    }
 }

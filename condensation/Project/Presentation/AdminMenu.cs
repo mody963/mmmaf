@@ -197,7 +197,7 @@ public static class AdminMenu
         AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturn"));
         Console.ReadKey(true);
     }
-    internal static void DeleteGameMenu()
+    private static void DeleteGameMenu()
     {
         var game = SearchAndSelectGame(Texts.Get("Admin_DeactivateGame"), true);
         if (game == null) { SoundEffects.PlayErrorSound(); Console.ReadKey(true); return; }
