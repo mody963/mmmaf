@@ -3,7 +3,7 @@ using Dapper;
 
 public class PublisherAccess
 {
-    private string _connectionString => AppConfig.ConnectionString;
+    private string _connectionString => AppConfig.PostgresConnectionString;
 
     public int CreatePublisher(PublisherModel publisher)
     {

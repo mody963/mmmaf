@@ -5,7 +5,7 @@ using System.Linq;
 
 public class GameAccess
 {
-    private string _connectionString => AppConfig.ConnectionString;
+    private string _connectionString => AppConfig.PostgresConnectionString;
     public void AddGame(GameModel game)
     {
         using var connection = new NpgsqlConnection(_connectionString);

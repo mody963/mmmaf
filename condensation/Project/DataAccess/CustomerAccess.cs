@@ -5,7 +5,7 @@ using System.Linq;
 
 public class CustomerAccess
 {
-    private string _connectionString => AppConfig.ConnectionString;
+    private string _connectionString => AppConfig.PostgresConnectionString;
     public int CreateCustomer(CustomerModel customer)
     {
         using var connection = new NpgsqlConnection(_connectionString);

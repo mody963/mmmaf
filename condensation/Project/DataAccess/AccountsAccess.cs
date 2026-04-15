@@ -6,7 +6,7 @@ using System.Linq;
 public class AccountsAccess
 {
     //private readonly string _connectionString = AppConfig.ConnectionString;
-    private string _connectionString => AppConfig.ConnectionString;
+    private string _connectionString => AppConfig.PostgresConnectionString;
     private const string Table = "account";
 
     public AccountModel? GetByEmail(string email)

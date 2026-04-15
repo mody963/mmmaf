@@ -3,7 +3,7 @@ using Npgsql;
 
 public class AnalyticsAccess
 {
-    private string _connectionString => AppConfig.ConnectionString;
+    private string _connectionString => AppConfig.PostgresConnectionString;
 
     public RevenueResult GetRevenueLastMonth()
     {

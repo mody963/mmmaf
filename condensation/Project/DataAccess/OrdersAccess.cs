@@ -3,7 +3,7 @@ using Npgsql;
 
 public class OrdersAccess
 {
-    private string ConnectionString => AppConfig.ConnectionString;
+    private string ConnectionString => AppConfig.PostgresConnectionString;
 
     public int CreateOrder(int customerId, double totalPrice, List<CartModel> items)
     {
