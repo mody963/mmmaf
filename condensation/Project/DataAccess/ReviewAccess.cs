@@ -3,7 +3,7 @@ using Npgsql;
 
 public class ReviewAccess : IReviewAccess
 {
-    private string _connectionString => AppConfig.ConnectionString;
+    private string _connectionString => AppConfig.PostgresConnectionString;
 
     public List<GameModel> GetOwnedGamesByCustomerId(int customerId)
     {
