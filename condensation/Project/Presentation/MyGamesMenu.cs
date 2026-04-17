@@ -5,6 +5,7 @@ public static class MyGamesMenu
     private static readonly CustomersLogic _customersLogic = new CustomersLogic();
     private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
     private static readonly GameLogic _gameLogic = new GameLogic();
+    private static readonly OrderLogic _orderLogic = new OrderLogic();
 
     public static void Start()
     {
@@ -28,7 +29,7 @@ public static class MyGamesMenu
         while (true)
         {
             AnsiConsole.Clear();
-            var ownedGames = _reviewLogic.GetOwnedGames(customer.Id);
+            var ownedGames = _orderLogic.GetOwnedGames(customer.Id);
 
             if (ownedGames.Count == 0)
             {
@@ -149,10 +150,13 @@ public static class MyGamesMenu
         {
             _reviewLogic.SaveReview(new ReviewModel
             {
+                Id = ownReview != null ? ownReview.Id : 0,
                 GameId = gameId,
                 CustomerId = customerId,
                 Rating = rating,
-                Comment = comment
+                Comment = comment,
+                // Preserve the reviewer name if editing, or set it if new
+                ReviewerName = ownReview?.ReviewerName ?? CurrentUserModel.CurrentUser?.FirstName ?? "Unknown"
             });
 
             AnsiConsole.MarkupLine($"[green]{Texts.Get("MyGames_ReviewSaved")}[/]");

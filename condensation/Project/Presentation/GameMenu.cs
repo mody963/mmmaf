@@ -7,6 +7,7 @@ public static class GameMenu
 {
     private static readonly GameLogic _gameLogic = new GameLogic();
     private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
+    private static readonly OrderLogic _orderLogic = new OrderLogic();
     // we use a readonly field so the value is pulled from resources once the class is loaded
     private static readonly string _backOption = Texts.Get("Go_Back");
 
@@ -155,9 +156,26 @@ public static class GameMenu
                         );
                         SoundEffects.PlayMenuClick();
                         if (detailAction == Texts.Get("Game_AddToCart"))
-                            cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
+                        {
+                            // Get the current customer profile
+                            var customerLogic = new CustomersLogic();
+                            var customer = customerLogic.GetByAccountId(CurrentUserModel.CurrentUser!.Id);
 
-                        break; // return to paged list
+                            // Check if they already own it!
+                            if (customer != null && _orderLogic.HasPurchasedGame(customer.Id, selectedGame.Id))
+                            {
+                                AnsiConsole.MarkupLine("\n[red]You already own this game![/]");
+                                AnsiConsole.MarkupLine("Press any key to return...");
+                                Console.ReadKey(true);
+                            }
+                            else
+                            {
+                                cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
+                                AnsiConsole.MarkupLine("\n[green]Game added to cart![/]");
+                                Thread.Sleep(1000);
+                            }
+                        }
+                        break;
                     }
             }
         }

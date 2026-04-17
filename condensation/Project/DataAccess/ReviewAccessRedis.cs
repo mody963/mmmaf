@@ -56,8 +56,6 @@ public class ReviewAccess : IReviewAccess
 
         return null;
     }
-
-    // TEMP (not implemented yet)    
     public List<ReviewModel> GetReviewsForGame(int gameId)
     {
         string gameKey = $"game:{gameId}:reviews";

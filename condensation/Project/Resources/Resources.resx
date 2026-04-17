@@ -331,6 +331,7 @@
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
+    <comment/>
   </data>
   <data name="No_Games_Available" xml:space="preserve">
     <value>No games available.</value>
@@ -433,11 +434,11 @@
     <comment/>
   </data>
   <data name="MyGames_RatingPrompt" xml:space="preserve">
-    <value>Give a rating (1-10):</value>
+    <value>Give a rating (1-5):</value>
     <comment/>
   </data>
   <data name="MyGames_RatingValidation" xml:space="preserve">
-    <value>Rating must be between 1 and 10.</value>
+    <value>Rating must be between 1 and 5.</value>
     <comment/>
   </data>
   <data name="MyGames_CurrentComment" xml:space="preserve">
@@ -621,7 +622,9 @@
     <comment/>
   </data>
   <data name="Admin_SearchHeader" xml:space="preserve">
-    <value>Your translated text here</value> </data>
+    <value>Your translated text here</value>
+    <comment/>
+  </data>
   <data name="Admin_UpdatingGame" xml:space="preserve">
     <value>Updating:</value>
     <comment/>

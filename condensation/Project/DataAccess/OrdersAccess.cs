@@ -54,4 +54,32 @@ public class OrdersAccess
             throw;
         }
     }
+    public List<GameModel> GetOwnedGamesByCustomerId(int customerId)
+    {
+        using var connection = new NpgsqlConnection(ConnectionString);
+        const string sql = @"
+            SELECT DISTINCT g.*
+            FROM orders o
+            JOIN order_games og ON og.order_id = o.id
+            JOIN game g ON g.id = og.game_id
+            WHERE o.customer_id = @CustomerId
+            ORDER BY g.title;";
+
+        return connection.Query<GameModel>(sql, new { CustomerId = customerId }).ToList();
+    }
+
+    public bool HasPurchasedGame(int customerId, int gameId)
+    {
+        using var connection = new NpgsqlConnection(ConnectionString);
+        const string sql = @"
+            SELECT EXISTS (
+                SELECT 1
+                FROM orders o
+                JOIN order_games og ON og.order_id = o.id
+                WHERE o.customer_id = @CustomerId
+                  AND og.game_id = @GameId
+            );";
+
+        return connection.ExecuteScalar<bool>(sql, new { CustomerId = customerId, GameId = gameId });
+    }
 }
