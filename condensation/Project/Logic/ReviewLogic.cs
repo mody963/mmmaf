@@ -1,10 +1,11 @@
 public class ReviewLogic
 {
     private readonly IReviewAccess _reviewAccess;
-
+    private readonly ReviewAccessPostgres _reviewAccessPostgres;
     public ReviewLogic()
     {
-        _reviewAccess = new ReviewAccess();
+        _reviewAccess = new ReviewAccess(); // Redis
+        _reviewAccessPostgres = new ReviewAccessPostgres(); // OLD postgres version we use it to get owned games and check if game is owned
     }
 
     public ReviewLogic(IReviewAccess reviewAccess)
@@ -17,7 +18,7 @@ public class ReviewLogic
         if (customerId <= 0)
             return new List<GameModel>();
 
-        return _reviewAccess.GetOwnedGamesByCustomerId(customerId);
+        return _reviewAccessPostgres.GetOwnedGamesByCustomerId(customerId);
     }
 
     public List<ReviewModel> GetReviewsForGame(int gameId)
@@ -41,12 +42,12 @@ public class ReviewLogic
         if (customerId <= 0 || gameId <= 0)
             return false;
 
-        return _reviewAccess.HasPurchasedGame(customerId, gameId);
+        return _reviewAccessPostgres.HasPurchasedGame(customerId, gameId);
     }
 
     public bool IsValidRating(int rating)
     {
-        return rating >= 1 && rating <= 10;
+        return rating >= 1 && rating <= 5;
     }
 
     public bool IsValidComment(string? comment)
@@ -63,7 +64,7 @@ public class ReviewLogic
             throw new InvalidOperationException("This game is not owned by the customer.");
 
         if (!IsValidRating(review.Rating))
-            throw new InvalidOperationException("Rating must be between 1 and 10.");
+            throw new InvalidOperationException("Rating must be between 1 and 5.");
 
         if (!IsValidComment(review.Comment))
             throw new InvalidOperationException("Review comment must contain at least 3 characters.");
@@ -71,9 +72,16 @@ public class ReviewLogic
         review.Comment = review.Comment.Trim();
         _reviewAccess.UpsertReview(review);
     }
+    public void DeleteReview(ReviewModel review)
+    {
+        if (review == null)
+            throw new ArgumentNullException(nameof(review));
+
+        _reviewAccess.DeleteReview(review.Id, review.GameId);
+    }
 
         public List<ReviewModel> GetPublisherReviews(int publisherId)
-        {
-            return _reviewAccess.GetReviewsByPublisherId(publisherId);
-        }
+    {
+        return _reviewAccess.GetReviewsByPublisherId(publisherId);
+    }
 }
