@@ -5,6 +5,7 @@ public static class AdminMenu
     private static readonly GameLogic _gameLogic = new GameLogic();
     private static readonly AccountsLogic _accountsLogic = new AccountsLogic();
     private static readonly PublisherLogic _publisherLogic = new PublisherLogic();
+    private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
     public static void Start()
     {
         bool exitMenu = false;
@@ -20,6 +21,7 @@ public static class AdminMenu
                         Texts.Get("Update_Game"),
                         Texts.Get("Delete_Game"),
                         "Approve Publishers",
+                        "Moderate Reviews",
                         Texts.Get("Admin_Analytics"),
                         Texts.Get("Log_Out")
                     )
@@ -48,7 +50,9 @@ public static class AdminMenu
                 case "Approve Publishers":
                     ApprovePublishersMenu();
                     break;
-
+                case "Moderate Reviews":
+                    ModerateReviewsMenu();
+                    break;
                 case var c when c == Texts.Get("Log_Out"):
                     Logout();
                     exitMenu = true; // Return to login/main menu
@@ -163,7 +167,7 @@ public static class AdminMenu
         game.Price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:" ).DefaultValue(game.Price));
         SoundEffects.PlayMenuClick();
 
-        // 2. Dropdown for Genre
+        // Dropdown for Genre
         var genres = _gameLogic.GetAllGenres();
         var currentGenre = genres.FirstOrDefault(g => g.Id == game.GenreId); // Find the current one
         
@@ -269,6 +273,72 @@ public static class AdminMenu
 
         AnsiConsole.MarkupLine("Press any key to return...");
         Console.ReadKey(true);
+    }
+    private static void ModerateReviewsMenu()
+    {
+        while (true)
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[bold cyan]--- Moderate Reviews ---[/]\n");
+
+            // Select a Game
+            var games = _gameLogic.GetAllGames();
+            
+            var gamePrompt = new SelectionPrompt<GameModel>()
+                .Title("Select a [green]Game[/] to view its reviews:")
+                .UseConverter(g => g.Id == -1 ? "Go Back" : g.Title)
+                .HighlightStyle(new Style(foreground: Color.Cyan));
+
+            foreach (var g in games) gamePrompt.AddChoice(g);
+            gamePrompt.AddChoice(new GameModel { Id = -1 }); // Back option
+
+            var selectedGame = AnsiConsole.Prompt(gamePrompt);
+            if (selectedGame.Id == -1) return; // Exit to main admin menu
+
+            // Manage Reviews for the Game
+            while (true)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine($"[bold cyan]--- Managing: {selectedGame.Title} ---[/]\n");
+
+                var reviews = _reviewLogic.GetAllReviewsForGameAdmin(selectedGame.Id);
+
+                if (reviews.Count == 0)
+                {
+                    AnsiConsole.MarkupLine("[yellow]There are no reviews for this game yet.[/]");
+                    Console.ReadKey(true);
+                    break;
+                }
+
+                // menu to show if review is currently hidden or visible
+                var reviewPrompt = new SelectionPrompt<ReviewModel>()
+                    .Title("Select a review to [yellow]Hide[/] or [green]Unhide[/]:")
+                    .UseConverter(r => 
+                    {
+                        if (r.Id == -1) return "Go Back";
+                        
+                        string status = r.IsHidden ? "[red](HIDDEN)[/]" : "[green](VISIBLE)[/]";
+                        // shorten comment if too long
+                        string shortComment = r.Comment.Length > 40 ? r.Comment.Substring(0, 37) + "..." : r.Comment;
+                        
+                        return $"{status} {r.ReviewerName} - {shortComment}";
+                    });
+
+                foreach (var r in reviews) reviewPrompt.AddChoice(r);
+                reviewPrompt.AddChoice(new ReviewModel { Id = -1 });
+
+                var selectedReview = AnsiConsole.Prompt(reviewPrompt);
+                if (selectedReview.Id == -1) break; // Go back to game selection
+
+                // Toggle the visibility!
+                _reviewLogic.ToggleReviewVisibility(selectedReview.Id);
+
+                // show the status
+                bool isNowHidden = !selectedReview.IsHidden; // Invert because it was just changed in the DB
+                AnsiConsole.MarkupLine($"\nReview is now {(isNowHidden ? "[red]HIDDEN[/]" : "[green]VISIBLE[/]")}.");
+                Thread.Sleep(1000);
+            }
+        }
     }
 
     private static void Logout()

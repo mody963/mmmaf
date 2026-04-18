@@ -117,4 +117,37 @@ public class ReviewAccess : IReviewAccess
     {
         return new List<ReviewModel>();
     }
+    public ReviewModel? GetReviewById(int reviewId)
+    {
+        var value = _db.StringGet($"review:{reviewId}");
+        
+        if (value.IsNullOrEmpty) 
+            return null;
+            
+        return JsonSerializer.Deserialize<ReviewModel>(value!);
+    }
+
+    // no dilter for hidden games
+    public List<ReviewModel> GetAllReviewsForGameAdmin(int gameId)
+    {
+        string gameSortedKey = $"game:{gameId}:reviews:sorted";
+        var reviewIds = _db.SortedSetRangeByRank(gameSortedKey, 0, -1, Order.Descending);
+        List<ReviewModel> reviews = new();
+
+        foreach (var id in reviewIds)
+        {
+            var value = _db.StringGet($"review:{id}");
+            if (!value.IsNullOrEmpty)
+            {
+                var review = JsonSerializer.Deserialize<ReviewModel>(value!);
+                
+                if (review != null) 
+                {
+                    reviews.Add(review);
+                }
+            }
+        }
+
+        return reviews;
+    }
 }

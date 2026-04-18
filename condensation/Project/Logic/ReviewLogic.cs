@@ -63,4 +63,25 @@ public class ReviewLogic
     {
         return _reviewAccess.GetReviewsByPublisherId(publisherId);
     }
+    public List<ReviewModel> GetAllReviewsForGameAdmin(int gameId)
+    {
+        if (gameId <= 0) return new List<ReviewModel>();
+        
+        return _reviewAccess.GetAllReviewsForGameAdmin(gameId);
+    }
+
+    public void ToggleReviewVisibility(int reviewId)
+    {
+        // get the review
+        var review = _reviewAccess.GetReviewById(reviewId);
+        
+        if (review != null)
+        {
+            // flip the boolean
+            review.IsHidden = !review.IsHidden;
+            
+            // save to redis/ overwrite cause its same
+            _reviewAccess.UpsertReview(review);
+        }
+    }
 }

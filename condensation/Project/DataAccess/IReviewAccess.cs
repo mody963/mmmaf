@@ -7,4 +7,6 @@ public interface IReviewAccess
     void UpsertReview(ReviewModel review);
     void DeleteReview(int reviewId, int gameId);
     List<ReviewModel> GetReviewsByPublisherId(int publisherId);
+    ReviewModel? GetReviewById(int reviewId);
+    List<ReviewModel> GetAllReviewsForGameAdmin(int gameId);
 }
