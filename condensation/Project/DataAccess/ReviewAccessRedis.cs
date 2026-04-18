@@ -24,6 +24,7 @@ public class ReviewAccess : IReviewAccess
 
         string reviewKey = $"review:{review.Id}";
         string gameKey = $"game:{review.GameId}:reviews";
+        string gameSortedKey = $"game:{review.GameId}:reviews:sorted"; //sorted set key
         string publisherKey = $"publisher:reviews"; // helps with the publisher requirement later
 
         string json = JsonSerializer.Serialize(review);
@@ -33,6 +34,9 @@ public class ReviewAccess : IReviewAccess
 
         // Index it under the game so we can easily fetch all reviews for a game
         _db.SetAdd(gameKey, review.Id);
+
+        // add to sorted set using timestamp as score
+        _db.SortedSetAdd(gameSortedKey, review.Id, review.CreatedAt.Ticks);
     }
 
     public ReviewModel? GetCustomerReviewForGame(int customerId, int gameId)
@@ -58,8 +62,10 @@ public class ReviewAccess : IReviewAccess
     }
     public List<ReviewModel> GetReviewsForGame(int gameId)
     {
-        string gameKey = $"game:{gameId}:reviews";
-        var reviewIds = _db.SetMembers(gameKey);
+        // string gameKey = $"game:{gameId}:reviews";
+        // var reviewIds = _db.SetMembers(gameKey);
+        string gameSortedKey = $"game:{gameId}:reviews:sorted";
+        var reviewIds = _db.SortedSetRangeByRank(gameSortedKey, 0, -1, Order.Descending);
         List<ReviewModel> reviews = new();
 
         foreach (var id in reviewIds)
@@ -78,19 +84,23 @@ public class ReviewAccess : IReviewAccess
         }
 
         // Requirement: Sort by date, newest first
-        return reviews.OrderByDescending(r => r.CreatedAt).ToList();
+        //return reviews.OrderByDescending(r => r.CreatedAt).ToList();
+        return reviews;
     }
 
     public void DeleteReview(int reviewId, int gameId)
     {
         string reviewKey = $"review:{reviewId}";
         string gameKey = $"game:{gameId}:reviews";
+        string gameSortedKey = $"game:{gameId}:reviews:sorted";
 
         // 1. Remove the JSON object
         _db.KeyDelete(reviewKey);
 
         // 2. Remove the ID from the game's index list
         _db.SetRemove(gameKey, reviewId);
+        // 3 delete the id from sorted set
+        _db.SortedSetRemove(gameSortedKey, reviewId);
     }
 
     public bool HasPurchasedGame(int customerId, int gameId)
