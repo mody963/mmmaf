@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Spectre.Console;
+using System.Globalization;
 
 public static class GameMenu
 {
@@ -340,18 +341,27 @@ public static class GameMenu
     private static void RenderReviewsForGame(int gameId)
     {
         var reviews = _reviewLogic.GetReviewsForGame(gameId);
+        double averageRating = _reviewLogic.GetAverageRatingForGame(gameId);
+
         AnsiConsole.WriteLine();
         AnsiConsole.MarkupLine($"[bold cyan]{Texts.Get("MyGames_ReviewsHeader")}[/]");
 
         if (reviews.Count == 0)
         {
+            AnsiConsole.MarkupLine("[grey]Average rating: -[/]");
             AnsiConsole.MarkupLine($"[grey]{Texts.Get("MyGames_NoReviewsYet")}[/]");
             return;
         }
 
+        AnsiConsole.MarkupLine($"[bold yellow]Average rating:[/] {averageRating.ToString("0.0", new CultureInfo("nl-NL"))}/5");
+        AnsiConsole.WriteLine();
+
         var reviewTable = new Table().Border(TableBorder.Rounded);
         reviewTable.AddColumn(Texts.Get("MyGames_Reviewer"));
+        reviewTable.AddColumn("Title");
         reviewTable.AddColumn(Texts.Get("MyGames_Rating"));
+        reviewTable.AddColumn("Pros");
+        reviewTable.AddColumn("Cons");
         reviewTable.AddColumn(Texts.Get("MyGames_Comment"));
         reviewTable.AddColumn(Texts.Get("MyGames_ReviewDate"));
 
@@ -359,7 +369,10 @@ public static class GameMenu
         {
             reviewTable.AddRow(
                 Markup.Escape(string.IsNullOrWhiteSpace(review.ReviewerName) ? "Unknown" : review.ReviewerName),
+                Markup.Escape(string.IsNullOrWhiteSpace(review.Title) ? "-" : review.Title),
                 review.Rating.ToString(),
+                Markup.Escape(string.IsNullOrWhiteSpace(review.Pros) ? "-" : review.Pros),
+                Markup.Escape(string.IsNullOrWhiteSpace(review.Cons) ? "-" : review.Cons),
                 Markup.Escape(string.IsNullOrWhiteSpace(review.Comment) ? "-" : review.Comment),
                 review.CreatedAt.ToString("yyyy-MM-dd")
             );

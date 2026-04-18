@@ -63,4 +63,38 @@ public class ReviewLogic
     {
         return _reviewAccess.GetReviewsByPublisherId(publisherId);
     }
+
+    public bool IsValidTitle(string? title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            return false;
+
+        return title.Trim().Length >= 3;
+    }
+
+    public bool IsValidPros(string? pros)
+    {
+        if (string.IsNullOrWhiteSpace(pros))
+            return false;
+
+        return pros.Trim().Length >= 3;
+    }
+
+    public bool IsValidCons(string? cons)
+    {
+        if (string.IsNullOrWhiteSpace(cons))
+            return false;
+
+        return cons.Trim().Length >= 3;
+    }
+
+    public double GetAverageRatingForGame(int gameId)
+    {
+        var reviews = GetReviewsForGame(gameId); // Takes only visible reviews, filter is handled in access layer
+
+        if (reviews.Count == 0)
+            return 0;
+
+        return reviews.Average(r => r.Rating);
+    }
 }
