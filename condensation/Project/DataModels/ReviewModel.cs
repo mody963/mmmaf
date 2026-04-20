@@ -16,12 +16,14 @@ public class ReviewModel
     public int CustomerId { get; set; }
     
     // Updated fields based on requirements
+    public string Title { get; set; } = string.Empty;
     public string Comment { get; set; } = string.Empty;
     public string Pros { get; set; } = string.Empty;
     public string Cons { get; set; } = string.Empty;
     public int Rating { get; set; } // Must be 1-5
     
     public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
     public string ReviewerName { get; set; } = string.Empty;
     
     // New field for the Admin requirement

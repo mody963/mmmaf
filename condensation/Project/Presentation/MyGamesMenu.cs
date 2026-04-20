@@ -1,4 +1,5 @@
 using Spectre.Console;
+using System.Globalization;
 using System.Threading;
 
 public static class MyGamesMenu
@@ -81,17 +82,29 @@ public static class MyGamesMenu
             AnsiConsole.WriteLine();
 
             var reviews = _reviewLogic.GetReviewsForGame(game.Id);
+            double averageRating = _reviewLogic.GetAverageRatingForGame(game.Id);
+
             AnsiConsole.MarkupLine($"[bold cyan]{Texts.Get("MyGames_ReviewsHeader")}[/]");
 
             if (reviews.Count == 0)
             {
+                // No reviews -> no average
+                AnsiConsole.MarkupLine("[grey]Average rating: -[/]");
                 AnsiConsole.MarkupLine($"[grey]{Texts.Get("MyGames_NoReviewsYet")}[/]");
             }
             else
             {
+                // // Display calculated average
+                AnsiConsole.MarkupLine($"[bold yellow]Average rating:[/] {averageRating.ToString("0.0", new CultureInfo("nl-NL"))}/5");
+                AnsiConsole.WriteLine();
+
                 var reviewTable = new Table().Border(TableBorder.Rounded);
+
                 reviewTable.AddColumn(Texts.Get("MyGames_Reviewer"));
+                reviewTable.AddColumn("Title");
                 reviewTable.AddColumn(Texts.Get("MyGames_Rating"));
+                reviewTable.AddColumn("Pros");
+                reviewTable.AddColumn("Cons");
                 reviewTable.AddColumn(Texts.Get("MyGames_Comment"));
                 reviewTable.AddColumn(Texts.Get("MyGames_ReviewDate"));
 
@@ -99,7 +112,10 @@ public static class MyGamesMenu
                 {
                     reviewTable.AddRow(
                         Markup.Escape(string.IsNullOrWhiteSpace(review.ReviewerName) ? "Unknown" : review.ReviewerName),
-                        review.Rating.ToString(),
+                        Markup.Escape(string.IsNullOrWhiteSpace(review.Title) ? "-" : review.Title),
+                        review.Rating.ToString("0.0", new CultureInfo("nl-NL")),
+                        Markup.Escape(string.IsNullOrWhiteSpace(review.Pros) ? "-" : review.Pros),
+                        Markup.Escape(string.IsNullOrWhiteSpace(review.Cons) ? "-" : review.Cons),
                         Markup.Escape(string.IsNullOrWhiteSpace(review.Comment) ? "-" : review.Comment),
                         review.CreatedAt.ToString("yyyy-MM-dd"));
                 }
@@ -108,8 +124,13 @@ public static class MyGamesMenu
             }
 
             AnsiConsole.WriteLine();
+
+            // Check whether this customer already reviewed the game
             var ownReview = _reviewLogic.GetCustomerReviewForGame(customerId, game.Id);
 
+            string reviewAction = ownReview == null
+                ? Texts.Get("MyGames_LeaveReview")
+                : Texts.Get("MyGames_EditReview");
             var choices = new List<string>();
             if (ownReview == null)
             {
@@ -133,6 +154,8 @@ public static class MyGamesMenu
             if (action == Texts.Get("MyGames_Back"))
                 return;
 
+            // Open the review form for creating or editing the user's review
+            LeaveOrEditReview(game.Id, customerId, ownReview);
             if (action == Texts.Get("MyGames_LeaveReview") || action == Texts.Get("MyGames_EditReview"))
             {
                 LeaveOrEditReview(game.Id, customerId, ownReview);
@@ -165,21 +188,55 @@ public static class MyGamesMenu
 
     private static void LeaveOrEditReview(int gameId, int customerId, ReviewModel? ownReview)
     {
-        int rating = AnsiConsole.Prompt(
-            new TextPrompt<int>(Texts.Get("MyGames_RatingPrompt"))
-                .Validate(r => r >= 1 && r <= 10
+        // if (ownReview != null)
+        // {
+        //     // Show current values so user knows what they are editing
+        //     AnsiConsole.MarkupLine($"[grey]Current title: {Markup.Escape(ownReview.Title ?? "-")}[/]");
+        //     AnsiConsole.MarkupLine($"[grey]Current pros: {Markup.Escape(ownReview.Pros ?? "-")}[/]");
+        //     AnsiConsole.MarkupLine($"[grey]Current cons: {Markup.Escape(ownReview.Cons ?? "-")}[/]");
+        //     AnsiConsole.MarkupLine($"[grey]Current comment: {Markup.Escape(ownReview.Comment ?? "-")}[/]");
+        //     AnsiConsole.MarkupLine($"[grey]Current rating: {ownReview.Rating}[/]");
+        //     AnsiConsole.WriteLine();
+        // }
+
+        string title = AnsiConsole.Prompt(
+            new TextPrompt<string>("Enter review title:")
+                .DefaultValue(ownReview?.Title ?? string.Empty)
+                .Validate(t => _reviewLogic.IsValidTitle(t)
                     ? ValidationResult.Success()
-                    : ValidationResult.Error(Texts.Get("MyGames_RatingValidation")))
+                    : ValidationResult.Error("Title must contain at least 3 characters."))
         );
 
-        if (ownReview != null)
-            AnsiConsole.MarkupLine($"[grey]{Texts.Get("MyGames_CurrentComment")} {Markup.Escape(ownReview.Comment)}[/]");
+        string pros = AnsiConsole.Prompt(
+            new TextPrompt<string>("Enter pros:")
+                .DefaultValue(ownReview?.Pros ?? string.Empty)
+                .Validate(p => _reviewLogic.IsValidPros(p)
+                    ? ValidationResult.Success()
+                    : ValidationResult.Error("Pros must contain at least 3 characters."))
+        );
+
+        string cons = AnsiConsole.Prompt(
+            new TextPrompt<string>("Enter cons:")
+                .DefaultValue(ownReview?.Cons ?? string.Empty)
+                .Validate(c => _reviewLogic.IsValidCons(c)
+                    ? ValidationResult.Success()
+                    : ValidationResult.Error("Cons must contain at least 3 characters."))
+        );
 
         string comment = AnsiConsole.Prompt(
-            new TextPrompt<string>(Texts.Get("MyGames_CommentPrompt"))
+            new TextPrompt<string>("Enter comment:")
+                .DefaultValue(ownReview?.Comment ?? string.Empty)
                 .Validate(c => _reviewLogic.IsValidComment(c)
                     ? ValidationResult.Success()
-                    : ValidationResult.Error(Texts.Get("MyGames_CommentValidation")))
+                    : ValidationResult.Error("Comment must contain at least 3 characters."))
+        );
+
+        int rating = AnsiConsole.Prompt(
+            new TextPrompt<int>("Enter rating (1-5):")
+                .DefaultValue(ownReview?.Rating ?? 1)
+                .Validate(r => _reviewLogic.IsValidRating(r)
+                    ? ValidationResult.Success()
+                    : ValidationResult.Error("Rating must be between 1 and 5."))
         );
 
         try
@@ -189,8 +246,15 @@ public static class MyGamesMenu
                 Id = ownReview != null ? ownReview.Id : 0,
                 GameId = gameId,
                 CustomerId = customerId,
-                Rating = rating,
+                Title = title,
+                Pros = pros,
+                Cons = cons,
                 Comment = comment,
+                Rating = rating,
+                // Preserve name on edit, otherwise use current user or unknown if something is wrong with the user data
+                ReviewerName = ownReview?.ReviewerName ?? CurrentUserModel.CurrentUser?.FirstName ?? "Unknown",
+
+                CreatedAt = ownReview?.CreatedAt ?? DateTime.UtcNow,
                 ReviewerName = ownReview?.ReviewerName ?? CurrentUserModel.CurrentUser?.FirstName ?? "Unknown"
             });
 
@@ -198,6 +262,7 @@ public static class MyGamesMenu
         }
         catch (InvalidOperationException ex)
         {
+            // Show validation errors from the logic layer
             AnsiConsole.MarkupLine($"[red]{Markup.Escape(ex.Message)}[/]");
         }
 
