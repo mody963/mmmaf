@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class GameLogic
+public class GameLogic : IGameLogic
 {
     private readonly GameAccess _gameAccess = new GameAccess();
 

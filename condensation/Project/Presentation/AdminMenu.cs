@@ -312,7 +312,7 @@ public static class AdminMenu
 
                 // menu to show if review is currently hidden or visible
                 var reviewPrompt = new SelectionPrompt<ReviewModel>()
-                    .Title("Select a review to [yellow]Hide[/] or [green]Unhide[/]:")
+                    .Title("Select a review to manage:")
                     .UseConverter(r => 
                     {
                         if (r.Id == -1) return "Go Back";
@@ -330,13 +330,63 @@ public static class AdminMenu
                 var selectedReview = AnsiConsole.Prompt(reviewPrompt);
                 if (selectedReview.Id == -1) break; // Go back to game selection
 
-                // Toggle the visibility!
-                _reviewLogic.ToggleReviewVisibility(selectedReview.Id);
+                // Show action menu for the selected review
+                var actionChoice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("What do you want to do?")
+                        .AddChoices(
+                            selectedReview.IsHidden ? "Unhide Review" : "Hide Review",
+                            "Delete Review",
+                            "Go Back"
+                        )
+                        .HighlightStyle(new Style(foreground: Color.Yellow))
+                );
 
-                // show the status
-                bool isNowHidden = !selectedReview.IsHidden; // Invert because it was just changed in the DB
-                AnsiConsole.MarkupLine($"\nReview is now {(isNowHidden ? "[red]HIDDEN[/]" : "[green]VISIBLE[/]")}.");
-                Thread.Sleep(1000);
+                if (actionChoice == "Go Back")
+                {
+                    continue;
+                }
+                else if (actionChoice.Contains("Hide"))
+                {
+                    // Toggle the visibility
+                    _reviewLogic.ToggleReviewVisibility(selectedReview.Id);
+                    bool isNowHidden = !selectedReview.IsHidden;
+                    AnsiConsole.MarkupLine($"\n[green]Review is now {(isNowHidden ? "[red]HIDDEN[/]" : "[green]VISIBLE[/]")}.[/]");
+                    SoundEffects.PlayMenuClick();
+                    Thread.Sleep(1000);
+                }
+                else if (actionChoice == "Delete Review")
+                {
+                    // Confirm deletion
+                    var confirmDelete = AnsiConsole.Confirm("[red]Are you sure you want to delete this review?[/]", false);
+                    if (confirmDelete)
+                    {
+                        try
+                        {
+                            _reviewLogic.DeleteReviewWithAuth(
+                                CurrentUserModel.CurrentUser!.Id,
+                                CurrentUserModel.CurrentUser!.Role,
+                                selectedReview.Id,
+                                selectedGame.Id
+                            );
+                            AnsiConsole.MarkupLine("[green]Review deleted successfully![/]");
+                            SoundEffects.PlayMenuClick();
+                            Thread.Sleep(1000);
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+                            SoundEffects.PlayErrorSound();
+                            Thread.Sleep(1500);
+                        }
+                    }
+                    else
+                    {
+                        AnsiConsole.MarkupLine("[yellow]Deletion cancelled.[/]");
+                        SoundEffects.PlayErrorSound();
+                        Thread.Sleep(1000);
+                    }
+                }
             }
         }
     }

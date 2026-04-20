@@ -434,11 +434,11 @@
     <comment/>
   </data>
   <data name="MyGames_RatingPrompt" xml:space="preserve">
-    <value>Give a rating (1-5):</value>
+    <value>Give a rating (1-10):</value>
     <comment/>
   </data>
   <data name="MyGames_RatingValidation" xml:space="preserve">
-    <value>Rating must be between 1 and 5.</value>
+    <value>Rating must be between 1 and 10.</value>
     <comment/>
   </data>
   <data name="MyGames_CurrentComment" xml:space="preserve">

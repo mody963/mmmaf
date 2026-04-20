@@ -168,4 +168,47 @@ public static class MyGamesMenu
 
         Console.ReadKey(true);
     }
+
+
+    private static void ManageExistingReview(int customerId, int gameId, ReviewModel ownReview)
+    {
+        AnsiConsole.Clear();
+        AnsiConsole.MarkupLine($"[bold yellow]Je hebt al een review geschreven voor deze game.[/]");
+        
+        var action = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Wat wil je doen?")
+                .AddChoices("Update Review", "Delete Review", "Back")
+        );
+
+        switch (action)
+        {
+            case "Update Review":
+                LeaveOrEditReview(gameId, customerId, ownReview);
+                break;
+
+            case "Delete Review":
+                if (AnsiConsole.Confirm("[red]Weet je zeker dat je jouw review wilt verwijderen?[/]"))
+                {
+                    try
+                    {
+                        _reviewLogic.DeleteReviewWithAuth(
+                            customerId,
+                            CurrentUserModel.CurrentUser!.Role,
+                            ownReview.Id,
+                            gameId
+                        );
+                        AnsiConsole.MarkupLine("[green]Review is verwijderd.[/]");
+                        SoundEffects.PlayMenuClick();
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+                        SoundEffects.PlayErrorSound();
+                    }
+                    Thread.Sleep(1000);
+                }
+                break;
+        }
+    }
 }
