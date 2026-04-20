@@ -28,6 +28,14 @@ if (string.IsNullOrWhiteSpace(redisConnectionString))
 AppConfig.PostgresConnectionString = postgresConnectionString;
 AppConfig.RedisConnectionString = redisConnectionString;
 
+// Load Redis connection if available
+string? redisConnectionString = config.GetConnectionString("RedisConnection");
+if (!string.IsNullOrWhiteSpace(redisConnectionString))
+{
+    AppConfig.RedisConnectionString = redisConnectionString;
+    RedisService.Initialize(redisConnectionString);
+}
+
 // Dapper turns game_id into GameId, but our properties are gameId, so we need to tell it to match names with underscores
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
