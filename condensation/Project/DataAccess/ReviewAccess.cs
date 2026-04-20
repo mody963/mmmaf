@@ -90,11 +90,31 @@ public class ReviewAccess : IReviewAccess
                 created_at = CURRENT_TIMESTAMP;";
 
         connection.Execute(sql, review);
+        
+        // Invalidate cache for all publishers when a review is modified
+        if (RedisService.IsConnected)
+        {
+            RedisService.RemoveByPattern("publisher_reviews:*");
+        }
     }
 
 
     public List<ReviewModel> GetReviewsByPublisherId(int publisherId)
     {
+        // Cache key for this publisher's reviews
+        string cacheKey = $"publisher_reviews:{publisherId}";
+        
+        // Try to get from Redis first
+        if (RedisService.IsConnected)
+        {
+            var cachedReviews = RedisService.Get<List<ReviewModel>>(cacheKey);
+            if (cachedReviews != null)
+            {
+                return cachedReviews;
+            }
+        }
+        
+        // If not in cache, query from database
         using var connection = new NpgsqlConnection(_connectionString);
         const string sql = @"
             SELECT 
@@ -113,6 +133,14 @@ public class ReviewAccess : IReviewAccess
             WHERE g.publisher_id = @PublisherId
             ORDER BY r.created_at DESC;";
 
-        return connection.Query<ReviewModel>(sql, new { PublisherId = publisherId }).ToList();
+        var reviews = connection.Query<ReviewModel>(sql, new { PublisherId = publisherId }).ToList();
+        
+        // Cache the results for 1 hour if Redis is available
+        if (RedisService.IsConnected && reviews.Count > 0)
+        {
+            RedisService.Set(cacheKey, reviews, TimeSpan.FromHours(1));
+        }
+        
+        return reviews;
     }
 }
