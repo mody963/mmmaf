@@ -260,6 +260,7 @@ public static class PublisherMenu
 
         int currentPage = 0;
         int totalPages = (int)Math.Ceiling(reviews.Count / (double)pageSize);
+        int gameId = gameGroup.GameId;
 
         while (true)
         {
@@ -273,49 +274,80 @@ public static class PublisherMenu
             AnsiConsole.MarkupLine($"[bold yellow]{Markup.Escape(gameGroup.GameTitle)}[/]");
             AnsiConsole.MarkupLine($"[grey]Reviews (Page {currentPage + 1}/{totalPages})[/]\n");
 
+            var reviewChoices = new List<ReviewModel>();
+            var reviewPrompt = new SelectionPrompt<ReviewModel>()
+                .Title("Select a review to manage or navigate:")
+                .UseConverter(r => 
+                {
+                    string shortComment = r.Comment.Length > 40 ? r.Comment.Substring(0, 37) + "..." : r.Comment;
+                    return $"[yellow]{r.Rating}/10[/] - {Markup.Escape(r.ReviewerName)}: {shortComment}";
+                });
+
             foreach (var r in pageReviews)
             {
-                var panel = new Panel(
-                    $"[bold]{Markup.Escape(r.ReviewerName)}[/]\n" +
-                    $"[yellow]Rating:[/] {r.Rating}/10\n\n" +
-                    $"{Markup.Escape(r.Comment)}\n\n" +
-                    $"[grey]{r.CreatedAt:g}[/]"
-                )
-                .Border(BoxBorder.Rounded)
-                .Padding(1, 1);
-
-                AnsiConsole.Write(panel);
+                reviewChoices.Add(r);
+                reviewPrompt.AddChoice(r);
             }
 
-            // Average rating
-            double avg = reviews.Average(r => r.Rating);
+            if (currentPage > 0)
+                reviewPrompt.AddChoice(new ReviewModel { Id = -2, ReviewerName = "← Previous Page" });
+            if (currentPage < totalPages - 1)
+                reviewPrompt.AddChoice(new ReviewModel { Id = -3, ReviewerName = "Next Page →" });
 
-            AnsiConsole.MarkupLine($"\n[bold green]Average Rating:[/] {avg:0.00}/10");
+            reviewPrompt.AddChoice(new ReviewModel { Id = -1, ReviewerName = "Go Back" });
 
-            AnsiConsole.MarkupLine("\n[grey]← → Page   Esc: Back[/]");
+            var selectedReview = AnsiConsole.Prompt(reviewPrompt);
 
-            var key = Console.ReadKey(true).Key;
-
-            switch (key)
+            if (selectedReview.Id == -1)
+                return; // Go back
+            else if (selectedReview.Id == -2)
             {
-                case ConsoleKey.LeftArrow:
-                    if (currentPage > 0)
-                    {
-                        currentPage--;
-                        SoundEffects.PlayMenuClick();
-                    }
-                    break;
+                currentPage--;
+                SoundEffects.PlayMenuClick();
+                continue;
+            }
+            else if (selectedReview.Id == -3)
+            {
+                currentPage++;
+                SoundEffects.PlayMenuClick();
+                continue;
+            }
+            AnsiConsole.Clear();
+            var panel = new Panel(
+                $"[bold]{Markup.Escape(selectedReview.ReviewerName)}[/]\n" +
+                $"[yellow]Rating:[/] {selectedReview.Rating}/10\n\n" +
+                $"{Markup.Escape(selectedReview.Comment)}\n\n" +
+                $"[grey]{selectedReview.CreatedAt:g}[/]"
+            )
+            .Border(BoxBorder.Rounded)
+            .Padding(1, 1);
 
-                case ConsoleKey.RightArrow:
-                    if (currentPage < totalPages - 1)
-                    {
-                        currentPage++;
-                        SoundEffects.PlayMenuClick();
-                    }
-                    break;
+            AnsiConsole.Write(panel);
 
-                case ConsoleKey.Escape:
-                    return;
+            var deleteAction = AnsiConsole.Confirm("\n[yellow]Delete this review?[/]", false);
+            if (deleteAction)
+            {
+                try
+                {
+                    _reviewLogic.DeleteReviewWithAuth(
+                        CurrentUserModel.CurrentUser!.Id,
+                        CurrentUserModel.CurrentUser!.Role,
+                        selectedReview.Id,
+                        gameId
+                    );
+                    reviews.Remove(selectedReview);
+                    totalPages = (int)Math.Ceiling(reviews.Count / (double)pageSize);
+                    AnsiConsole.MarkupLine("[green]Review deleted successfully![/]");
+                    SoundEffects.PlayMenuClick();
+                    Thread.Sleep(1000);
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+                    SoundEffects.PlayErrorSound();
+                    Thread.Sleep(1500);
+                    continue;
+                }
             }
         }
     }

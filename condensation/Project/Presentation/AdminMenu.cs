@@ -5,6 +5,7 @@ public static class AdminMenu
     private static readonly GameLogic _gameLogic = new GameLogic();
     private static readonly AccountsLogic _accountsLogic = new AccountsLogic();
     private static readonly PublisherLogic _publisherLogic = new PublisherLogic();
+    private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
     public static void Start()
     {
         bool exitMenu = false;
@@ -20,6 +21,7 @@ public static class AdminMenu
                         Texts.Get("Update_Game"),
                         Texts.Get("Delete_Game"),
                         "Approve Publishers",
+                        "Moderate Reviews",
                         Texts.Get("Admin_Analytics"),
                         Texts.Get("Log_Out")
                     )
@@ -48,7 +50,9 @@ public static class AdminMenu
                 case "Approve Publishers":
                     ApprovePublishersMenu();
                     break;
-
+                case "Moderate Reviews":
+                    ModerateReviewsMenu();
+                    break;
                 case var c when c == Texts.Get("Log_Out"):
                     Logout();
                     exitMenu = true; // Return to login/main menu
@@ -163,7 +167,7 @@ public static class AdminMenu
         game.Price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:" ).DefaultValue(game.Price));
         SoundEffects.PlayMenuClick();
 
-        // 2. Dropdown for Genre
+        // Dropdown for Genre
         var genres = _gameLogic.GetAllGenres();
         var currentGenre = genres.FirstOrDefault(g => g.Id == game.GenreId); // Find the current one
         
@@ -269,6 +273,122 @@ public static class AdminMenu
 
         AnsiConsole.MarkupLine("Press any key to return...");
         Console.ReadKey(true);
+    }
+    private static void ModerateReviewsMenu()
+    {
+        while (true)
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[bold cyan]--- Moderate Reviews ---[/]\n");
+
+            // Select a Game
+            var games = _gameLogic.GetAllGames();
+            
+            var gamePrompt = new SelectionPrompt<GameModel>()
+                .Title("Select a [green]Game[/] to view its reviews:")
+                .UseConverter(g => g.Id == -1 ? "Go Back" : g.Title)
+                .HighlightStyle(new Style(foreground: Color.Cyan));
+
+            foreach (var g in games) gamePrompt.AddChoice(g);
+            gamePrompt.AddChoice(new GameModel { Id = -1 }); // Back option
+
+            var selectedGame = AnsiConsole.Prompt(gamePrompt);
+            if (selectedGame.Id == -1) return; // Exit to main admin menu
+
+            // Manage Reviews for the Game
+            while (true)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine($"[bold cyan]--- Managing: {selectedGame.Title} ---[/]\n");
+
+                var reviews = _reviewLogic.GetAllReviewsForGameAdmin(selectedGame.Id);
+
+                if (reviews.Count == 0)
+                {
+                    AnsiConsole.MarkupLine("[yellow]There are no reviews for this game yet.[/]");
+                    Console.ReadKey(true);
+                    break;
+                }
+
+                // menu to show if review is currently hidden or visible
+                var reviewPrompt = new SelectionPrompt<ReviewModel>()
+                    .Title("Select a review to manage:")
+                    .UseConverter(r => 
+                    {
+                        if (r.Id == -1) return "Go Back";
+                        
+                        string status = r.IsHidden ? "[red](HIDDEN)[/]" : "[green](VISIBLE)[/]";
+                        // shorten comment if too long
+                        string shortComment = r.Comment.Length > 40 ? r.Comment.Substring(0, 37) + "..." : r.Comment;
+                        
+                        return $"{status} {r.ReviewerName} - {shortComment}";
+                    });
+
+                foreach (var r in reviews) reviewPrompt.AddChoice(r);
+                reviewPrompt.AddChoice(new ReviewModel { Id = -1 });
+
+                var selectedReview = AnsiConsole.Prompt(reviewPrompt);
+                if (selectedReview.Id == -1) break; // Go back to game selection
+
+                // Show action menu for the selected review
+                var actionChoice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("What do you want to do?")
+                        .AddChoices(
+                            selectedReview.IsHidden ? "Unhide Review" : "Hide Review",
+                            "Delete Review",
+                            "Go Back"
+                        )
+                        .HighlightStyle(new Style(foreground: Color.Yellow))
+                );
+
+                if (actionChoice == "Go Back")
+                {
+                    continue;
+                }
+                else if (actionChoice.Contains("Hide"))
+                {
+                    // Toggle the visibility
+                    _reviewLogic.ToggleReviewVisibility(selectedReview.Id);
+                    bool isNowHidden = !selectedReview.IsHidden;
+                    AnsiConsole.MarkupLine($"\n[green]Review is now {(isNowHidden ? "[red]HIDDEN[/]" : "[green]VISIBLE[/]")}.[/]");
+                    SoundEffects.PlayMenuClick();
+                    Thread.Sleep(1000);
+                }
+                else if (actionChoice == "Delete Review")
+                {
+                    // Confirm deletion
+                    var confirmDelete = AnsiConsole.Confirm("[red]Are you sure you want to delete this review?[/]", false);
+                    if (confirmDelete)
+                    {
+                        try
+                        {
+                            _reviewLogic.DeleteReviewWithAuth(
+                                CurrentUserModel.CurrentUser!.Id,
+                                CurrentUserModel.CurrentUser!.Role,
+                                selectedReview.Id,
+                                selectedGame.Id
+                            );
+                            AnsiConsole.MarkupLine("[green]Review deleted successfully![/]");
+                            SoundEffects.PlayMenuClick();
+                            Thread.Sleep(1000);
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+                            SoundEffects.PlayErrorSound();
+                            Thread.Sleep(1500);
+                        }
+                    }
+                    else
+                    {
+                        AnsiConsole.MarkupLine("[yellow]Deletion cancelled.[/]");
+                        SoundEffects.PlayErrorSound();
+                        Thread.Sleep(1000);
+                    }
+                }
+            }
+        }
     }
 
     private static void Logout()

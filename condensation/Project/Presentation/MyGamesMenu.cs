@@ -1,5 +1,6 @@
 using Spectre.Console;
 using System.Globalization;
+using System.Threading;
 
 public static class MyGamesMenu
 {
@@ -130,11 +131,22 @@ public static class MyGamesMenu
             string reviewAction = ownReview == null
                 ? Texts.Get("MyGames_LeaveReview")
                 : Texts.Get("MyGames_EditReview");
+            var choices = new List<string>();
+            if (ownReview == null)
+            {
+                choices.Add(Texts.Get("MyGames_LeaveReview"));
+            }
+            else
+            {
+                choices.Add(Texts.Get("MyGames_EditReview"));
+                choices.Add(Texts.Get("MyGames_DeleteReview"));
+            }
+            choices.Add(Texts.Get("MyGames_Back"));
 
             var action = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title($"[bold]{Texts.Get("Game_WhatWouldYouLikeToDo")}[/]")
-                    .AddChoices(reviewAction, Texts.Get("MyGames_Back"))
+                    .AddChoices(choices)
                     .HighlightStyle(new Style(foreground: Color.Green))
             );
             SoundEffects.PlayMenuClick();
@@ -144,6 +156,33 @@ public static class MyGamesMenu
 
             // Open the review form for creating or editing the user's review
             LeaveOrEditReview(game.Id, customerId, ownReview);
+            if (action == Texts.Get("MyGames_LeaveReview") || action == Texts.Get("MyGames_EditReview"))
+            {
+                LeaveOrEditReview(game.Id, customerId, ownReview);
+            }
+            else if (action == Texts.Get("MyGames_DeleteReview"))
+            {
+                if (AnsiConsole.Confirm($"[red]{Texts.Get("MyGames_DeleteConfirm")}[/]"))
+                {
+                    try
+                    {
+                        _reviewLogic.DeleteReviewWithAuth(
+                            customerId,
+                            (int)CurrentUserModel.CurrentUser!.Role,
+                            ownReview!.Id,
+                            game.Id
+                        );
+                        AnsiConsole.MarkupLine($"[green]{Texts.Get("MyGames_ReviewDeleted")}[/]");
+                        SoundEffects.PlayMenuClick();
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        AnsiConsole.MarkupLine($"[red]{Markup.Escape(ex.Message)}[/]");
+                        SoundEffects.PlayErrorSound();
+                    }
+                    Thread.Sleep(1000);
+                }
+            }
         }
     }
 
@@ -216,6 +255,7 @@ public static class MyGamesMenu
                 ReviewerName = ownReview?.ReviewerName ?? CurrentUserModel.CurrentUser?.FirstName ?? "Unknown",
 
                 CreatedAt = ownReview?.CreatedAt ?? DateTime.UtcNow,
+                ReviewerName = ownReview?.ReviewerName ?? CurrentUserModel.CurrentUser?.FirstName ?? "Unknown"
             });
 
             AnsiConsole.MarkupLine($"[green]{Texts.Get("MyGames_ReviewSaved")}[/]");
