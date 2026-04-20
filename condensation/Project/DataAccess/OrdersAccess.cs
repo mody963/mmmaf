@@ -10,53 +10,41 @@ public class OrdersAccess
         using var connection = new NpgsqlConnection(ConnectionString);
         connection.Open();
 
-        using var transaction = connection.BeginTransaction();
+        const string orderSql = @"
+            INSERT INTO orders (customer_id, total_price)
+            VALUES (@CustomerId, @TotalPrice)
+            RETURNING id;";
 
-        try
+        int orderId = connection.ExecuteScalar<int>(orderSql, new
         {
-            const string orderSql = @"
-                INSERT INTO orders (customer_id, total_price)
-                VALUES (@CustomerId, @TotalPrice)
-                RETURNING id;";
+            CustomerId = customerId,
+            TotalPrice = totalPrice
+        });
 
-            int orderId = connection.ExecuteScalar<int>(orderSql, new
-            {
-                CustomerId = customerId,
-                TotalPrice = totalPrice
-            },
-                transaction
+        const string orderGameSql = @"
+            INSERT INTO order_games (game_id, order_id, quantity)
+            VALUES (@GameId, @OrderId, @Quantity);";
+
+        foreach (var item in items)
+        {
+            connection.Execute(
+                orderGameSql,
+                new
+                {
+                    GameId = item.id,
+                    OrderId = orderId,
+                    Quantity = 1
+                }
             );
-
-            const string orderGameSql = @"
-                INSERT INTO order_games (game_id, order_id, quantity)
-                VALUES (@GameId, @OrderId, @Quantity);";
-
-            foreach (var item in items)
-            {
-                connection.Execute(
-                    orderGameSql,
-                    new
-                    {
-                        GameId = item.id,
-                        OrderId = orderId,
-                        Quantity = 1
-                    },
-                    transaction
-                );
-            }
-
-            transaction.Commit();
-            return orderId;
         }
-        catch
-        {
-            transaction.Rollback();
-            throw;
-        }
+
+        return orderId;
     }
+
     public List<GameModel> GetOwnedGamesByCustomerId(int customerId)
     {
         using var connection = new NpgsqlConnection(ConnectionString);
+
         const string sql = @"
             SELECT DISTINCT g.*
             FROM orders o
@@ -71,6 +59,7 @@ public class OrdersAccess
     public bool HasPurchasedGame(int customerId, int gameId)
     {
         using var connection = new NpgsqlConnection(ConnectionString);
+
         const string sql = @"
             SELECT EXISTS (
                 SELECT 1
@@ -80,6 +69,10 @@ public class OrdersAccess
                   AND og.game_id = @GameId
             );";
 
-        return connection.ExecuteScalar<bool>(sql, new { CustomerId = customerId, GameId = gameId });
+        return connection.ExecuteScalar<bool>(sql, new
+        {
+            CustomerId = customerId,
+            GameId = gameId
+        });
     }
 }
