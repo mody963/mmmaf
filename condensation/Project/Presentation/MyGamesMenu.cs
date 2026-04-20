@@ -151,11 +151,8 @@ public static class MyGamesMenu
             );
             SoundEffects.PlayMenuClick();
 
-            if (action == Texts.Get("MyGames_Back"))
-                return;
+            if (action == Texts.Get("MyGames_Back")) return;
 
-            // Open the review form for creating or editing the user's review
-            LeaveOrEditReview(game.Id, customerId, ownReview);
             if (action == Texts.Get("MyGames_LeaveReview") || action == Texts.Get("MyGames_EditReview"))
             {
                 LeaveOrEditReview(game.Id, customerId, ownReview);
@@ -252,7 +249,6 @@ public static class MyGamesMenu
                 Comment = comment,
                 Rating = rating,
                 // Preserve name on edit, otherwise use current user or unknown if something is wrong with the user data
-                ReviewerName = ownReview?.ReviewerName ?? CurrentUserModel.CurrentUser?.FirstName ?? "Unknown",
 
                 CreatedAt = ownReview?.CreatedAt ?? DateTime.UtcNow,
                 ReviewerName = ownReview?.ReviewerName ?? CurrentUserModel.CurrentUser?.FirstName ?? "Unknown"

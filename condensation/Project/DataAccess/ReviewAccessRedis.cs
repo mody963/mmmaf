@@ -55,13 +55,14 @@ public class ReviewAccess : IReviewAccess
             {
                 var review = JsonSerializer.Deserialize<ReviewModel>(value!);
 
-                if (review != null && review.CustomerId == customerId)
+                if (review != null && review.CustomerId == customerId && !review.IsHidden)
                     return review;
             }
         }
 
         return null;
     }
+    
     public List<ReviewModel> GetReviewsForGame(int gameId)
     {
         // string gameKey = $"game:{gameId}:reviews";
