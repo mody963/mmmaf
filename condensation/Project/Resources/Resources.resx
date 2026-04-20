@@ -457,6 +457,18 @@
     <value>Your review has been saved.</value>
     <comment/>
   </data>
+  <data name="MyGames_DeleteReview" xml:space="preserve">
+    <value>Delete Review</value>
+    <comment/>
+  </data>
+  <data name="MyGames_DeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete your review?</value>
+    <comment/>
+  </data>
+  <data name="MyGames_ReviewDeleted" xml:space="preserve">
+    <value>Review has been deleted.</value>
+    <comment/>
+  </data>
   <data name="Game_SearchHeader" xml:space="preserve">
     <value>--- Search for a game ---</value>
     <comment/>

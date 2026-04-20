@@ -1,4 +1,5 @@
 using Spectre.Console;
+using System.Threading;
 
 public static class MyGamesMenu
 {
@@ -108,14 +109,23 @@ public static class MyGamesMenu
 
             AnsiConsole.WriteLine();
             var ownReview = _reviewLogic.GetCustomerReviewForGame(customerId, game.Id);
-            string reviewAction = ownReview == null
-                ? Texts.Get("MyGames_LeaveReview")
-                : Texts.Get("MyGames_EditReview");
+
+            var choices = new List<string>();
+            if (ownReview == null)
+            {
+                choices.Add(Texts.Get("MyGames_LeaveReview"));
+            }
+            else
+            {
+                choices.Add(Texts.Get("MyGames_EditReview"));
+                choices.Add(Texts.Get("MyGames_DeleteReview"));
+            }
+            choices.Add(Texts.Get("MyGames_Back"));
 
             var action = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title($"[bold]{Texts.Get("Game_WhatWouldYouLikeToDo")}[/]")
-                    .AddChoices(reviewAction, Texts.Get("MyGames_Back"))
+                    .AddChoices(choices)
                     .HighlightStyle(new Style(foreground: Color.Green))
             );
             SoundEffects.PlayMenuClick();
@@ -123,7 +133,33 @@ public static class MyGamesMenu
             if (action == Texts.Get("MyGames_Back"))
                 return;
 
-            LeaveOrEditReview(game.Id, customerId, ownReview);
+            if (action == Texts.Get("MyGames_LeaveReview") || action == Texts.Get("MyGames_EditReview"))
+            {
+                LeaveOrEditReview(game.Id, customerId, ownReview);
+            }
+            else if (action == Texts.Get("MyGames_DeleteReview"))
+            {
+                if (AnsiConsole.Confirm($"[red]{Texts.Get("MyGames_DeleteConfirm")}[/]"))
+                {
+                    try
+                    {
+                        _reviewLogic.DeleteReviewWithAuth(
+                            customerId,
+                            (int)CurrentUserModel.CurrentUser!.Role,
+                            ownReview!.Id,
+                            game.Id
+                        );
+                        AnsiConsole.MarkupLine($"[green]{Texts.Get("MyGames_ReviewDeleted")}[/]");
+                        SoundEffects.PlayMenuClick();
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        AnsiConsole.MarkupLine($"[red]{Markup.Escape(ex.Message)}[/]");
+                        SoundEffects.PlayErrorSound();
+                    }
+                    Thread.Sleep(1000);
+                }
+            }
         }
     }
 
@@ -167,48 +203,5 @@ public static class MyGamesMenu
         }
 
         Console.ReadKey(true);
-    }
-
-
-    private static void ManageExistingReview(int customerId, int gameId, ReviewModel ownReview)
-    {
-        AnsiConsole.Clear();
-        AnsiConsole.MarkupLine($"[bold yellow]Je hebt al een review geschreven voor deze game.[/]");
-        
-        var action = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title("Wat wil je doen?")
-                .AddChoices("Update Review", "Delete Review", "Back")
-        );
-
-        switch (action)
-        {
-            case "Update Review":
-                LeaveOrEditReview(gameId, customerId, ownReview);
-                break;
-
-            case "Delete Review":
-                if (AnsiConsole.Confirm("[red]Weet je zeker dat je jouw review wilt verwijderen?[/]"))
-                {
-                    try
-                    {
-                        _reviewLogic.DeleteReviewWithAuth(
-                            customerId,
-                            CurrentUserModel.CurrentUser!.Role,
-                            ownReview.Id,
-                            gameId
-                        );
-                        AnsiConsole.MarkupLine("[green]Review is verwijderd.[/]");
-                        SoundEffects.PlayMenuClick();
-                    }
-                    catch (UnauthorizedAccessException ex)
-                    {
-                        AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
-                        SoundEffects.PlayErrorSound();
-                    }
-                    Thread.Sleep(1000);
-                }
-                break;
-        }
     }
 }

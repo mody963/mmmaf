@@ -4,11 +4,13 @@ using System.Text.Json;
 public class ReviewAccess : IReviewAccess
 {
     private readonly IDatabase _db;
+    private readonly OrdersAccess _ordersAccess;
 
     public ReviewAccess()
     {
         var redis = ConnectionMultiplexer.Connect(AppConfig.RedisConnectionString);
         _db = redis.GetDatabase();
+        _ordersAccess = new OrdersAccess();
     }
 
     // STEP 1: Save (Upsert)
@@ -105,7 +107,7 @@ public class ReviewAccess : IReviewAccess
 
     public bool HasPurchasedGame(int customerId, int gameId)
     {
-        throw new NotImplementedException(); // still using Postgres later
+        return _ordersAccess.HasPurchasedGame(customerId, gameId);
     }
 
     public List<GameModel> GetOwnedGamesByCustomerId(int customerId)
