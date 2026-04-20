@@ -102,15 +102,6 @@ public class ReviewLogic
     {
         _reviewAccess.DeleteReview(reviewId, gameId);
     }
-
-    /// <summary>
-    /// Validates if a user can delete a review based on their role and permissions.
-    /// </summary>
-    /// <param name="userId">Current user's ID</param>
-    /// <param name="userRole">Current user's role (0=Customer, 1=Admin, 2=Publisher)</param>
-    /// <param name="reviewId">Review to delete</param>
-    /// <param name="gameId">Game the review belongs to</param>
-    /// <exception cref="UnauthorizedAccessException">Thrown if user doesn't have permission</exception>
     public void DeleteReviewWithAuth(int userId, int userRole, int reviewId, int gameId)
     {
         // Admin (role 1) can delete any review

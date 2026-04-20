@@ -289,7 +289,6 @@ public static class PublisherMenu
                 reviewPrompt.AddChoice(r);
             }
 
-            // Add navigation options
             if (currentPage > 0)
                 reviewPrompt.AddChoice(new ReviewModel { Id = -2, ReviewerName = "← Previous Page" });
             if (currentPage < totalPages - 1)
@@ -313,8 +312,6 @@ public static class PublisherMenu
                 SoundEffects.PlayMenuClick();
                 continue;
             }
-
-            // Show review details and deletion option
             AnsiConsole.Clear();
             var panel = new Panel(
                 $"[bold]{Markup.Escape(selectedReview.ReviewerName)}[/]\n" +

@@ -191,7 +191,6 @@ public static class MyGamesMenu
                 CustomerId = customerId,
                 Rating = rating,
                 Comment = comment,
-                // Preserve the reviewer name if editing, or set it if new
                 ReviewerName = ownReview?.ReviewerName ?? CurrentUserModel.CurrentUser?.FirstName ?? "Unknown"
             });
 
