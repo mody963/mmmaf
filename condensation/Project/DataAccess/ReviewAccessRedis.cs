@@ -13,7 +13,6 @@ public class ReviewAccess : IReviewAccess
         _ordersAccess = new OrdersAccess();
     }
 
-    // STEP 1: Save (Upsert)
     public void UpsertReview(ReviewModel review)
     {
         // 1. Generate a new ID if this is a brand new review
@@ -97,12 +96,12 @@ public class ReviewAccess : IReviewAccess
         string gameKey = $"game:{gameId}:reviews";
         string gameSortedKey = $"game:{gameId}:reviews:sorted";
 
-        // 1. Remove the JSON object
+        // Remove the JSON object
         _db.KeyDelete(reviewKey);
 
-        // 2. Remove the ID from the game's index list
+        // Remove the ID from the game's index list
         _db.SetRemove(gameKey, reviewId);
-        // 3 delete the id from sorted set
+        // delete the id from sorted set
         _db.SortedSetRemove(gameSortedKey, reviewId);
     }
 
