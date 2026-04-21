@@ -55,7 +55,7 @@ public class ReviewAccess : IReviewAccess
             {
                 var review = JsonSerializer.Deserialize<ReviewModel>(value!);
 
-                if (review != null && review.CustomerId == customerId && !review.IsHidden)
+                if (review != null && review.CustomerId == customerId)
                     return review;
             }
         }

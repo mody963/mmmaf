@@ -21,7 +21,8 @@ public static class AdminMenu
                         Texts.Get("Update_Game"),
                         Texts.Get("Delete_Game"),
                         "Approve Publishers",
-                        "Moderate Reviews",
+                        "Toggle Review Visibility", 
+                        "Delete Review",
                         Texts.Get("Admin_Analytics"),
                         Texts.Get("Log_Out")
                     )
@@ -50,8 +51,11 @@ public static class AdminMenu
                 case "Approve Publishers":
                     ApprovePublishersMenu();
                     break;
-                case "Moderate Reviews":
+                case "Toggle Review Visibility":
                     ModerateReviewsMenu();
+                    break;
+                case "Delete Review":
+                    DeleteReviewAdminMenu();
                     break;
                 case var c when c == Texts.Get("Log_Out"):
                     Logout();
@@ -279,23 +283,20 @@ public static class AdminMenu
         while (true)
         {
             AnsiConsole.Clear();
-            AnsiConsole.MarkupLine("[bold cyan]--- Moderate Reviews ---[/]\n");
+            AnsiConsole.MarkupLine("[bold cyan]--- Toggle Review Visibility ---[/]\n");
 
-            // Select a Game
             var games = _gameLogic.GetAllGames();
-            
             var gamePrompt = new SelectionPrompt<GameModel>()
                 .Title("Select a [green]Game[/] to view its reviews:")
                 .UseConverter(g => g.Id == -1 ? "Go Back" : g.Title)
                 .HighlightStyle(new Style(foreground: Color.Cyan));
 
             foreach (var g in games) gamePrompt.AddChoice(g);
-            gamePrompt.AddChoice(new GameModel { Id = -1 }); // Back option
+            gamePrompt.AddChoice(new GameModel { Id = -1 });
 
             var selectedGame = AnsiConsole.Prompt(gamePrompt);
-            if (selectedGame.Id == -1) return; // Exit to main admin menu
+            if (selectedGame.Id == -1) return; 
 
-            // Manage Reviews for the Game
             while (true)
             {
                 AnsiConsole.Clear();
@@ -310,82 +311,87 @@ public static class AdminMenu
                     break;
                 }
 
-                // menu to show if review is currently hidden or visible
                 var reviewPrompt = new SelectionPrompt<ReviewModel>()
-                    .Title("Select a review to manage:")
+                    .Title("Select a review to instantly [yellow]Hide[/] or [green]Unhide[/]:")
                     .UseConverter(r => 
                     {
                         if (r.Id == -1) return "Go Back";
-                        
                         string status = r.IsHidden ? "[red](HIDDEN)[/]" : "[green](VISIBLE)[/]";
-                        // shorten comment if too long
                         string shortComment = r.Comment.Length > 40 ? r.Comment.Substring(0, 37) + "..." : r.Comment;
-                        
-                        return $"{status} {r.ReviewerName} - {shortComment}";
+                        return $"{status} [grey](ID:{r.Id})[/] {Markup.Escape(r.ReviewerName)} - {Markup.Escape(shortComment)}";
                     });
 
                 foreach (var r in reviews) reviewPrompt.AddChoice(r);
                 reviewPrompt.AddChoice(new ReviewModel { Id = -1 });
 
                 var selectedReview = AnsiConsole.Prompt(reviewPrompt);
-                if (selectedReview.Id == -1) break; // Go back to game selection
+                if (selectedReview.Id == -1) break; 
 
-                // Show action menu for the selected review
-                var actionChoice = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
-                        .Title("What do you want to do?")
-                        .AddChoices(
-                            selectedReview.IsHidden ? "Unhide Review" : "Hide Review",
-                            "Delete Review",
-                            "Go Back"
-                        )
-                        .HighlightStyle(new Style(foreground: Color.Yellow))
-                );
+                // --- INSTANT TOGGLE (No extra menu!) ---
+                _reviewLogic.ToggleReviewVisibility(selectedReview.Id);
+                
+                bool isNowHidden = !selectedReview.IsHidden; 
+                AnsiConsole.MarkupLine($"\n[green]Review is now {(isNowHidden ? "[red]HIDDEN[/]" : "[green]VISIBLE[/]")}.[/]");
+                SoundEffects.PlayMenuClick();
+                Thread.Sleep(1000);
+            }
+        }
+    }
+    private static void DeleteReviewAdminMenu()
+    {
+        while (true)
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[bold red]--- Delete Reviews (Admin) ---[/]\n");
 
-                if (actionChoice == "Go Back")
+            var games = _gameLogic.GetAllGames();
+            var gamePrompt = new SelectionPrompt<GameModel>()
+                .Title("Select a [green]Game[/] to view its reviews:")
+                .UseConverter(g => g.Id == -1 ? "Go Back" : g.Title)
+                .HighlightStyle(new Style(foreground: Color.Red));
+
+            foreach (var g in games) gamePrompt.AddChoice(g);
+            gamePrompt.AddChoice(new GameModel { Id = -1 });
+
+            var selectedGame = AnsiConsole.Prompt(gamePrompt);
+            if (selectedGame.Id == -1) return;
+
+            while (true)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine($"[bold red]--- Deleting from: {selectedGame.Title} ---[/]\n");
+
+                var reviews = _reviewLogic.GetAllReviewsForGameAdmin(selectedGame.Id);
+                if (reviews.Count == 0)
                 {
-                    continue;
+                    AnsiConsole.MarkupLine("[yellow]There are no reviews for this game yet.[/]");
+                    Console.ReadKey(true);
+                    break;
                 }
-                else if (actionChoice.Contains("Hide"))
+
+                var reviewPrompt = new SelectionPrompt<ReviewModel>()
+                    .Title("Select a review to [red]PERMANENTLY DELETE[/]:")
+                    .UseConverter(r => 
+                    {
+                        if (r.Id == -1) return "Go Back";
+                        string status = r.IsHidden ? "[red](HIDDEN)[/]" : "[green](VISIBLE)[/]";
+                        string shortComment = r.Comment.Length > 40 ? r.Comment.Substring(0, 37) + "..." : r.Comment;
+                        return $"{status} [grey](ID:{r.Id})[/] {Markup.Escape(r.ReviewerName)} - {Markup.Escape(shortComment)}";
+                    });
+
+                foreach (var r in reviews) reviewPrompt.AddChoice(r);
+                reviewPrompt.AddChoice(new ReviewModel { Id = -1 });
+
+                var selectedReview = AnsiConsole.Prompt(reviewPrompt);
+                if (selectedReview.Id == -1) break;
+
+                if (AnsiConsole.Confirm($"[red]Are you SURE you want to delete this review by {Markup.Escape(selectedReview.ReviewerName)}?[/]", false))
                 {
-                    // Toggle the visibility
-                    _reviewLogic.ToggleReviewVisibility(selectedReview.Id);
-                    bool isNowHidden = !selectedReview.IsHidden;
-                    AnsiConsole.MarkupLine($"\n[green]Review is now {(isNowHidden ? "[red]HIDDEN[/]" : "[green]VISIBLE[/]")}.[/]");
+                    // Call standard Delete (Admins bypass auth in this specific menu)
+                    _reviewLogic.DeleteReview(selectedReview.Id, selectedGame.Id);
+                    AnsiConsole.MarkupLine("\n[green]Review permanently deleted![/]");
                     SoundEffects.PlayMenuClick();
-                    Thread.Sleep(1000);
-                }
-                else if (actionChoice == "Delete Review")
-                {
-                    // Confirm deletion
-                    var confirmDelete = AnsiConsole.Confirm("[red]Are you sure you want to delete this review?[/]", false);
-                    if (confirmDelete)
-                    {
-                        try
-                        {
-                            _reviewLogic.DeleteReviewWithAuth(
-                                CurrentUserModel.CurrentUser!.Id,
-                                CurrentUserModel.CurrentUser!.Role,
-                                selectedReview.Id,
-                                selectedGame.Id
-                            );
-                            AnsiConsole.MarkupLine("[green]Review deleted successfully![/]");
-                            SoundEffects.PlayMenuClick();
-                            Thread.Sleep(1000);
-                        }
-                        catch (UnauthorizedAccessException ex)
-                        {
-                            AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
-                            SoundEffects.PlayErrorSound();
-                            Thread.Sleep(1500);
-                        }
-                    }
-                    else
-                    {
-                        AnsiConsole.MarkupLine("[yellow]Deletion cancelled.[/]");
-                        SoundEffects.PlayErrorSound();
-                        Thread.Sleep(1000);
-                    }
+                    Thread.Sleep(1200);
                 }
             }
         }
