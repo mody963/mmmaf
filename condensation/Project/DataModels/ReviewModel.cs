@@ -23,7 +23,6 @@ public class ReviewModel
     public int Rating { get; set; } // Must be 1-5
     
     public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
     public string ReviewerName { get; set; } = string.Empty;
     
     // New field for the Admin requirement
