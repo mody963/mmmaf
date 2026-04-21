@@ -33,7 +33,7 @@ public class ReviewAccess : IReviewAccess
         // Save review by ID
         _db.StringSet(reviewKey, json);
 
-        // Index it under the game so we can easily fetch all reviews for a game
+        // Index for akses e
         _db.SetAdd(gameKey, review.Id);
 
         // add to sorted set using timestamp as score
