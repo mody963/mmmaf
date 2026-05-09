@@ -56,6 +56,7 @@ var mongoDb = new MongoDb(
 );
 
 await mongoDb.TestConnectionAsync();
+AppConfig.MongoDb = mongoDb;
 
 var uiSoundPlayer = new UiSoundPlayer(AppContext.BaseDirectory);
 SoundEffects.Configure(uiSoundPlayer);
