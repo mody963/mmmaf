@@ -453,10 +453,16 @@ public static class AdminMenu
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine("[bold cyan]--- Search Order by Number ---[/]\n");
 
-            string orderNumber = AnsiConsole.Prompt(new TextPrompt<string>("Enter Order Number:"));
+            int orderId = AnsiConsole.Prompt(new TextPrompt<int>("Enter Order ID (just the number, e.g. 254):"));
             SoundEffects.PlayMenuClick();
 
-            var order = _orderLogic.GetOrderDocumentAsync(orderNumber).Result;
+            OrderDocumentModel order = null;
+            for (int daysBack = 0; daysBack <= 30; daysBack++)
+            {
+                string orderNumber = $"ORD-{DateTime.Now.AddDays(-daysBack):yyyyMMdd}-{orderId}";
+                order = _orderLogic.GetOrderDocumentAsync(orderNumber).Result;
+                if (order != null) break;
+            }
 
             if (order == null)
             {
@@ -476,7 +482,6 @@ public static class AdminMenu
             SoundEffects.PlayErrorSound();
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-            AnsiConsole.MarkupLine($"[grey]{ex.StackTrace}[/]");
             AnsiConsole.MarkupLine("\nPress any key to return...");
             Console.ReadKey(true);
         }
@@ -534,7 +539,6 @@ public static class AdminMenu
             SoundEffects.PlayErrorSound();
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-            AnsiConsole.MarkupLine($"[grey]{ex.StackTrace}[/]");
             AnsiConsole.MarkupLine("\nPress any key to return...");
             Console.ReadKey(true);
         }
