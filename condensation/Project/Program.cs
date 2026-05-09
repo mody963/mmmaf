@@ -20,10 +20,15 @@ string postgresConnectionString = config.GetConnectionString("DefaultConnection"
 if (string.IsNullOrWhiteSpace(postgresConnectionString))
     throw new InvalidOperationException("Connection string 'DefaultConnection' is missing or empty.");
 
+// Set AppConfig for data access layers
+AppConfig.PostgresConnectionString = postgresConnectionString;
+
 string redisConnectionString = config.GetConnectionString("RedisConnection") ?? "";
 
 if (string.IsNullOrWhiteSpace(redisConnectionString))
     throw new InvalidOperationException("Connection string 'RedisConnection' is missing or empty.");
+
+AppConfig.RedisConnectionString = redisConnectionString;
 
 string mongoDbConnectionString = config.GetConnectionString("MongoDbConnection") ?? "";
 string mongoDbDatabaseName = config["MongoDb:DatabaseName"] ?? "";

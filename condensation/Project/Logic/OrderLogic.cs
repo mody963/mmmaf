@@ -52,35 +52,34 @@ public class OrderLogic
         if (_orderDocumentAccess == null)
             throw new InvalidOperationException("OrderDocumentAccess not initialized");
 
-        // 1. Create order in PostgreSQL
         int orderId = _ordersAccess.CreateOrder(customerId, totalPrice, items);
-
-        // 2. Generate unique order number
         string orderNumber = $"ORD-{DateTime.Now:yyyyMMdd}-{orderId}";
-
-        // 3. Create OrderDocument
         var orderDoc = new OrderDocumentModel(customerId, orderNumber, shippingAddress, totalPrice);
 
-        // 4. Add items to order document
         foreach (var cartItem in items)
         {
-            var gameModel = gameModels.FirstOrDefault(g => g.id == cartItem.id);
+            var gameModel = gameModels.FirstOrDefault(g => g.Id == cartItem.id);
             if (gameModel != null)
             {
                 orderDoc.Items.Add(new OrderItemModel(
                     cartItem.id,
-                    gameModel.title,
+                    gameModel.Title,
                     cartItem.Price,
                     1
                 ));
             }
         }
 
-        // 5. Add initial status to history
         orderDoc.StatusHistory.Add(new OrderStatusHistoryModel("Created", DateTime.Now));
 
-        // 6. Save to MongoDB
-        await _orderDocumentAccess.CreateOrderDocumentAsync(orderDoc);
+        try
+        {
+            await _orderDocumentAccess.CreateOrderDocumentAsync(orderDoc);
+        }
+        catch (Exception mongoEx)
+        {
+            Console.WriteLine($"Warning: Order created in PostgreSQL (ID: {orderId}), but MongoDB save failed: {mongoEx.Message}");
+        }
 
         return (orderId, orderNumber);
     }
