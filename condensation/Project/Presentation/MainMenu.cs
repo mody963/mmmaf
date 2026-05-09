@@ -2,7 +2,6 @@ using System;
 using System.Globalization;
 using System.Threading;
 using Spectre.Console;
-using CondensationApp;
 
 public static class MainMenu
 {

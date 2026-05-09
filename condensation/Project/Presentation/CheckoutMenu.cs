@@ -1,3 +1,4 @@
+
 using Spectre.Console;
 
 public static class CheckoutMenu
@@ -100,7 +101,8 @@ public static class CheckoutMenu
 
         try
         {
-            int orderId = _checkoutLogic.Checkout(customer.Id, items);
+            double totalPrice = items.Sum(item => item.Price);
+            int orderId = _checkoutLogic.Checkout(customer.Id, totalPrice, items);
 
             cart.ClearCart();
 

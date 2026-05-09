@@ -1,7 +1,5 @@
 using Npgsql;
 
-namespace CondensationApp;
-
 public class Database
 {
     private readonly string _connectionString;
