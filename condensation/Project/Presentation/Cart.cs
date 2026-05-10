@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+using MongoDB.Bson;
 using Spectre.Console;
 
 public class Cart
@@ -16,6 +16,17 @@ public class Cart
         }
         else
         {
+            UserActionLogger.Log(
+                actionType: "add_to_cart",
+                objectType: "game",
+                objectId: id.ToString(),
+                details: new BsonDocument
+                {
+                    { "title", name },
+                    { "price", price }
+                }
+            );
+
             AnsiConsole.MarkupLine($"[green]{Texts.Get("Cart_ItemAddedToCart")} {name} {Texts.Get("Cart_ItemAddedToCartEnd")}{price:F2}.[/]");
             SoundEffects.PlayKaching();
             Console.ReadKey(true);
@@ -24,7 +35,26 @@ public class Cart
 
     public void RemoveFromCart(string name)
     {
+        var item = _cartLogic.GetCartItems().FirstOrDefault(i => i.Name == name);
+
         _cartLogic.RemoveFromCart(name);
+
+        var details = new BsonDocument
+        {
+            { "title", name }
+        };
+
+        if (item != null)
+        {
+            details.Add("price", item.Price);
+        }
+
+        UserActionLogger.Log(
+            actionType: "remove_from_cart",
+            objectType: "game",
+            objectId: item == null ? null : item.id.ToString(),
+            details: details
+        );
     }
 
     public void ClearCart()
@@ -45,10 +75,12 @@ public class Cart
     public void CartOptions()
     {
         var optie = AnsiConsole.Prompt(
-        new SelectionPrompt<string>()
-        .Title($"[bold yellow]{Texts.Get("Cart_SelectOption")}[/]")
-        .AddChoices(Texts.Get("Cart_View"), Texts.Get("Cart_RemoveItem"), Texts.Get("Cart_ClearCart"), _backOption)
-        .HighlightStyle(new Style(foreground: Color.Green)));
+            new SelectionPrompt<string>()
+                .Title($"[bold yellow]{Texts.Get("Cart_SelectOption")}[/]")
+                .AddChoices(Texts.Get("Cart_View"), Texts.Get("Cart_RemoveItem"), Texts.Get("Cart_ClearCart"), _backOption)
+                .HighlightStyle(new Style(foreground: Color.Green))
+        );
+
         SoundEffects.PlayMenuClick();
 
         switch (optie)
@@ -56,6 +88,7 @@ public class Cart
             case var c when c == Texts.Get("Cart_View"):
                 ShowCart();
                 break;
+
             case var c when c == Texts.Get("Cart_RemoveItem"):
                 var items = GetCartItems();
 
@@ -75,6 +108,7 @@ public class Cart
                         .AddChoices(items)
                         .HighlightStyle(new Style(foreground: Color.Red))
                 );
+
                 SoundEffects.PlayMenuClick();
 
                 RemoveFromCart(selectedItem.Name);
@@ -83,11 +117,39 @@ public class Cart
                 Console.ReadKey(true);
 
                 break;
+
             case var c when c == Texts.Get("Cart_ClearCart"):
+                var itemsBeforeClear = GetCartItems();
+
+                var itemDocuments = new BsonArray();
+
+                foreach (var item in itemsBeforeClear)
+                {
+                    itemDocuments.Add(new BsonDocument
+                    {
+                        { "id", item.id },
+                        { "name", item.Name },
+                        { "price", item.Price }
+                    });
+                }
+
                 ClearCart();
+
+                UserActionLogger.Log(
+                    actionType: "clear_cart",
+                    objectType: "cart",
+                    details: new BsonDocument
+                    {
+                        { "itemCount", itemsBeforeClear.Count },
+                        { "total", itemsBeforeClear.Sum(item => item.Price) },
+                        { "items", itemDocuments }
+                    }
+                );
+
                 AnsiConsole.MarkupLine($"[green]{Texts.Get("Cart_Cleared")}[/]");
                 Console.ReadKey(true);
                 break;
+
             case var c when c == _backOption:
                 return;
         }
@@ -110,6 +172,16 @@ public class Cart
             return;
         }
 
+        UserActionLogger.Log(
+            actionType: "view_cart",
+            objectType: "cart",
+            details: new BsonDocument
+            {
+                { "itemCount", items.Count },
+                { "total", totalPrice }
+            }
+        );
+
         var table = new Table()
             .Border(TableBorder.Rounded)
             .Title($"[bold yellow]{Texts.Get("Cart_Title")}[/]")
@@ -124,12 +196,6 @@ public class Cart
                 $"[green]€{item.Price:F2}[/]",
                 item.DateAdded.ToString("dd-MM-yyyy")
             );
-        }
-
-        if (items.Count == 0)
-        {
-            AnsiConsole.MarkupLine($"[red]{Texts.Get("Cart_YourCartIsEmpty")}[/]");
-            return;
         }
 
         AnsiConsole.Write(table);

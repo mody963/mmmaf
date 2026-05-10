@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using Spectre.Console;
 
 public static class CheckoutMenu
@@ -85,6 +86,17 @@ public static class CheckoutMenu
 
         if (customer == null)
         {
+            UserActionLogger.Log(
+                actionType: "error",
+                objectType: "checkout",
+                details: new BsonDocument
+                {
+                    { "message", "No customer profile found for this account." },
+                    { "accountId", account.Id },
+                    { "email", account.Email }
+                }
+            );
+
             SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine("[red]No customer profile found for this account.[/]");
             Pause();
@@ -95,12 +107,42 @@ public static class CheckoutMenu
         ShowReceipt(items, account.Email, customer.PaymentMethod);
 
         bool confirm = AnsiConsole.Confirm("Confirm order?");
+
         if (!confirm)
+        {
             return;
+        }
 
         try
         {
             int orderId = _checkoutLogic.Checkout(customer.Id, items);
+
+            var itemDocuments = new BsonArray();
+
+            foreach (var item in items)
+            {
+                itemDocuments.Add(new BsonDocument
+                {
+                    { "id", item.id },
+                    { "name", item.Name },
+                    { "price", item.Price }
+                });
+            }
+
+            UserActionLogger.Log(
+                actionType: "complete_order",
+                objectType: "order",
+                objectId: orderId.ToString(),
+                details: new BsonDocument
+                {
+                    { "customerId", customer.Id },
+                    { "email", account.Email },
+                    { "paymentMethod", customer.PaymentMethod },
+                    { "itemCount", items.Count },
+                    { "total", items.Sum(item => item.Price) },
+                    { "items", itemDocuments }
+                }
+            );
 
             cart.ClearCart();
 
@@ -112,6 +154,19 @@ public static class CheckoutMenu
         }
         catch (Exception ex)
         {
+            UserActionLogger.LogError(
+                message: "Checkout failed.",
+                source: "CheckoutMenu.CheckoutLoggedIn",
+                exception: ex,
+                details: new BsonDocument
+                {
+                    { "customerId", customer.Id },
+                    { "email", account.Email },
+                    { "itemCount", items.Count },
+                    { "total", items.Sum(item => item.Price) }
+                }
+            );
+
             SoundEffects.PlayErrorSound();
             AnsiConsole.MarkupLine($"[red]Checkout failed:[/] {ex.Message}");
             Pause();
@@ -129,8 +184,11 @@ public static class CheckoutMenu
         ShowReceipt(items, email, paymentMethod);
 
         bool confirm = AnsiConsole.Confirm("Confirm order?");
+
         if (!confirm)
+        {
             return;
+        }
 
         cart.ClearCart();
 
@@ -219,11 +277,12 @@ public static class CheckoutMenu
     private static void ReturnToMainMenu()
     {
         bool returnToMenu = AnsiConsole.Confirm("Return to main menu?");
+
         if (!returnToMenu)
         {
             Pause();
         }
-        
+
         AnsiConsole.Clear();
     }
 

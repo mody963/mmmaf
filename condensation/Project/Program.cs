@@ -6,6 +6,7 @@ using NRedisStack;
 using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 
+
 // Fix euro sign
 Console.OutputEncoding = Encoding.UTF8;
 
@@ -34,6 +35,11 @@ if (string.IsNullOrWhiteSpace(mongoDbConnectionString))
 
 if (string.IsNullOrWhiteSpace(mongoDbDatabaseName))
     throw new InvalidOperationException("MongoDb:DatabaseName is missing or empty.");
+
+AppConfig.PostgresConnectionString = postgresConnectionString;
+AppConfig.RedisConnectionString = redisConnectionString;
+AppConfig.MongoDbConnectionString = mongoDbConnectionString;
+AppConfig.MongoDbDatabaseName = mongoDbDatabaseName;
 
 // Dapper turns game_id into GameId, but our properties are gameId, so we need to tell it to match names with underscores
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
