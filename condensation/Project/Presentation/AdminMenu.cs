@@ -6,6 +6,7 @@ public static class AdminMenu
     private static readonly AccountsLogic _accountsLogic = new AccountsLogic();
     private static readonly PublisherLogic _publisherLogic = new PublisherLogic();
     private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
+
     public static void Start()
     {
         bool exitMenu = false;
@@ -13,6 +14,7 @@ public static class AdminMenu
         while (!exitMenu)
         {
             AnsiConsole.Clear();
+
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title($"[bold green]{Texts.Get("Admin_Menu")}[/]")
@@ -21,7 +23,7 @@ public static class AdminMenu
                         Texts.Get("Update_Game"),
                         Texts.Get("Delete_Game"),
                         "Approve Publishers",
-                        "Toggle Review Visibility", 
+                        "Toggle Review Visibility",
                         "Delete Review",
                         Texts.Get("Admin_Analytics"),
                         Texts.Get("Log_Out")
@@ -46,24 +48,34 @@ public static class AdminMenu
                     break;
 
                 case var c when c == Texts.Get("Admin_Analytics"):
+                    UserActionLogger.Log(
+                        actionType: "open_analytics",
+                        objectType: "admin_menu"
+                    );
+
                     AnalyticsMenu.AdminAnalytics();
                     break;
+
                 case "Approve Publishers":
                     ApprovePublishersMenu();
                     break;
+
                 case "Toggle Review Visibility":
                     ModerateReviewsMenu();
                     break;
+
                 case "Delete Review":
                     DeleteReviewAdminMenu();
                     break;
+
                 case var c when c == Texts.Get("Log_Out"):
                     Logout();
-                    exitMenu = true; // Return to login/main menu
+                    exitMenu = true;
                     break;
             }
         }
     }
+
     internal static void AddGameMenu(int publishersid = -200)
     {
         AnsiConsole.Clear();
@@ -71,12 +83,16 @@ public static class AdminMenu
 
         string title = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Title")}:"));
         SoundEffects.PlayMenuClick();
+
         string description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:"));
         SoundEffects.PlayMenuClick();
+
         double price;
+
         do
         {
             price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:"));
+
             if (price <= 0)
             {
                 SoundEffects.PlayErrorSound();
@@ -87,26 +103,33 @@ public static class AdminMenu
             }
         }
         while (price <= 0);
-        // placeholder for genre, publisher and agerating till they are implemented.
-        int publisherId = publishersid != -200 ? publishersid : AnsiConsole.Prompt(new TextPrompt<int>($"{Texts.Get("Publisher_ID")}:"));
+
+        int publisherId = publishersid != -200
+            ? publishersid
+            : AnsiConsole.Prompt(new TextPrompt<int>($"{Texts.Get("Publisher_ID")}:"));
+
         SoundEffects.PlayMenuClick();
+
         var genres = _gameLogic.GetAllGenres();
-        
+
         var selectedGenre = AnsiConsole.Prompt(
             new SelectionPrompt<GenreModel>()
                 .Title($"{Texts.Get("Select_Genre")}:")
-                .UseConverter(g => g.Name) // Tells the menu to only display the Name text
+                .UseConverter(g => g.Name)
                 .AddChoices(genres)
         );
+
         SoundEffects.PlayMenuClick();
 
         var ageRatings = _gameLogic.GetAllAgeRatings();
+
         var selectedAgeRating = AnsiConsole.Prompt(
             new SelectionPrompt<AgeRatingModel>()
                 .Title($"{Texts.Get("Select_Age_Rating")}:")
                 .UseConverter(a => a.Name)
                 .AddChoices(ageRatings)
         );
+
         SoundEffects.PlayMenuClick();
 
         GameModel newGame = new GameModel
@@ -121,18 +144,48 @@ public static class AdminMenu
 
         _gameLogic.AddGame(newGame);
 
+        UserActionLogger.Log(
+            actionType: "create_game",
+            objectType: "game",
+            details: new Dictionary<string, object?>
+            {
+                ["title"] = title,
+                ["price"] = price,
+                ["publisherId"] = publisherId,
+                ["genreId"] = selectedGenre.Id,
+                ["genreName"] = selectedGenre.Name,
+                ["ageRatingId"] = selectedAgeRating.Id,
+                ["ageRatingName"] = selectedAgeRating.Name
+            }
+        );
+
         AnsiConsole.MarkupLine($"[green]{Texts.Get("Successfully_Added")} '{title}' {Texts.Get("To_The_Database")}![/]");
         AnsiConsole.MarkupLine($"\n{Texts.Get("Press_Any_Key_To_Return")}");
         Console.ReadKey(true);
     }
+
     private static GameModel? SearchAndSelectGame(string action, bool onlyActive = false)
     {
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"\n[bold cyan]--- {action} ---[/]");
-        string searchTitle = AnsiConsole.Prompt(new TextPrompt<string>(Texts.Get("Search_Title"))); 
+
+        string searchTitle = AnsiConsole.Prompt(new TextPrompt<string>(Texts.Get("Search_Title")));
         SoundEffects.PlayMenuClick();
-        
+
+        UserActionLogger.Log(
+            actionType: "search",
+            objectType: "game",
+            details: new Dictionary<string, object?>
+            {
+                ["query"] = searchTitle,
+                ["source"] = "admin_menu",
+                ["adminAction"] = action,
+                ["onlyActive"] = onlyActive
+            }
+        );
+
         var results = _gameLogic.SearchGamesByTitle(searchTitle);
+
         if (onlyActive)
         {
             results = results.Where(g => g.IsActive).ToList();
@@ -145,55 +198,100 @@ public static class AdminMenu
             return null;
         }
 
-        // Let them pick from the search results
         var selectedGame = AnsiConsole.Prompt(
             new SelectionPrompt<GameModel>()
                 .Title($"{Texts.Get("Game_SelectDetails")} {action.ToLower()}")
                 .UseConverter(g => $"{g.Title} (${g.Price}) - Active: {g.IsActive}")
                 .AddChoices(results)
         );
+
         SoundEffects.PlayMenuClick();
+
+        UserActionLogger.Log(
+            actionType: "view_product",
+            objectType: "game",
+            objectId: selectedGame.Id.ToString(),
+            details: new Dictionary<string, object?>
+            {
+                ["title"] = selectedGame.Title,
+                ["price"] = selectedGame.Price,
+                ["source"] = "admin_menu",
+                ["adminAction"] = action
+            }
+        );
+
         return selectedGame;
     }
+
     private static void UpdateGameMenu()
     {
         var game = SearchAndSelectGame("Update a Game");
-        if (game == null) { SoundEffects.PlayErrorSound(); Console.ReadKey(true); return; }
+
+        if (game == null)
+        {
+            SoundEffects.PlayErrorSound();
+            Console.ReadKey(true);
+            return;
+        }
+
+        string oldTitle = game.Title;
+        string oldDescription = game.Description;
+        double oldPrice = game.Price;
+        int oldGenreId = game.GenreId;
+        int oldAgeRatingId = game.AgeRatingId;
+        bool oldIsActive = game.IsActive;
 
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine($"\n[bold yellow]{Texts.Get("Admin_UpdatingGame")} {game.Title}[/]");
         AnsiConsole.MarkupLine($"[grey]{Texts.Get("Admin_PressEnterToKeep")}[/]\n");
 
-        game.Title = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Title")}:").DefaultValue(game.Title));
-        SoundEffects.PlayMenuClick();
-        game.Description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:" ).DefaultValue(game.Description));
-        SoundEffects.PlayMenuClick();
-        game.Price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:" ).DefaultValue(game.Price));
+        game.Title = AnsiConsole.Prompt(
+            new TextPrompt<string>($"{Texts.Get("Title")}:")
+                .DefaultValue(game.Title)
+        );
+
         SoundEffects.PlayMenuClick();
 
-        // Dropdown for Genre
+        game.Description = AnsiConsole.Prompt(
+            new TextPrompt<string>($"{Texts.Get("Description")}:")
+                .DefaultValue(game.Description)
+        );
+
+        SoundEffects.PlayMenuClick();
+
+        game.Price = AnsiConsole.Prompt(
+            new TextPrompt<double>($"{Texts.Get("Price")}:")
+                .DefaultValue(game.Price)
+        );
+
+        SoundEffects.PlayMenuClick();
+
         var genres = _gameLogic.GetAllGenres();
-        var currentGenre = genres.FirstOrDefault(g => g.Id == game.GenreId); // Find the current one
-        
+        var currentGenre = genres.FirstOrDefault(g => g.Id == game.GenreId);
+
         var selectedGenre = AnsiConsole.Prompt(
             new SelectionPrompt<GenreModel>()
                 .Title($"{Texts.Get("Admin_SelectGenreWithCurrent")} [yellow]{currentGenre?.Name}[/]):")
                 .UseConverter(g => g.Name)
                 .AddChoices(genres)
         );
+
         SoundEffects.PlayMenuClick();
+
         game.GenreId = selectedGenre.Id;
 
         var ageRatings = _gameLogic.GetAllAgeRatings();
         var currentAgeRating = ageRatings.FirstOrDefault(a => a.Id == game.AgeRatingId);
-        
+
         var selectedAgeRating = AnsiConsole.Prompt(
             new SelectionPrompt<AgeRatingModel>()
                 .Title($"{Texts.Get("Admin_SelectAgeRatingWithCurrent")} [yellow]{currentAgeRating?.Name}[/]):")
                 .UseConverter(a => a.Name)
                 .AddChoices(ageRatings)
         );
+
         SoundEffects.PlayMenuClick();
+
         game.AgeRatingId = selectedAgeRating.Id;
 
         game.IsActive = AnsiConsole.Confirm(Texts.Get("Admin_GameActivePrompt"), defaultValue: game.IsActive);
@@ -201,30 +299,73 @@ public static class AdminMenu
 
         _gameLogic.UpdateGame(game);
 
+        UserActionLogger.Log(
+            actionType: "update_game",
+            objectType: "game",
+            objectId: game.Id.ToString(),
+            details: new Dictionary<string, object?>
+            {
+                ["oldTitle"] = oldTitle,
+                ["newTitle"] = game.Title,
+                ["oldDescription"] = oldDescription,
+                ["newDescription"] = game.Description,
+                ["oldPrice"] = oldPrice,
+                ["newPrice"] = game.Price,
+                ["oldGenreId"] = oldGenreId,
+                ["newGenreId"] = game.GenreId,
+                ["oldAgeRatingId"] = oldAgeRatingId,
+                ["newAgeRatingId"] = game.AgeRatingId,
+                ["oldIsActive"] = oldIsActive,
+                ["newIsActive"] = game.IsActive
+            }
+        );
+
         AnsiConsole.MarkupLine($"\n[green]{Texts.Get("Admin_SuccessfullyUpdated")} '{game.Title}'![/]");
         AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturn"));
         Console.ReadKey(true);
     }
+
     private static void DeleteGameMenu()
     {
         var game = SearchAndSelectGame(Texts.Get("Admin_DeactivateGame"), true);
-        if (game == null) { SoundEffects.PlayErrorSound(); Console.ReadKey(true); return; }
+
+        if (game == null)
+        {
+            SoundEffects.PlayErrorSound();
+            Console.ReadKey(true);
+            return;
+        }
 
         var confirmed = AnsiConsole.Confirm($"\n{Texts.Get("Admin_ConfirmDeactivate")} '[red]{game.Title}[/]'?");
         SoundEffects.PlayMenuClick();
+
         if (confirmed)
         {
             _gameLogic.SoftDeleteGame(game.Id);
+
+            UserActionLogger.Log(
+                actionType: "delete_game",
+                objectType: "game",
+                objectId: game.Id.ToString(),
+                details: new Dictionary<string, object?>
+                {
+                    ["title"] = game.Title,
+                    ["price"] = game.Price,
+                    ["deleteType"] = "soft_delete"
+                }
+            );
+
             AnsiConsole.MarkupLine($"\n[green]'{game.Title}' {Texts.Get("Admin_GameDeactivated")}[/]");
         }
         else
         {
             AnsiConsole.MarkupLine($"\n[grey]{Texts.Get("Admin_DeactivationCancelled")}[/]");
         }
-        
+
         AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturn"));
         Console.ReadKey(true);
     }
+
     private static void ApprovePublishersMenu()
     {
         AnsiConsole.Clear();
@@ -240,17 +381,15 @@ public static class AdminMenu
             return;
         }
 
-        // We use a dictionary so we can show a nice string in the menu
-        // but still easily grab the actual AccountModel when they select it
         var choices = new Dictionary<string, AccountModel?>();
-        
+
         foreach (var account in pendingAccounts)
         {
             var publisher = _publisherLogic.GetByAccountId(account.Id);
             string displayName = $"{publisher?.StudioName ?? "Unknown Studio"} ({account.Email}) - Rep: {account.FirstName}";
             choices.Add(displayName, account);
         }
-        
+
         choices.Add("Go Back", null);
 
         var choiceStr = AnsiConsole.Prompt(
@@ -259,7 +398,10 @@ public static class AdminMenu
                 .AddChoices(choices.Keys)
         );
 
-        if (choiceStr == "Go Back") return;
+        if (choiceStr == "Go Back")
+        {
+            return;
+        }
 
         var selectedAccount = choices[choiceStr];
 
@@ -267,7 +409,22 @@ public static class AdminMenu
         {
             selectedAccount!.IsActive = true;
             _accountsLogic.UpdateAccount(selectedAccount);
-            
+
+            var publisher = _publisherLogic.GetByAccountId(selectedAccount.Id);
+
+            UserActionLogger.Log(
+                actionType: "approve_publisher",
+                objectType: "account",
+                objectId: selectedAccount.Id.ToString(),
+                details: new Dictionary<string, object?>
+                {
+                    ["email"] = selectedAccount.Email,
+                    ["firstName"] = selectedAccount.FirstName,
+                    ["lastName"] = selectedAccount.LastName,
+                    ["studioName"] = publisher?.StudioName
+                }
+            );
+
             AnsiConsole.MarkupLine("\n[green]Successfully approved publisher![/] They can now log in.");
         }
         else
@@ -278,6 +435,7 @@ public static class AdminMenu
         AnsiConsole.MarkupLine("Press any key to return...");
         Console.ReadKey(true);
     }
+
     private static void ModerateReviewsMenu()
     {
         while (true)
@@ -286,16 +444,36 @@ public static class AdminMenu
             AnsiConsole.MarkupLine("[bold cyan]--- Toggle Review Visibility ---[/]\n");
 
             var games = _gameLogic.GetAllGames();
+
             var gamePrompt = new SelectionPrompt<GameModel>()
                 .Title("Select a [green]Game[/] to view its reviews:")
                 .UseConverter(g => g.Id == -1 ? "Go Back" : g.Title)
                 .HighlightStyle(new Style(foreground: Color.Cyan));
 
-            foreach (var g in games) gamePrompt.AddChoice(g);
+            foreach (var g in games)
+            {
+                gamePrompt.AddChoice(g);
+            }
+
             gamePrompt.AddChoice(new GameModel { Id = -1 });
 
             var selectedGame = AnsiConsole.Prompt(gamePrompt);
-            if (selectedGame.Id == -1) return; 
+
+            if (selectedGame.Id == -1)
+            {
+                return;
+            }
+
+            UserActionLogger.Log(
+                actionType: "view_product",
+                objectType: "game",
+                objectId: selectedGame.Id.ToString(),
+                details: new Dictionary<string, object?>
+                {
+                    ["title"] = selectedGame.Title,
+                    ["source"] = "review_moderation"
+                }
+            );
 
             while (true)
             {
@@ -313,30 +491,58 @@ public static class AdminMenu
 
                 var reviewPrompt = new SelectionPrompt<ReviewModel>()
                     .Title("Select a review to instantly [yellow]Hide[/] or [green]Unhide[/]:")
-                    .UseConverter(r => 
+                    .UseConverter(r =>
                     {
-                        if (r.Id == -1) return "Go Back";
+                        if (r.Id == -1)
+                        {
+                            return "Go Back";
+                        }
+
                         string status = r.IsHidden ? "[red](HIDDEN)[/]" : "[green](VISIBLE)[/]";
                         string shortComment = r.Comment.Length > 40 ? r.Comment.Substring(0, 37) + "..." : r.Comment;
+
                         return $"{status} [grey](ID:{r.Id})[/] {Markup.Escape(r.ReviewerName)} - {Markup.Escape(shortComment)}";
                     });
 
-                foreach (var r in reviews) reviewPrompt.AddChoice(r);
+                foreach (var r in reviews)
+                {
+                    reviewPrompt.AddChoice(r);
+                }
+
                 reviewPrompt.AddChoice(new ReviewModel { Id = -1 });
 
                 var selectedReview = AnsiConsole.Prompt(reviewPrompt);
-                if (selectedReview.Id == -1) break; 
 
-                // --- INSTANT TOGGLE (No extra menu!) ---
+                if (selectedReview.Id == -1)
+                {
+                    break;
+                }
+
                 _reviewLogic.ToggleReviewVisibility(selectedReview.Id);
-                
-                bool isNowHidden = !selectedReview.IsHidden; 
+
+                bool isNowHidden = !selectedReview.IsHidden;
+
+                UserActionLogger.Log(
+                    actionType: isNowHidden ? "hide_review" : "unhide_review",
+                    objectType: "review",
+                    objectId: selectedReview.Id.ToString(),
+                    details: new Dictionary<string, object?>
+                    {
+                        ["gameId"] = selectedGame.Id,
+                        ["gameTitle"] = selectedGame.Title,
+                        ["reviewerName"] = selectedReview.ReviewerName,
+                        ["wasHidden"] = selectedReview.IsHidden,
+                        ["isHidden"] = isNowHidden
+                    }
+                );
+
                 AnsiConsole.MarkupLine($"\n[green]Review is now {(isNowHidden ? "[red]HIDDEN[/]" : "[green]VISIBLE[/]")}.[/]");
                 SoundEffects.PlayMenuClick();
                 Thread.Sleep(1000);
             }
         }
     }
+
     private static void DeleteReviewAdminMenu()
     {
         while (true)
@@ -345,16 +551,36 @@ public static class AdminMenu
             AnsiConsole.MarkupLine("[bold red]--- Delete Reviews (Admin) ---[/]\n");
 
             var games = _gameLogic.GetAllGames();
+
             var gamePrompt = new SelectionPrompt<GameModel>()
                 .Title("Select a [green]Game[/] to view its reviews:")
                 .UseConverter(g => g.Id == -1 ? "Go Back" : g.Title)
                 .HighlightStyle(new Style(foreground: Color.Red));
 
-            foreach (var g in games) gamePrompt.AddChoice(g);
+            foreach (var g in games)
+            {
+                gamePrompt.AddChoice(g);
+            }
+
             gamePrompt.AddChoice(new GameModel { Id = -1 });
 
             var selectedGame = AnsiConsole.Prompt(gamePrompt);
-            if (selectedGame.Id == -1) return;
+
+            if (selectedGame.Id == -1)
+            {
+                return;
+            }
+
+            UserActionLogger.Log(
+                actionType: "view_product",
+                objectType: "game",
+                objectId: selectedGame.Id.ToString(),
+                details: new Dictionary<string, object?>
+                {
+                    ["title"] = selectedGame.Title,
+                    ["source"] = "review_delete_menu"
+                }
+            );
 
             while (true)
             {
@@ -362,6 +588,7 @@ public static class AdminMenu
                 AnsiConsole.MarkupLine($"[bold red]--- Deleting from: {selectedGame.Title} ---[/]\n");
 
                 var reviews = _reviewLogic.GetAllReviewsForGameAdmin(selectedGame.Id);
+
                 if (reviews.Count == 0)
                 {
                     AnsiConsole.MarkupLine("[yellow]There are no reviews for this game yet.[/]");
@@ -371,24 +598,50 @@ public static class AdminMenu
 
                 var reviewPrompt = new SelectionPrompt<ReviewModel>()
                     .Title("Select a review to [red]PERMANENTLY DELETE[/]:")
-                    .UseConverter(r => 
+                    .UseConverter(r =>
                     {
-                        if (r.Id == -1) return "Go Back";
+                        if (r.Id == -1)
+                        {
+                            return "Go Back";
+                        }
+
                         string status = r.IsHidden ? "[red](HIDDEN)[/]" : "[green](VISIBLE)[/]";
                         string shortComment = r.Comment.Length > 40 ? r.Comment.Substring(0, 37) + "..." : r.Comment;
+
                         return $"{status} [grey](ID:{r.Id})[/] {Markup.Escape(r.ReviewerName)} - {Markup.Escape(shortComment)}";
                     });
 
-                foreach (var r in reviews) reviewPrompt.AddChoice(r);
+                foreach (var r in reviews)
+                {
+                    reviewPrompt.AddChoice(r);
+                }
+
                 reviewPrompt.AddChoice(new ReviewModel { Id = -1 });
 
                 var selectedReview = AnsiConsole.Prompt(reviewPrompt);
-                if (selectedReview.Id == -1) break;
+
+                if (selectedReview.Id == -1)
+                {
+                    break;
+                }
 
                 if (AnsiConsole.Confirm($"[red]Are you SURE you want to delete this review by {Markup.Escape(selectedReview.ReviewerName)}?[/]", false))
                 {
-                    // Call standard Delete (Admins bypass auth in this specific menu)
                     _reviewLogic.DeleteReview(selectedReview.Id, selectedGame.Id);
+
+                    UserActionLogger.Log(
+                        actionType: "delete_review",
+                        objectType: "review",
+                        objectId: selectedReview.Id.ToString(),
+                        details: new Dictionary<string, object?>
+                        {
+                            ["gameId"] = selectedGame.Id,
+                            ["gameTitle"] = selectedGame.Title,
+                            ["reviewerName"] = selectedReview.ReviewerName,
+                            ["rating"] = selectedReview.Rating
+                        }
+                    );
+
                     AnsiConsole.MarkupLine("\n[green]Review permanently deleted![/]");
                     SoundEffects.PlayMenuClick();
                     Thread.Sleep(1200);
@@ -400,7 +653,26 @@ public static class AdminMenu
     private static void Logout()
     {
         AnsiConsole.Clear();
+
+        if (CurrentUserModel.CurrentUser != null)
+        {
+            var user = CurrentUserModel.CurrentUser;
+
+            UserActionLogger.Log(
+                actionType: "logout",
+                objectType: "account",
+                objectId: user.Id.ToString(),
+                details: new Dictionary<string, object?>
+                {
+                    ["email"] = user.Email,
+                    ["role"] = user.Role,
+                    ["source"] = "admin_menu"
+                }
+            );
+        }
+
         CurrentUserModel.CurrentUser = null;
+
         AnsiConsole.MarkupLine($"\n[green]{Texts.Get("Admin_LoggedOut")}[/]");
         AnsiConsole.MarkupLine(Texts.Get("Admin_PressAnyKeyToReturnToMainMenu"));
         Console.ReadKey(true);
