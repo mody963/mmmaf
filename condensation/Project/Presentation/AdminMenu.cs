@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using Spectre.Console;
 
 public static class AdminMenu
@@ -147,15 +148,15 @@ public static class AdminMenu
         UserActionLogger.Log(
             actionType: "create_game",
             objectType: "game",
-            details: new Dictionary<string, object?>
+            details: new BsonDocument
             {
-                ["title"] = title,
-                ["price"] = price,
-                ["publisherId"] = publisherId,
-                ["genreId"] = selectedGenre.Id,
-                ["genreName"] = selectedGenre.Name,
-                ["ageRatingId"] = selectedAgeRating.Id,
-                ["ageRatingName"] = selectedAgeRating.Name
+                { "title", title },
+                { "price", price },
+                { "publisherId", publisherId },
+                { "genreId", selectedGenre.Id },
+                { "genreName", selectedGenre.Name },
+                { "ageRatingId", selectedAgeRating.Id },
+                { "ageRatingName", selectedAgeRating.Name }
             }
         );
 
@@ -175,12 +176,12 @@ public static class AdminMenu
         UserActionLogger.Log(
             actionType: "search",
             objectType: "game",
-            details: new Dictionary<string, object?>
+            details: new BsonDocument
             {
-                ["query"] = searchTitle,
-                ["source"] = "admin_menu",
-                ["adminAction"] = action,
-                ["onlyActive"] = onlyActive
+                { "query", searchTitle },
+                { "source", "admin_menu" },
+                { "adminAction", action },
+                { "onlyActive", onlyActive }
             }
         );
 
@@ -211,12 +212,12 @@ public static class AdminMenu
             actionType: "view_product",
             objectType: "game",
             objectId: selectedGame.Id.ToString(),
-            details: new Dictionary<string, object?>
+            details: new BsonDocument
             {
-                ["title"] = selectedGame.Title,
-                ["price"] = selectedGame.Price,
-                ["source"] = "admin_menu",
-                ["adminAction"] = action
+                { "title", selectedGame.Title },
+                { "price", selectedGame.Price },
+                { "source", "admin_menu" },
+                { "adminAction", action }
             }
         );
 
@@ -303,20 +304,20 @@ public static class AdminMenu
             actionType: "update_game",
             objectType: "game",
             objectId: game.Id.ToString(),
-            details: new Dictionary<string, object?>
+            details: new BsonDocument
             {
-                ["oldTitle"] = oldTitle,
-                ["newTitle"] = game.Title,
-                ["oldDescription"] = oldDescription,
-                ["newDescription"] = game.Description,
-                ["oldPrice"] = oldPrice,
-                ["newPrice"] = game.Price,
-                ["oldGenreId"] = oldGenreId,
-                ["newGenreId"] = game.GenreId,
-                ["oldAgeRatingId"] = oldAgeRatingId,
-                ["newAgeRatingId"] = game.AgeRatingId,
-                ["oldIsActive"] = oldIsActive,
-                ["newIsActive"] = game.IsActive
+                { "oldTitle", oldTitle },
+                { "newTitle", game.Title },
+                { "oldDescription", oldDescription },
+                { "newDescription", game.Description },
+                { "oldPrice", oldPrice },
+                { "newPrice", game.Price },
+                { "oldGenreId", oldGenreId },
+                { "newGenreId", game.GenreId },
+                { "oldAgeRatingId", oldAgeRatingId },
+                { "newAgeRatingId", game.AgeRatingId },
+                { "oldIsActive", oldIsActive },
+                { "newIsActive", game.IsActive }
             }
         );
 
@@ -347,11 +348,11 @@ public static class AdminMenu
                 actionType: "delete_game",
                 objectType: "game",
                 objectId: game.Id.ToString(),
-                details: new Dictionary<string, object?>
+                details: new BsonDocument
                 {
-                    ["title"] = game.Title,
-                    ["price"] = game.Price,
-                    ["deleteType"] = "soft_delete"
+                    { "title", game.Title },
+                    { "price", game.Price },
+                    { "deleteType", "soft_delete" }
                 }
             );
 
@@ -412,17 +413,23 @@ public static class AdminMenu
 
             var publisher = _publisherLogic.GetByAccountId(selectedAccount.Id);
 
+            var details = new BsonDocument
+            {
+                { "email", selectedAccount.Email },
+                { "firstName", selectedAccount.FirstName },
+                { "lastName", selectedAccount.LastName }
+            };
+
+            if (publisher != null && publisher.StudioName != null)
+            {
+                details.Add("studioName", publisher.StudioName);
+            }
+
             UserActionLogger.Log(
                 actionType: "approve_publisher",
                 objectType: "account",
                 objectId: selectedAccount.Id.ToString(),
-                details: new Dictionary<string, object?>
-                {
-                    ["email"] = selectedAccount.Email,
-                    ["firstName"] = selectedAccount.FirstName,
-                    ["lastName"] = selectedAccount.LastName,
-                    ["studioName"] = publisher?.StudioName
-                }
+                details: details
             );
 
             AnsiConsole.MarkupLine("\n[green]Successfully approved publisher![/] They can now log in.");
@@ -468,10 +475,10 @@ public static class AdminMenu
                 actionType: "view_product",
                 objectType: "game",
                 objectId: selectedGame.Id.ToString(),
-                details: new Dictionary<string, object?>
+                details: new BsonDocument
                 {
-                    ["title"] = selectedGame.Title,
-                    ["source"] = "review_moderation"
+                    { "title", selectedGame.Title },
+                    { "source", "review_moderation" }
                 }
             );
 
@@ -526,13 +533,13 @@ public static class AdminMenu
                     actionType: isNowHidden ? "hide_review" : "unhide_review",
                     objectType: "review",
                     objectId: selectedReview.Id.ToString(),
-                    details: new Dictionary<string, object?>
+                    details: new BsonDocument
                     {
-                        ["gameId"] = selectedGame.Id,
-                        ["gameTitle"] = selectedGame.Title,
-                        ["reviewerName"] = selectedReview.ReviewerName,
-                        ["wasHidden"] = selectedReview.IsHidden,
-                        ["isHidden"] = isNowHidden
+                        { "gameId", selectedGame.Id },
+                        { "gameTitle", selectedGame.Title },
+                        { "reviewerName", selectedReview.ReviewerName },
+                        { "wasHidden", selectedReview.IsHidden },
+                        { "isHidden", isNowHidden }
                     }
                 );
 
@@ -575,10 +582,10 @@ public static class AdminMenu
                 actionType: "view_product",
                 objectType: "game",
                 objectId: selectedGame.Id.ToString(),
-                details: new Dictionary<string, object?>
+                details: new BsonDocument
                 {
-                    ["title"] = selectedGame.Title,
-                    ["source"] = "review_delete_menu"
+                    { "title", selectedGame.Title },
+                    { "source", "review_delete_menu" }
                 }
             );
 
@@ -633,12 +640,12 @@ public static class AdminMenu
                         actionType: "delete_review",
                         objectType: "review",
                         objectId: selectedReview.Id.ToString(),
-                        details: new Dictionary<string, object?>
+                        details: new BsonDocument
                         {
-                            ["gameId"] = selectedGame.Id,
-                            ["gameTitle"] = selectedGame.Title,
-                            ["reviewerName"] = selectedReview.ReviewerName,
-                            ["rating"] = selectedReview.Rating
+                            { "gameId", selectedGame.Id },
+                            { "gameTitle", selectedGame.Title },
+                            { "reviewerName", selectedReview.ReviewerName },
+                            { "rating", selectedReview.Rating }
                         }
                     );
 
@@ -662,11 +669,11 @@ public static class AdminMenu
                 actionType: "logout",
                 objectType: "account",
                 objectId: user.Id.ToString(),
-                details: new Dictionary<string, object?>
+                details: new BsonDocument
                 {
-                    ["email"] = user.Email,
-                    ["role"] = user.Role,
-                    ["source"] = "admin_menu"
+                    { "email", user.Email },
+                    { "role", user.Role },
+                    { "source", "admin_menu" }
                 }
             );
         }

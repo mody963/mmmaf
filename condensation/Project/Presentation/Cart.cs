@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+using MongoDB.Bson;
 using Spectre.Console;
 
 public class Cart
@@ -20,10 +20,10 @@ public class Cart
                 actionType: "add_to_cart",
                 objectType: "game",
                 objectId: id.ToString(),
-                details: new Dictionary<string, object?>
+                details: new BsonDocument
                 {
-                    ["title"] = name,
-                    ["price"] = price
+                    { "title", name },
+                    { "price", price }
                 }
             );
 
@@ -39,15 +39,21 @@ public class Cart
 
         _cartLogic.RemoveFromCart(name);
 
+        var details = new BsonDocument
+        {
+            { "title", name }
+        };
+
+        if (item != null)
+        {
+            details.Add("price", item.Price);
+        }
+
         UserActionLogger.Log(
             actionType: "remove_from_cart",
             objectType: "game",
-            objectId: item?.id.ToString(),
-            details: new Dictionary<string, object?>
-            {
-                ["title"] = name,
-                ["price"] = item?.Price
-            }
+            objectId: item == null ? null : item.id.ToString(),
+            details: details
         );
     }
 
@@ -115,21 +121,28 @@ public class Cart
             case var c when c == Texts.Get("Cart_ClearCart"):
                 var itemsBeforeClear = GetCartItems();
 
+                var itemDocuments = new BsonArray();
+
+                foreach (var item in itemsBeforeClear)
+                {
+                    itemDocuments.Add(new BsonDocument
+                    {
+                        { "id", item.id },
+                        { "name", item.Name },
+                        { "price", item.Price }
+                    });
+                }
+
                 ClearCart();
 
                 UserActionLogger.Log(
                     actionType: "clear_cart",
                     objectType: "cart",
-                    details: new Dictionary<string, object?>
+                    details: new BsonDocument
                     {
-                        ["itemCount"] = itemsBeforeClear.Count,
-                        ["total"] = itemsBeforeClear.Sum(item => item.Price),
-                        ["items"] = itemsBeforeClear.Select(item => new
-                        {
-                            item.id,
-                            item.Name,
-                            item.Price
-                        }).ToList()
+                        { "itemCount", itemsBeforeClear.Count },
+                        { "total", itemsBeforeClear.Sum(item => item.Price) },
+                        { "items", itemDocuments }
                     }
                 );
 
@@ -162,10 +175,10 @@ public class Cart
         UserActionLogger.Log(
             actionType: "view_cart",
             objectType: "cart",
-            details: new Dictionary<string, object?>
+            details: new BsonDocument
             {
-                ["itemCount"] = items.Count,
-                ["total"] = totalPrice
+                { "itemCount", items.Count },
+                { "total", totalPrice }
             }
         );
 
@@ -186,6 +199,7 @@ public class Cart
         }
 
         AnsiConsole.Write(table);
+
         AnsiConsole.WriteLine();
 
         var totalPanel = new Panel(

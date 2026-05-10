@@ -14,5 +14,5 @@ public class UserActionLogModel
     public string ObjectType { get; set; } = "";
     public string? ObjectId { get; set; }
 
-    public Dictionary<string, object?> Details { get; set; } = new();
+    public BsonDocument Details { get; set; } = new BsonDocument();
 }

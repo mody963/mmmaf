@@ -6,6 +6,7 @@ using NRedisStack;
 using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
 
+
 // Fix euro sign
 Console.OutputEncoding = Encoding.UTF8;
 

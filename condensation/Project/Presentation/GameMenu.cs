@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Spectre.Console;
 using System.Globalization;
+using MongoDB.Bson;
 
 public static class GameMenu
 {
@@ -147,11 +147,11 @@ public static class GameMenu
                         actionType: "view_product",
                         objectType: "game",
                         objectId: selectedGame.Id.ToString(),
-                        details: new Dictionary<string, object?>
+                        details: new BsonDocument
                         {
-                            ["title"] = selectedGame.Title,
-                            ["price"] = selectedGame.Price,
-                            ["source"] = "game_list"
+                            { "title", selectedGame.Title },
+                            { "price", selectedGame.Price },
+                            { "source", "game_list" }
                         }
                     );
 
@@ -253,9 +253,9 @@ public static class GameMenu
             actionType: "filter",
             objectType: "genre",
             objectId: selectedGenre.Id.ToString(),
-            details: new Dictionary<string, object?>
+            details: new BsonDocument
             {
-                ["genreName"] = selectedGenre.Name
+                { "genreName", selectedGenre.Name }
             }
         );
 
@@ -299,10 +299,10 @@ public static class GameMenu
             UserActionLogger.Log(
                 actionType: "search",
                 objectType: "game",
-                details: new Dictionary<string, object?>
+                details: new BsonDocument
                 {
-                    ["query"] = searchTitle,
-                    ["onlyActive"] = onlyActive
+                    { "query", searchTitle },
+                    { "onlyActive", onlyActive }
                 }
             );
 
@@ -373,12 +373,12 @@ public static class GameMenu
                     actionType: "view_product",
                     objectType: "game",
                     objectId: selectedGame.Id.ToString(),
-                    details: new Dictionary<string, object?>
+                    details: new BsonDocument
                     {
-                        ["title"] = selectedGame.Title,
-                        ["price"] = selectedGame.Price,
-                        ["source"] = "game_search",
-                        ["query"] = searchTitle
+                        { "title", selectedGame.Title },
+                        { "price", selectedGame.Price },
+                        { "source", "game_search" },
+                        { "query", searchTitle }
                     }
                 );
 

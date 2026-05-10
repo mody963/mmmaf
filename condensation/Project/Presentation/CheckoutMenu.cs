@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using Spectre.Console;
 
 public static class CheckoutMenu
@@ -88,11 +89,11 @@ public static class CheckoutMenu
             UserActionLogger.Log(
                 actionType: "error",
                 objectType: "checkout",
-                details: new Dictionary<string, object?>
+                details: new BsonDocument
                 {
-                    ["message"] = "No customer profile found for this account.",
-                    ["accountId"] = account.Id,
-                    ["email"] = account.Email
+                    { "message", "No customer profile found for this account." },
+                    { "accountId", account.Id },
+                    { "email", account.Email }
                 }
             );
 
@@ -116,23 +117,30 @@ public static class CheckoutMenu
         {
             int orderId = _checkoutLogic.Checkout(customer.Id, items);
 
+            var itemDocuments = new BsonArray();
+
+            foreach (var item in items)
+            {
+                itemDocuments.Add(new BsonDocument
+                {
+                    { "id", item.id },
+                    { "name", item.Name },
+                    { "price", item.Price }
+                });
+            }
+
             UserActionLogger.Log(
                 actionType: "complete_order",
                 objectType: "order",
                 objectId: orderId.ToString(),
-                details: new Dictionary<string, object?>
+                details: new BsonDocument
                 {
-                    ["customerId"] = customer.Id,
-                    ["email"] = account.Email,
-                    ["paymentMethod"] = customer.PaymentMethod,
-                    ["itemCount"] = items.Count,
-                    ["total"] = items.Sum(item => item.Price),
-                    ["items"] = items.Select(item => new
-                    {
-                        item.id,
-                        item.Name,
-                        item.Price
-                    }).ToList()
+                    { "customerId", customer.Id },
+                    { "email", account.Email },
+                    { "paymentMethod", customer.PaymentMethod },
+                    { "itemCount", items.Count },
+                    { "total", items.Sum(item => item.Price) },
+                    { "items", itemDocuments }
                 }
             );
 
@@ -150,12 +158,12 @@ public static class CheckoutMenu
                 message: "Checkout failed.",
                 source: "CheckoutMenu.CheckoutLoggedIn",
                 exception: ex,
-                details: new Dictionary<string, object?>
+                details: new BsonDocument
                 {
-                    ["customerId"] = customer.Id,
-                    ["email"] = account.Email,
-                    ["itemCount"] = items.Count,
-                    ["total"] = items.Sum(item => item.Price)
+                    { "customerId", customer.Id },
+                    { "email", account.Email },
+                    { "itemCount", items.Count },
+                    { "total", items.Sum(item => item.Price) }
                 }
             );
 
