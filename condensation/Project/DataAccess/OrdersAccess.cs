@@ -13,12 +13,12 @@ public class OrdersAccess
     {
         var mongoDb = new MongoDb(AppConfig.MongoDbConnectionString, AppConfig.MongoDbDatabaseName);
         _ordersCollection = mongoDb.GetCollection<BsonDocument>("orders");
-        
+
         var lastOrder = _ordersCollection
             .Find(new BsonDocument())
             .Sort(Builders<BsonDocument>.Sort.Descending("id"))
             .FirstOrDefault();
-        
+
         if (lastOrder != null && lastOrder.Contains("id"))
         {
             _nextOrderId = lastOrder["id"].AsInt32 + 1;
@@ -93,7 +93,7 @@ public class OrdersAccess
     {
         var filter = Builders<BsonDocument>.Filter.And(
             Builders<BsonDocument>.Filter.Eq("customerId", customerId),
-            Builders<BsonDocument>.Filter.ElemMatch("games", 
+            Builders<BsonDocument>.Filter.ElemMatch("games",
                 Builders<BsonDocument>.Filter.Eq("gameId", gameId))
         );
 
@@ -111,7 +111,11 @@ public class OrdersAccess
         var orderModels = new List<OrderModel>();
         foreach (var doc in orders)
         {
-            orderModels.Add(BsonDocumentToOrderModel(doc));
+            var orderModel = BsonDocumentToOrderModel(doc);
+            if (orderModel != null)
+            {
+                orderModels.Add(orderModel);
+            }
         }
 
         return orderModels;
@@ -125,8 +129,14 @@ public class OrdersAccess
         return orderDoc != null ? BsonDocumentToOrderModel(orderDoc) : null;
     }
 
-    private OrderModel BsonDocumentToOrderModel(BsonDocument doc)
+    private OrderModel? BsonDocumentToOrderModel(BsonDocument doc)
     {
+        // Validate required fields exist
+        if (!doc.Contains("id") || !doc.Contains("customerId") || !doc.Contains("orderDate") || !doc.Contains("totalPrice"))
+        {
+            return null;
+        }
+
         var order = new OrderModel
         {
             Id = doc["id"].AsInt32,
