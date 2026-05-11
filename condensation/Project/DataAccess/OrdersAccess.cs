@@ -1,78 +1,167 @@
 using Dapper;
+using MongoDB.Driver;
+using MongoDB.Bson;
 using Npgsql;
+using CondensationApp;
 
 public class OrdersAccess
 {
     private string ConnectionString => AppConfig.PostgresConnectionString;
+    private readonly IMongoCollection<BsonDocument> _ordersCollection;
+    private int _nextOrderId = 1;
+
+    public OrdersAccess()
+    {
+        var mongoDb = new MongoDb(AppConfig.MongoDbConnectionString, AppConfig.MongoDbDatabaseName);
+        _ordersCollection = mongoDb.GetCollection<BsonDocument>("orders");
+        
+        var lastOrder = _ordersCollection
+            .Find(new BsonDocument())
+            .Sort(Builders<BsonDocument>.Sort.Descending("id"))
+            .FirstOrDefault();
+        
+        if (lastOrder != null && lastOrder.Contains("id"))
+        {
+            _nextOrderId = lastOrder["id"].AsInt32 + 1;
+        }
+    }
 
     public int CreateOrder(int customerId, double totalPrice, List<CartModel> items)
     {
-        using var connection = new NpgsqlConnection(ConnectionString);
-        connection.Open();
+        int orderId = _nextOrderId++;
 
-        const string orderSql = @"
-            INSERT INTO orders (customer_id, total_price)
-            VALUES (@CustomerId, @TotalPrice)
-            RETURNING id;";
-
-        int orderId = connection.ExecuteScalar<int>(orderSql, new
+        var games = items.Select(item => new BsonDocument
         {
-            CustomerId = customerId,
-            TotalPrice = totalPrice
-        });
+            { "gameId", item.id },
+            { "gameTitle", item.Name },
+            { "priceAtPurchase", item.Price }
+        }).ToList();
 
-        const string orderGameSql = @"
-            INSERT INTO order_games (game_id, order_id, quantity)
-            VALUES (@GameId, @OrderId, @Quantity);";
-
-        foreach (var item in items)
+        var orderDoc = new BsonDocument
         {
-            connection.Execute(
-                orderGameSql,
-                new
-                {
-                    GameId = item.id,
-                    OrderId = orderId,
-                    Quantity = 1
-                }
-            );
-        }
+            { "id", orderId },
+            { "customerId", customerId },
+            { "orderDate", DateTime.UtcNow },
+            { "totalPrice", totalPrice },
+            { "games", new BsonArray(games) }
+        };
 
+        _ordersCollection.InsertOne(orderDoc);
         return orderId;
     }
 
     public List<GameModel> GetOwnedGamesByCustomerId(int customerId)
     {
-        using var connection = new NpgsqlConnection(ConnectionString);
+        var filter = Builders<BsonDocument>.Filter.Eq("customerId", customerId);
+        var orders = _ordersCollection.Find(filter).ToList();
 
-        const string sql = @"
-            SELECT DISTINCT g.*
-            FROM orders o
-            JOIN order_games og ON og.order_id = o.id
-            JOIN game g ON g.id = og.game_id
-            WHERE o.customer_id = @CustomerId
-            ORDER BY g.title;";
+        var ownedGames = new List<GameModel>();
+        var seenGameIds = new HashSet<int>();
 
-        return connection.Query<GameModel>(sql, new { CustomerId = customerId }).ToList();
+        foreach (var order in orders)
+        {
+            if (order.Contains("games") && order["games"].IsBsonArray)
+            {
+                var gamesArray = order["games"].AsBsonArray;
+                foreach (var gameDoc in gamesArray)
+                {
+                    if (gameDoc.IsBsonDocument)
+                    {
+                        var game = gameDoc.AsBsonDocument;
+                        if (game.Contains("gameId"))
+                        {
+                            int gameId = game["gameId"].AsInt32;
+                            if (!seenGameIds.Contains(gameId))
+                            {
+                                seenGameIds.Add(gameId);
+                                // Fetch game details from PostgreSQL
+                                var gameModel = GetGameDetailsFromPostgres(gameId);
+                                if (gameModel != null)
+                                {
+                                    ownedGames.Add(gameModel);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return ownedGames.OrderBy(g => g.Title).ToList();
     }
 
     public bool HasPurchasedGame(int customerId, int gameId)
     {
-        using var connection = new NpgsqlConnection(ConnectionString);
+        var filter = Builders<BsonDocument>.Filter.And(
+            Builders<BsonDocument>.Filter.Eq("customerId", customerId),
+            Builders<BsonDocument>.Filter.ElemMatch("games", 
+                Builders<BsonDocument>.Filter.Eq("gameId", gameId))
+        );
 
-        const string sql = @"
-            SELECT EXISTS (
-                SELECT 1
-                FROM orders o
-                JOIN order_games og ON og.order_id = o.id
-                WHERE o.customer_id = @CustomerId
-                  AND og.game_id = @GameId
-            );";
+        return _ordersCollection.Find(filter).FirstOrDefault() != null;
+    }
 
-        return connection.ExecuteScalar<bool>(sql, new
+    public List<OrderModel> GetOrderHistoryByCustomerId(int customerId)
+    {
+        var filter = Builders<BsonDocument>.Filter.Eq("customerId", customerId);
+        var orders = _ordersCollection
+            .Find(filter)
+            .Sort(Builders<BsonDocument>.Sort.Descending("orderDate"))
+            .ToList();
+
+        var orderModels = new List<OrderModel>();
+        foreach (var doc in orders)
         {
-            CustomerId = customerId,
-            GameId = gameId
-        });
+            orderModels.Add(BsonDocumentToOrderModel(doc));
+        }
+
+        return orderModels;
+    }
+
+    public OrderModel? GetOrderDetailsById(int orderId)
+    {
+        var filter = Builders<BsonDocument>.Filter.Eq("id", orderId);
+        var orderDoc = _ordersCollection.Find(filter).FirstOrDefault();
+
+        return orderDoc != null ? BsonDocumentToOrderModel(orderDoc) : null;
+    }
+
+    private OrderModel BsonDocumentToOrderModel(BsonDocument doc)
+    {
+        var order = new OrderModel
+        {
+            Id = doc["id"].AsInt32,
+            CustomerId = doc["customerId"].AsInt32,
+            OrderDate = doc["orderDate"].ToUniversalTime(),
+            TotalPrice = doc["totalPrice"].AsDouble,
+            Games = new List<OrderGameModel>()
+        };
+
+        if (doc.Contains("games") && doc["games"].IsBsonArray)
+        {
+            var gamesArray = doc["games"].AsBsonArray;
+            foreach (var gameDoc in gamesArray)
+            {
+                if (gameDoc.IsBsonDocument)
+                {
+                    var game = gameDoc.AsBsonDocument;
+                    order.Games.Add(new OrderGameModel
+                    {
+                        GameId = game["gameId"].AsInt32,
+                        GameTitle = game["gameTitle"].AsString,
+                        PriceAtPurchase = game["priceAtPurchase"].AsDouble
+                    });
+                }
+            }
+        }
+
+        return order;
+    }
+
+    private GameModel? GetGameDetailsFromPostgres(int gameId)
+    {
+        using var connection = new NpgsqlConnection(ConnectionString);
+        const string sql = "SELECT * FROM game WHERE id = @GameId";
+        return connection.QueryFirstOrDefault<GameModel>(sql, new { GameId = gameId });
     }
 }

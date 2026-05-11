@@ -685,4 +685,68 @@
     <value>Press any key to return to the main menu...</value>
     <comment/>
   </data>
+  <data name="Order_NotLoggedInCustomer" xml:space="preserve">
+    <value>You must be logged in as a customer to view your order history.</value>
+    <comment/>
+  </data>
+  <data name="Order_NoCustomerProfile" xml:space="preserve">
+    <value>No customer profile found for your account.</value>
+    <comment/>
+  </data>
+  <data name="Order_NoOrderHistory" xml:space="preserve">
+    <value>You have no orders yet.</value>
+    <comment/>
+  </data>
+  <data name="Order_SelectOrder" xml:space="preserve">
+    <value>Select an order to view details:</value>
+    <comment/>
+  </data>
+  <data name="Order_Back" xml:space="preserve">
+    <value>Back</value>
+    <comment/>
+  </data>
+  <data name="Order_NotFound" xml:space="preserve">
+    <value>Order not found.</value>
+    <comment/>
+  </data>
+  <data name="Order_Details" xml:space="preserve">
+    <value>📋 Order Details</value>
+    <comment/>
+  </data>
+  <data name="Order_Property" xml:space="preserve">
+    <value>Property</value>
+    <comment/>
+  </data>
+  <data name="Order_Value" xml:space="preserve">
+    <value>Value</value>
+    <comment/>
+  </data>
+  <data name="Order_OrderId" xml:space="preserve">
+    <value>Order ID</value>
+    <comment/>
+  </data>
+  <data name="Order_OrderDate" xml:space="preserve">
+    <value>Order Date</value>
+    <comment/>
+  </data>
+  <data name="Order_TotalPrice" xml:space="preserve">
+    <value>Total Price</value>
+    <comment/>
+  </data>
+  <data name="Order_Games" xml:space="preserve">
+    <value>🎮 Games in Order</value>
+    <comment/>
+  </data>
+  <data name="Order_GameName" xml:space="preserve">
+    <value>Game Name</value>
+    <comment/>
+  </data>
+  <data name="Order_GamePrice" xml:space="preserve">
+    <value>Price</value>
+    <comment/>
+  </data>
+  <data name="Order_WhatWouldYouLikeToDo" xml:space="preserve">
+    <value>What would you like to do?</value>
+    <comment/>
+  </data>
 </root>

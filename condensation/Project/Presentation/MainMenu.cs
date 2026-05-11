@@ -90,7 +90,7 @@ public static class MainMenu
                     break;
 
                 case var c when c == Texts.Get("Menu_Orders"):
-                    AnsiConsole.MarkupLine("[yellow]Orders in Sprint 3.[/]");
+                    OrderMenu.Start();
                     break;
 
                 case var c when c == Texts.Get("Menu_Analytics"):

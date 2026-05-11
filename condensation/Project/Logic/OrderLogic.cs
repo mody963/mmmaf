@@ -27,4 +27,20 @@ public class OrderLogic
 
         return _ordersAccess.HasPurchasedGame(customerId, gameId);
     }
+
+    public List<OrderModel> GetOrderHistory(int customerId)
+    {
+        if (customerId <= 0)
+            return new List<OrderModel>();
+
+        return _ordersAccess.GetOrderHistoryByCustomerId(customerId);
+    }
+
+    public OrderModel? GetOrderDetails(int orderId)
+    {
+        if (orderId <= 0)
+            return null;
+
+        return _ordersAccess.GetOrderDetailsById(orderId);
+    }
 }
