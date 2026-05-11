@@ -14,11 +14,6 @@ public static class UserActionLogger
         {
             var user = CurrentUserModel.CurrentUser;
 
-            if (user == null)
-            {
-                return;
-            }
-
             if (details == null)
             {
                 details = new BsonDocument();
@@ -28,7 +23,10 @@ public static class UserActionLogger
             {
                 ActionType = actionType,
                 CreatedAtUtc = DateTime.UtcNow,
-                UserId = user.Id,
+
+                UserId = user?.Id,
+
+                SessionId = SessionManager.SessionId,
                 ObjectType = objectType,
                 ObjectId = objectId,
                 Details = details
