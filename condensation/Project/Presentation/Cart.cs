@@ -147,5 +147,7 @@ public class Cart
         AnsiConsole.WriteLine();
         AnsiConsole.MarkupLine($"[grey]{Texts.Get("Cart_PressAnyKeyToContinue")}[/]");
         Console.ReadKey();
+
+        Console.Clear();
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Globalization;
 using System.Threading;
 using Spectre.Console;
-using CondensationApp;
 
 public static class MainMenu
 {
@@ -40,18 +39,28 @@ public static class MainMenu
         bool running = true;
         while (running)
         {
+            bool isCustomerLoggedIn = CurrentUserModel.CurrentUser?.Role == AccountRoles.Customer;
+            var menuChoices = new List<string>
+            {
+                Texts.Get("Menu_Login"),
+                Texts.Get("Menu_Game"),
+                Texts.Get("Menu_Cart"),
+                Texts.Get("Menu_Checkout"),
+                Texts.Get("Menu_Orders"),
+                Texts.Get("Menu_Analytics"),
+                Texts.Get("Menu_About"),
+                Texts.Get("Menu_Language"),
+                Texts.Get("Menu_Exit")
+            };
+
+            if (isCustomerLoggedIn)
+            {
+                menuChoices.Insert(2, Texts.Get("Menu_MyGames"));
+            }
+
             var mainMenu = new SelectionPrompt<string>()
                 .Title($"[bold]{Texts.Get("Menu_Main")}[/]")
-                .AddChoices(
-                    Texts.Get("Menu_Login"),
-                    Texts.Get("Menu_Game"),
-                    Texts.Get("Menu_Cart"),
-                    Texts.Get("Menu_Checkout"),
-                    Texts.Get("Menu_Orders"),
-                    Texts.Get("Menu_About"),
-                    Texts.Get("Menu_Language"),
-                    Texts.Get("Menu_Exit")
-                )
+                .AddChoices(menuChoices)
                 .HighlightStyle(new Style(foreground: Color.Yellow));
 
             var choice = AnsiConsole.Prompt(mainMenu);
@@ -67,16 +76,24 @@ public static class MainMenu
                     GameMenu.Start(cart); // Open the new GameMenu file! cart meegegeven voor zelfde cart bij add
                     break;
 
+                case var c when c == Texts.Get("Menu_MyGames"):
+                    MyGamesMenu.Start();
+                    break;
+
                 case var c when c == Texts.Get("Menu_Cart"):
                     cart.CartOptions(); // zelde cart als voorheen als je wta toevoegd want static
                     break;
 
                 case var c when c == Texts.Get("Menu_Checkout"):
-                    AnsiConsole.MarkupLine("[yellow]Checkout in Sprint 3.[/]");
+                    CheckoutMenu.Start(cart);
                     break;
 
                 case var c when c == Texts.Get("Menu_Orders"):
                     AnsiConsole.MarkupLine("[yellow]Orders in Sprint 3.[/]");
+                    break;
+
+                case var c when c == Texts.Get("Menu_Analytics"):
+                    AnalyticsMenu.StartUserAnalytics();
                     break;
 
                 case var c when c == Texts.Get("Menu_About"):

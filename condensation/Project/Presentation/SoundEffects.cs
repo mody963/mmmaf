@@ -1,43 +1,32 @@
-using System;
-using System.IO;
-using System.Media;
+using Project.Services;
 
 public static class SoundEffects
 {
-    private static readonly string MenuClickSoundPath =
-        Path.Combine(AppContext.BaseDirectory, "Sounds", "sound-4.wav");
+    private static IUiSoundPlayer _player = new NoOpUiSoundPlayer();
 
-    private static readonly string KachingSoundPath =
-        Path.Combine(AppContext.BaseDirectory, "Sounds", "Cash Register (Kaching) - Sound Effect (HD) - Gaming Sound FX (youtube).wav");
-
-    private static readonly string ErrorSoundPath =
-        Path.Combine(AppContext.BaseDirectory, "Sounds", "universfield-error-08-206492.wav");
-
-    public static void PlayMenuClick()
+    public static void Configure(IUiSoundPlayer player)
     {
-        PlaySound(MenuClickSoundPath);
+        _player = player ?? new NoOpUiSoundPlayer();
     }
 
-    public static void PlayKaching()
-    {
-        PlaySound(KachingSoundPath);
-    }
+    public static void PlayMenuClick() => _player.PlayMenuClick();
 
-    public static void PlayErrorSound()
-    {
-        PlaySound(ErrorSoundPath);
-    }
+    public static void PlayErrorSound() => _player.PlayErrorSound();
 
-    private static void PlaySound(string path)
+    public static void PlayKaching() => _player.PlayKaching();
+
+    private sealed class NoOpUiSoundPlayer : IUiSoundPlayer
     {
-        try
+        public void PlayMenuClick()
         {
-            using var player = new SoundPlayer(path);
-            player.PlaySync();
         }
-        catch
+
+        public void PlayErrorSound()
         {
-            // ignore errors playing sound so it doesn't crash the app
+        }
+
+        public void PlayKaching()
+        {
         }
     }
 }

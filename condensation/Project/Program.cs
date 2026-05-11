@@ -1,41 +1,69 @@
-﻿using System;
-using System.Threading;
-using Spectre.Console;
-using Microsoft.Extensions.Configuration;
-using CondensationApp;
+﻿using Microsoft.Extensions.Configuration;
+using System.Text;
+using Project.Services;
+using NRedisStack;
+using NRedisStack.RedisStackCommands;
+using StackExchange.Redis;
 
-// 1. DATABASE & CONFIG SETUP
-IConfiguration config = new ConfigurationBuilder()
+// Fix euro sign
+Console.OutputEncoding = Encoding.UTF8;
+
+// Load config
+var config = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    // ADD THIS NEW LINE:
-    .AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true)
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile("appsettings.local.json", optional: true)
     .Build();
 
-string? connString = config.GetConnectionString("DefaultConnection");
-AppConfig.ConnectionString = connString ?? "";
+string postgresConnectionString = config.GetConnectionString("DefaultConnection") ?? "";
 
-// Initialize your data access classes
-var db = new Database(connString);
-try
-{
-    // Test the connection before starting the UI
-    await db.TestConnectionAsync();
-    await db.RunVersionQueryAsync();
-    AnsiConsole.MarkupLine("[green]Database connection successful![/]");
-    Thread.Sleep(1500);
-    Console.Clear();
-}
-catch (Exception ex)
-{
-    AnsiConsole.MarkupLine($"[red]Error connecting to database: {ex.Message}[/]");
-    AnsiConsole.MarkupLine("[yellow]Press any key to exit...[/]");
-    Console.ReadKey();
-    return;
-}
+if (string.IsNullOrWhiteSpace(postgresConnectionString))
+    throw new InvalidOperationException("Connection string 'DefaultConnection' is missing or empty.");
 
-// 2. LAUNCH THE APP
-// Hand over control to the MainMenu, passing along the database logic!
+// Set AppConfig for data access layers
+AppConfig.PostgresConnectionString = postgresConnectionString;
+
+string redisConnectionString = config.GetConnectionString("RedisConnection") ?? "";
+
+if (string.IsNullOrWhiteSpace(redisConnectionString))
+    throw new InvalidOperationException("Connection string 'RedisConnection' is missing or empty.");
+
+AppConfig.RedisConnectionString = redisConnectionString;
+
+string mongoDbConnectionString = config.GetConnectionString("MongoDbConnection") ?? "";
+string mongoDbDatabaseName = config["MongoDb:DatabaseName"] ?? "";
+
+if (string.IsNullOrWhiteSpace(mongoDbConnectionString))
+    throw new InvalidOperationException("Connection string 'MongoDbConnection' is missing or empty.");
+
+if (string.IsNullOrWhiteSpace(mongoDbDatabaseName))
+    throw new InvalidOperationException("MongoDb:DatabaseName is missing or empty.");
+
+// Dapper turns game_id into GameId, but our properties are gameId, so we need to tell it to match names with underscores
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
+// Init PostgreSQL
+var db = new Database(postgresConnectionString);
+
+await db.TestConnectionAsync();
+await db.EnsureAnalyticsViewsAsync();
+await db.EnsureReviewSchemaAsync();
+
+// Init Redis
+using var redisDb = new RedisDB(redisConnectionString);
+await redisDb.TestConnectionAsync();
+
+// Init MongoDB
+var mongoDb = new MongoDb(
+    mongoDbConnectionString,
+    mongoDbDatabaseName
+);
+
+await mongoDb.TestConnectionAsync();
+AppConfig.MongoDb = mongoDb;
+
+var uiSoundPlayer = new UiSoundPlayer(AppContext.BaseDirectory);
+SoundEffects.Configure(uiSoundPlayer);
+
+// Start app
 MainMenu.Start();

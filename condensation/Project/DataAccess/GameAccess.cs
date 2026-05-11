@@ -5,7 +5,7 @@ using System.Linq;
 
 public class GameAccess
 {
-    private string _connectionString => AppConfig.ConnectionString;
+    private string _connectionString => AppConfig.PostgresConnectionString;
     public void AddGame(GameModel game)
     {
         using var connection = new NpgsqlConnection(_connectionString);
@@ -80,5 +80,12 @@ public class GameAccess
         using var connection = new NpgsqlConnection(_connectionString);
         string sql = "SELECT * FROM game WHERE genre_id = @GenreId AND is_active = true ORDER BY title";
         return connection.Query<GameModel>(sql, new { GenreId = genreId }).ToList();
+    }
+
+    public GameModel GetGameById(int id)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        string sql = "SELECT * FROM game WHERE id = @Id";
+        return connection.QueryFirstOrDefault<GameModel>(sql, new { Id = id });
     }
 }

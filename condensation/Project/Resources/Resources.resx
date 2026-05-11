@@ -153,6 +153,10 @@
     <value>Previous Orders</value>
     <comment/>
   </data>
+  <data name="Menu_MyGames" xml:space="preserve">
+    <value>My Games</value>
+    <comment/>
+  </data>
   <data name="Menu_About" xml:space="preserve">
     <value>About Us</value>
     <comment/>
@@ -226,7 +230,7 @@
     <comment/>
   </data>
   <data name="Price" xml:space="preserve">
-    <value>Price (e.g. 59.99)</value>
+    <value>Price</value>
     <comment/>
   </data>
   <data name="Publisher_ID" xml:space="preserve">
@@ -254,15 +258,87 @@
     <comment/>
   </data>
   <data name="Press_Any_Key_To_Return" xml:space="preserve">
-    <value>Press any key to return . . .</value>
+    <value>Press any key to return...</value>
     <comment/>
   </data>
   <data name="Search_Title" xml:space="preserve">
     <value>Enter game title to search for:</value>
     <comment/>
   </data>
+  <data name="Menu_Analytics" xml:space="preserve">
+    <value>Analytics</value>
+    <comment/>
+  </data>
+  <data name="User_Analytics" xml:space="preserve">
+    <value>User analytics</value>
+    <comment/>
+  </data>
+  <data name="Admin_Analytics" xml:space="preserve">
+    <value>Admin analytics</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Month" xml:space="preserve">
+    <value>Revenue last month</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Revenue_Last_Year" xml:space="preserve">
+    <value>Revenue last year</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Most_Expensive_Games" xml:space="preserve">
+    <value>Top 3 most expensive games</value>
+    <comment/>
+  </data>
+  <data name="Analytics_3_Cheapest_Games" xml:space="preserve">
+    <value>Top 3 cheapest games</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_3_Genres_Most_Sold" xml:space="preserve">
+    <value>Top 3 genres with most sold games</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Games_Last_Month" xml:space="preserve">
+    <value>Top 10 most sold games of last month</value>
+    <comment/>
+  </data>
+  <data name="Analytics_Top_10_Genres" xml:space="preserve">
+    <value>Top 10 most popular genres</value>
+    <comment/>
+  </data>
+  <data name="Period_Start" xml:space="preserve">
+    <value>Period start</value>
+    <comment/>
+  </data>
+  <data name="Period_End" xml:space="preserve">
+    <value>Period end</value>
+    <comment/>
+  </data>
+  <data name="Total_Revenue" xml:space="preserve">
+    <value>Total revenue</value>
+    <comment/>
+  </data>
+  <data name="Sold_Copies" xml:space="preserve">
+    <value>Sold copies</value>
+    <comment/>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+    <comment/>
+  </data>
+  <data name="Game" xml:space="preserve">
+    <value>Game</value>
+    <comment/>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+    <comment/>
+  </data>
   <data name="No_Games_Available" xml:space="preserve">
     <value>No games available.</value>
+    <comment/>
+  </data>
+  <data name="No_Data_Available" xml:space="preserve">
+    <value>No data available.</value>
     <comment/>
   </data>
   <data name="Game_SelectDetails" xml:space="preserve">
@@ -303,6 +379,94 @@
   </data>
   <data name="Game_BackToMenu" xml:space="preserve">
     <value>Back to Game Menu</value>
+    <comment/>
+  </data>
+  <data name="MyGames_SelectGame" xml:space="preserve">
+    <value>Select one of your purchased games:</value>
+    <comment/>
+  </data>
+  <data name="MyGames_Back" xml:space="preserve">
+    <value>Back</value>
+    <comment/>
+  </data>
+  <data name="MyGames_NotLoggedInCustomer" xml:space="preserve">
+    <value>You need to be logged in as a customer to open My Games.</value>
+    <comment/>
+  </data>
+  <data name="MyGames_NoCustomerProfile" xml:space="preserve">
+    <value>No customer profile found for this account.</value>
+    <comment/>
+  </data>
+  <data name="MyGames_NoOwnedGames" xml:space="preserve">
+    <value>You do not own any games yet.</value>
+    <comment/>
+  </data>
+  <data name="MyGames_ReviewsHeader" xml:space="preserve">
+    <value>Reviews for this game</value>
+    <comment/>
+  </data>
+  <data name="MyGames_NoReviewsYet" xml:space="preserve">
+    <value>No reviews yet.</value>
+    <comment/>
+  </data>
+  <data name="MyGames_Reviewer" xml:space="preserve">
+    <value>Reviewer</value>
+    <comment/>
+  </data>
+  <data name="MyGames_Rating" xml:space="preserve">
+    <value>Rating</value>
+    <comment/>
+  </data>
+  <data name="MyGames_Comment" xml:space="preserve">
+    <value>Comment</value>
+    <comment/>
+  </data>
+  <data name="MyGames_ReviewDate" xml:space="preserve">
+    <value>Date</value>
+    <comment/>
+  </data>
+  <data name="MyGames_LeaveReview" xml:space="preserve">
+    <value>Leave review</value>
+    <comment/>
+  </data>
+  <data name="MyGames_EditReview" xml:space="preserve">
+    <value>Edit your review</value>
+    <comment/>
+  </data>
+  <data name="MyGames_RatingPrompt" xml:space="preserve">
+    <value>Give a rating (1-10):</value>
+    <comment/>
+  </data>
+  <data name="MyGames_RatingValidation" xml:space="preserve">
+    <value>Rating must be between 1 and 10.</value>
+    <comment/>
+  </data>
+  <data name="MyGames_CurrentComment" xml:space="preserve">
+    <value>Your current comment:</value>
+    <comment/>
+  </data>
+  <data name="MyGames_CommentPrompt" xml:space="preserve">
+    <value>Write your review comment:</value>
+    <comment/>
+  </data>
+  <data name="MyGames_CommentValidation" xml:space="preserve">
+    <value>Comment must have at least 3 characters.</value>
+    <comment/>
+  </data>
+  <data name="MyGames_ReviewSaved" xml:space="preserve">
+    <value>Your review has been saved.</value>
+    <comment/>
+  </data>
+  <data name="MyGames_DeleteReview" xml:space="preserve">
+    <value>Delete Review</value>
+    <comment/>
+  </data>
+  <data name="MyGames_DeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete your review?</value>
+    <comment/>
+  </data>
+  <data name="MyGames_ReviewDeleted" xml:space="preserve">
+    <value>Review has been deleted.</value>
     <comment/>
   </data>
   <data name="Game_SearchHeader" xml:space="preserve">
@@ -470,7 +634,9 @@
     <comment/>
   </data>
   <data name="Admin_SearchHeader" xml:space="preserve">
-    <value>Your translated text here</value> </data>
+    <value>Your translated text here</value>
+    <comment/>
+  </data>
   <data name="Admin_UpdatingGame" xml:space="preserve">
     <value>Updating:</value>
     <comment/>

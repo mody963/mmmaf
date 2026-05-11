@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class GameLogic
+public class GameLogic : IGameLogic
 {
     private readonly GameAccess _gameAccess = new GameAccess();
 
@@ -51,4 +51,12 @@ public class GameLogic
         
         return _gameAccess.GetGamesByGenre(genreId);
     }
+
+    public GameModel GetGameById(int id)
+    {
+        if (id <= 0) return null;
+        return _gameAccess.GetGameById(id);
+    }
+
+    
 }
