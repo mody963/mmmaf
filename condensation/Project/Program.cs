@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using CondensationApp;
 using System.Text;
 using Project.Services;
 using NRedisStack;
@@ -22,10 +21,15 @@ string postgresConnectionString = config.GetConnectionString("DefaultConnection"
 if (string.IsNullOrWhiteSpace(postgresConnectionString))
     throw new InvalidOperationException("Connection string 'DefaultConnection' is missing or empty.");
 
+// Set AppConfig for data access layers
+AppConfig.PostgresConnectionString = postgresConnectionString;
+
 string redisConnectionString = config.GetConnectionString("RedisConnection") ?? "";
 
 if (string.IsNullOrWhiteSpace(redisConnectionString))
     throw new InvalidOperationException("Connection string 'RedisConnection' is missing or empty.");
+
+AppConfig.RedisConnectionString = redisConnectionString;
 
 string mongoDbConnectionString = config.GetConnectionString("MongoDbConnection") ?? "";
 string mongoDbDatabaseName = config["MongoDb:DatabaseName"] ?? "";
@@ -62,6 +66,7 @@ var mongoDb = new MongoDb(
 );
 
 await mongoDb.TestConnectionAsync();
+AppConfig.MongoDb = mongoDb;
 
 var uiSoundPlayer = new UiSoundPlayer(AppContext.BaseDirectory);
 SoundEffects.Configure(uiSoundPlayer);

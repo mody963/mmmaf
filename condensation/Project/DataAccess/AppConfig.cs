@@ -6,4 +6,5 @@ public static class AppConfig
 
     public static string MongoDbConnectionString { get; set; } = "";
     public static string MongoDbDatabaseName { get; set; } = "";
+    public static MongoDb? MongoDb { get; set; }
 }

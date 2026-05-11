@@ -1,5 +1,6 @@
 using MongoDB.Bson;
 using Spectre.Console;
+using MongoDB.Bson;
 
 public static class AdminMenu
 {
@@ -8,6 +9,7 @@ public static class AdminMenu
     private static readonly PublisherLogic _publisherLogic = new PublisherLogic();
     private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
 
+    private static readonly OrderLogic _orderLogic = new OrderLogic();
     public static void Start()
     {
         bool exitMenu = false;
@@ -26,6 +28,7 @@ public static class AdminMenu
                         "Approve Publishers",
                         "Toggle Review Visibility",
                         "Delete Review",
+                        "View Orders",
                         Texts.Get("Admin_Analytics"),
                         Texts.Get("Log_Out")
                     )
@@ -69,6 +72,9 @@ public static class AdminMenu
                     DeleteReviewAdminMenu();
                     break;
 
+                case "View Orders":
+                    ViewOrdersMenu();
+                    break;
                 case var c when c == Texts.Get("Log_Out"):
                     Logout();
                     exitMenu = true;
@@ -655,6 +661,195 @@ public static class AdminMenu
                 }
             }
         }
+    }
+
+    private static void ViewOrdersMenu()
+    {
+        try
+        {
+            while (true)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.MarkupLine("[bold cyan]--- View Orders ---[/]\n");
+
+                var searchChoice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("How would you like to search?")
+                        .AddChoices(
+                            "Search by Order Number",
+                            "Search by Customer ID",
+                            "Go Back"
+                        )
+                        .HighlightStyle(new Style(foreground: Color.Cyan))
+                );
+
+                switch (searchChoice)
+                {
+                    case "Search by Order Number":
+                        SearchAndViewByOrderNumber();
+                        break;
+                    case "Search by Customer ID":
+                        SearchAndViewByCustomerId();
+                        break;
+                    case "Go Back":
+                        return;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SoundEffects.PlayErrorSound();
+            AnsiConsole.MarkupLine($"[red]Error in orders menu: {ex.Message}[/]");
+            AnsiConsole.MarkupLine($"[grey]{ex.StackTrace}[/]");
+            AnsiConsole.MarkupLine("\nPress any key to return...");
+            Console.ReadKey(true);
+        }
+    }
+
+    private static void SearchAndViewByOrderNumber()
+    {
+        try
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[bold cyan]--- Search Order by Number ---[/]\n");
+
+            int orderId = AnsiConsole.Prompt(new TextPrompt<int>("Enter Order ID (just the number, e.g. 254):"));
+            SoundEffects.PlayMenuClick();
+
+            OrderDocumentModel order = null;
+            for (int daysBack = 0; daysBack <= 30; daysBack++)
+            {
+                string orderNumber = $"ORD-{DateTime.Now.AddDays(-daysBack):yyyyMMdd}-{orderId}";
+                order = _orderLogic.GetOrderDocumentAsync(orderNumber).Result;
+                if (order != null) break;
+            }
+
+            if (order == null)
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]Order not found![/]");
+            }
+            else
+            {
+                DisplayOrderDetails(order);
+            }
+
+            AnsiConsole.MarkupLine("\nPress any key to return...");
+            Console.ReadKey(true);
+        }
+        catch (Exception ex)
+        {
+            SoundEffects.PlayErrorSound();
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
+            AnsiConsole.MarkupLine("\nPress any key to return...");
+            Console.ReadKey(true);
+        }
+    }
+
+    private static void SearchAndViewByCustomerId()
+    {
+        try
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine("[bold cyan]--- Search Orders by Customer ---[/]\n");
+
+            int customerId = AnsiConsole.Prompt(new TextPrompt<int>("Enter Customer ID:"));
+            SoundEffects.PlayMenuClick();
+
+            var orders = _orderLogic.GetCustomerOrderDocumentsAsync(customerId).Result;
+
+            if (orders.Count == 0)
+            {
+                SoundEffects.PlayErrorSound();
+                AnsiConsole.MarkupLine("[red]No orders found for this customer![/]");
+                AnsiConsole.MarkupLine("\nPress any key to return...");
+                Console.ReadKey(true);
+            }
+            else
+            {
+                while (true)
+                {
+                    AnsiConsole.Clear();
+                    AnsiConsole.MarkupLine($"[bold cyan]--- Customer {customerId} Orders ---[/]\n");
+
+                    var orderPrompt = new SelectionPrompt<OrderDocumentModel>()
+                        .Title("Select an order to view details:")
+                        .UseConverter(o => o.Id == ObjectId.Empty ? "Go Back" :
+                            $"{o.OrderNumber} - {o.OrderDate:yyyy-MM-dd} - Status: {o.OrderStatus}")
+                        .HighlightStyle(new Style(foreground: Color.Cyan));
+
+                    foreach (var order in orders) orderPrompt.AddChoice(order);
+
+                    var emptyOrder = new OrderDocumentModel();
+                    orderPrompt.AddChoice(emptyOrder);
+
+                    var selectedOrder = AnsiConsole.Prompt(orderPrompt);
+
+                    if (selectedOrder.Id == ObjectId.Empty) break;
+
+                    DisplayOrderDetails(selectedOrder);
+                    AnsiConsole.MarkupLine("\nPress any key to return to order list...");
+                    Console.ReadKey(true);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            SoundEffects.PlayErrorSound();
+            AnsiConsole.Clear();
+            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
+            AnsiConsole.MarkupLine("\nPress any key to return...");
+            Console.ReadKey(true);
+        }
+    }
+
+    private static void DisplayOrderDetails(OrderDocumentModel order)
+    {
+        AnsiConsole.Clear();
+        AnsiConsole.MarkupLine($"[bold green]--- Order Details ---[/]\n");
+
+        AnsiConsole.MarkupLine($"[yellow]Order Number:[/] {order.OrderNumber}");
+        AnsiConsole.MarkupLine($"[yellow]Customer ID:[/] {order.CustomerId}");
+        AnsiConsole.MarkupLine($"[yellow]Order Date:[/] {order.OrderDate:yyyy-MM-dd HH:mm:ss}");
+        AnsiConsole.MarkupLine($"[yellow]Total Price:[/] €{order.TotalPrice:F2}");
+        AnsiConsole.MarkupLine($"[yellow]Shipping Address:[/] {order.ShippingAddress}");
+        AnsiConsole.MarkupLine($"[yellow]Order Status:[/] [cyan]{order.OrderStatus}[/]");
+        AnsiConsole.MarkupLine($"[yellow]Payment Status:[/] [cyan]{order.PaymentStatus}[/]");
+
+        AnsiConsole.MarkupLine("\n[bold]Items:[/]");
+        var table = new Table();
+        table.AddColumn("Game ID");
+        table.AddColumn("Title");
+        table.AddColumn("Price");
+        table.AddColumn("Quantity");
+
+        foreach (var item in order.Items)
+        {
+            table.AddRow(
+                item.GameId.ToString(),
+                item.GameName,
+                $"€{item.PriceAtPurchase:F2}",
+                item.Quantity.ToString()
+            );
+        }
+
+        AnsiConsole.Write(table);
+
+        AnsiConsole.MarkupLine("\n[bold]Status History:[/]");
+        var historyTable = new Table();
+        historyTable.AddColumn("Status");
+        historyTable.AddColumn("Date/Time");
+
+        foreach (var history in order.StatusHistory.OrderBy(h => h.StatusChangedAt))
+        {
+            historyTable.AddRow(
+                history.Status,
+                history.StatusChangedAt.ToString("yyyy-MM-dd HH:mm:ss")
+            );
+        }
+
+        AnsiConsole.Write(historyTable);
     }
 
     private static void Logout()

@@ -1,7 +1,5 @@
 using StackExchange.Redis;
 
-namespace CondensationApp;
-
 public class RedisDB : IDisposable
 {
     private readonly ConnectionMultiplexer _redis;

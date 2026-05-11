@@ -1,8 +1,6 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace CondensationApp;
-
 public class MongoDb
 {
     private readonly MongoClient _client;
