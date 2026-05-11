@@ -187,10 +187,19 @@ public static class GameMenu
 
                     if (detailAction == Texts.Get("Game_AddToCart"))
                     {
-                        var customerLogic = new CustomersLogic();
-                        var customer = customerLogic.GetByAccountId(CurrentUserModel.CurrentUser!.Id);
+                        bool alreadyOwned = false;
 
-                        if (customer != null && _orderLogic.HasPurchasedGame(customer.Id, selectedGame.Id))
+                        if (CurrentUserModel.CurrentUser != null)
+                        {
+                            var customerLogic = new CustomersLogic();
+                            var customer = customerLogic.GetByAccountId(CurrentUserModel.CurrentUser.Id);
+
+                            if (customer != null && _orderLogic.HasPurchasedGame(customer.Id, selectedGame.Id))
+                            {
+                                alreadyOwned = true;
+                            }
+                        }
+                        if (alreadyOwned)
                         {
                             AnsiConsole.MarkupLine("\n[red]You already own this game![/]");
                             AnsiConsole.MarkupLine("Press any key to return...");
@@ -199,11 +208,8 @@ public static class GameMenu
                         else
                         {
                             cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
-                            AnsiConsole.MarkupLine("\n[green]Game added to cart![/]");
-                            Thread.Sleep(1000);
                         }
                     }
-
                     break;
                 }
             }
@@ -413,7 +419,29 @@ public static class GameMenu
 
                 if (detailAction == Texts.Get("Game_AddToCart"))
                 {
-                    cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
+                    bool alreadyOwned = false;
+
+                    if (CurrentUserModel.CurrentUser != null)
+                    {
+                        var customerLogic = new CustomersLogic();
+                        var customer = customerLogic.GetByAccountId(CurrentUserModel.CurrentUser.Id);
+
+                        if (customer != null && _orderLogic.HasPurchasedGame(customer.Id, selectedGame.Id))
+                        {
+                            alreadyOwned = true;
+                        }
+                    }
+
+                    if (alreadyOwned)
+                    {
+                        AnsiConsole.MarkupLine("\n[red]You already own this game![/]");
+                        AnsiConsole.MarkupLine("Press any key to return...");
+                        Console.ReadKey(true);
+                    }
+                    else
+                    {
+                        cart.AddToCart(selectedGame.Id, selectedGame.Title, selectedGame.Price);
+                    }
                 }
             }
         }
