@@ -1,13 +1,14 @@
 using System;
 using Spectre.Console;
+using MongoDB.Bson;
 
 public static class LoginMenu
-{ 
+{
     private static readonly AccountsLogic accountsLogic = new AccountsLogic();
     private static readonly CustomersLogic customerLogic = new CustomersLogic();
     private static readonly PublisherLogic publisherLogic = new PublisherLogic();
 
-    public static void Start() 
+    public static void Start()
     {
         bool exitMenu = false;
 
@@ -30,7 +31,7 @@ public static class LoginMenu
             switch (choice)
             {
                 case var c when c == Texts.Get("Log_In"):
-                    if (DoLogin()) exitMenu = true; 
+                    if (DoLogin()) exitMenu = true;
                     break;
 
                 case var c when c == Texts.Get("Create_Account"):
@@ -159,7 +160,7 @@ public static class LoginMenu
             Address = address,
             PaymentMethod = paymentMethod.ToLower()
         };
-        
+
         customerLogic.CreateCustomer(newCustomer);
 
         AnsiConsole.MarkupLine($"\n[green]Account successfully created! You can now log in, {firstName}.[/]");
@@ -174,8 +175,8 @@ public static class LoginMenu
 
         string email = AnsiConsole.Prompt(
             new TextPrompt<string>("Contact Email:")
-                .Validate(e => accountsLogic.IsValidEmail(e) 
-                    ? ValidationResult.Success() 
+                .Validate(e => accountsLogic.IsValidEmail(e)
+                    ? ValidationResult.Success()
                     : ValidationResult.Error("[red]Invalid email format.[/]")));
 
         string firstName = AnsiConsole.Prompt(new TextPrompt<string>("Representative First Name:"));
@@ -183,16 +184,16 @@ public static class LoginMenu
 
         string password = AnsiConsole.Prompt(
             new TextPrompt<string>("Password (min 8 chars, 1 special char):")
-                .Secret() 
-                .Validate(p => accountsLogic.IsValidPassword(p) 
-                    ? ValidationResult.Success() 
+                .Secret()
+                .Validate(p => accountsLogic.IsValidPassword(p)
+                    ? ValidationResult.Success()
                     : ValidationResult.Error("[red]Password must be 8+ chars and contain a special character (!@#$%^&*()).[/]")));
 
         // 2. Publisher specific info
         string studioName = AnsiConsole.Prompt(
             new TextPrompt<string>("Studio Name:")
-                .Validate(s => publisherLogic.IsValidStudioName(s) 
-                    ? ValidationResult.Success() 
+                .Validate(s => publisherLogic.IsValidStudioName(s)
+                    ? ValidationResult.Success()
                     : ValidationResult.Error("[red]Invalid or already taken Studio Name.[/]")));
 
         // 3. Create Account: starts with isactive false cause we need approval from admin
@@ -202,7 +203,7 @@ public static class LoginMenu
             FirstName = firstName,
             LastName = lastName,
             Password = password,
-            Role = AccountRoles.Publisher, 
+            Role = AccountRoles.Publisher,
             IsActive = false
         };
 
@@ -226,7 +227,7 @@ public static class LoginMenu
             StudioName = studioName,
             AmountOfGames = 0
         };
-        
+
         publisherLogic.CreatePublisher(newPublisher);
 
         AnsiConsole.MarkupLine("\n[green]A request has been sent to the admin for approval.[/]");
@@ -236,7 +237,7 @@ public static class LoginMenu
     }
 
 
-    private static bool DoLogin() 
+    private static bool DoLogin()
     {
         if (CurrentUserModel.CurrentUser != null)
         {
@@ -283,7 +284,7 @@ public static class LoginMenu
             AccountModel? account = null;
             try
             {
-                account = accountsLogic.CheckLogin(email, password); 
+                account = accountsLogic.CheckLogin(email, password);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -297,11 +298,23 @@ public static class LoginMenu
             {
                 CurrentUserModel.CurrentUser = account;
 
+                UserActionLogger.Log(
+                    actionType: account.Role == AccountRoles.Admin ? "admin_login" : "login",
+                    objectType: account.Role == AccountRoles.Admin ? "admin_account" : "account",
+                    objectId: account.Id.ToString(),
+                    details: new BsonDocument
+                    {
+                        { "email", account.Email },
+                        { "role", account.Role.ToString() },
+                        { "source", "login_menu" }
+                    }
+                );
+
                 if (account.Role == AccountRoles.Admin)
                 {
                     AnsiConsole.MarkupLine($"[green]{Texts.Get("Login_WelcomeAdmin")} {account.FirstName}! {Texts.Get("Login_AdminSuffix")}[/]");
                     AdminMenu.Start(); // Open admin menu
-                    return true;       
+                    return true;
                 }
 
                 if (account.Role == AccountRoles.Publisher)
@@ -318,7 +331,7 @@ public static class LoginMenu
                     {
                         AnsiConsole.MarkupLine($"[green]{Texts.Get("Login_WelcomePublisher")} {account.FirstName}! {Texts.Get("Login_PublisherSuffix")}[/]");
                         PublisherMenu.Start();
-                        return true;       
+                        return true;
                     }
                 }
 
@@ -336,7 +349,7 @@ public static class LoginMenu
                 {
                     SoundEffects.PlayErrorSound();
                     AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_TooManyAttempts")}[/]");
-                    return true; 
+                    return true;
                 }
 
                 AnsiConsole.MarkupLine(Texts.Get("Login_PressEnterToRetry"));
@@ -353,6 +366,20 @@ public static class LoginMenu
     {
         if (CurrentUserModel.CurrentUser != null)
         {
+            var user = CurrentUserModel.CurrentUser;
+
+            UserActionLogger.Log(
+                actionType: "logout",
+                objectType: "account",
+                objectId: user.Id.ToString(),
+                details: new BsonDocument
+                {
+                    { "email", user.Email },
+                    { "role", user.Role.ToString() },
+                    { "source", "login_menu" }
+                }
+            );
+
             AnsiConsole.MarkupLine($"\n[blue]{CurrentUserModel.CurrentUser.FirstName} {Texts.Get("Login_LoggedOut")}[/]");
             CurrentUserModel.CurrentUser = null;
         }

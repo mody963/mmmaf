@@ -9,7 +9,8 @@ public class UserActionLogModel
     public string ActionType { get; set; } = "";
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
+    public string SessionId { get; set; } = "";
 
     public string ObjectType { get; set; } = "";
     public string? ObjectId { get; set; }

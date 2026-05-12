@@ -1,6 +1,5 @@
 using MongoDB.Bson;
 using Spectre.Console;
-using MongoDB.Bson;
 
 public static class AdminMenu
 {
@@ -864,8 +863,8 @@ public static class AdminMenu
             var user = CurrentUserModel.CurrentUser;
 
             UserActionLogger.Log(
-                actionType: "logout",
-                objectType: "account",
+                actionType: "admin_logout",
+                objectType: "admin_account",
                 objectId: user.Id.ToString(),
                 details: new BsonDocument
                 {
