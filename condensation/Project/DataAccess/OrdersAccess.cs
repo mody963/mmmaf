@@ -12,7 +12,7 @@ public class OrdersAccess
     public OrdersAccess()
     {
         var mongoDb = new MongoDb(AppConfig.MongoDbConnectionString, AppConfig.MongoDbDatabaseName);
-        _ordersCollection = mongoDb.GetCollection<BsonDocument>("orders");
+        _ordersCollection = mongoDb.GetCollection<BsonDocument>("previous_orders");
 
         var lastOrder = _ordersCollection
             .Find(new BsonDocument())
