@@ -773,21 +773,24 @@ public static class AdminMenu
                     AnsiConsole.Clear();
                     AnsiConsole.MarkupLine($"[bold cyan]--- Customer {customerId} Orders ---[/]\n");
 
-                    var orderPrompt = new SelectionPrompt<OrderDocumentModel>()
+                    var orderChoices = new Dictionary<string, OrderDocumentModel>();
+                    foreach (var order in orders)
+                    {
+                        string label = $"{order.OrderNumber} - {order.OrderDate:yyyy-MM-dd} - Status: {order.OrderStatus}";
+                        orderChoices[label] = order;
+                    }
+                    orderChoices["Go Back"] = null!;
+
+                    var orderPrompt = new SelectionPrompt<string>()
                         .Title("Select an order to view details:")
-                        .UseConverter(o => o.Id == ObjectId.Empty ? "Go Back" :
-                            $"{o.OrderNumber} - {o.OrderDate:yyyy-MM-dd} - Status: {o.OrderStatus}")
+                        .AddChoices(orderChoices.Keys)
                         .HighlightStyle(new Style(foreground: Color.Cyan));
 
-                    foreach (var order in orders) orderPrompt.AddChoice(order);
+                    var selectedLabel = AnsiConsole.Prompt(orderPrompt);
+                    if (selectedLabel == "Go Back")
+                        break;
 
-                    var emptyOrder = new OrderDocumentModel();
-                    orderPrompt.AddChoice(emptyOrder);
-
-                    var selectedOrder = AnsiConsole.Prompt(orderPrompt);
-
-                    if (selectedOrder.Id == ObjectId.Empty) break;
-
+                    var selectedOrder = orderChoices[selectedLabel];
                     DisplayOrderDetails(selectedOrder);
                     AnsiConsole.MarkupLine("\nPress any key to return to order list...");
                     Console.ReadKey(true);
