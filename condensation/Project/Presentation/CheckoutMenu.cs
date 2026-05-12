@@ -192,14 +192,58 @@ public static class CheckoutMenu
             return;
         }
 
-        cart.ClearCart();
+        try
+        {
+            
+            double totalPrice = items.Sum(item => item.Price);
+            int guestCustomerId = 9999; // dummy id for guest
 
-        SoundEffects.PlayKaching();
-        AnsiConsole.MarkupLine("\n[green]Order confirmed.[/]");
-        AnsiConsole.MarkupLine("[grey]Guest checkout completed.[/]");
-        AnsiConsole.MarkupLine("[grey]Receipt displayed above.[/]");
+            // Save the order to Postgres & MongoDB!
+            int orderId = _checkoutLogic.Checkout(guestCustomerId, totalPrice, items);
 
-        ReturnToMainMenu();
+            // items list for Analytics
+            var itemDocuments = new BsonArray();
+            foreach (var item in items)
+            {
+                itemDocuments.Add(new BsonDocument
+                {
+                    { "id", item.id },
+                    { "name", item.Name },
+                    { "price", item.Price }
+                });
+            }
+
+            // Log the successful guest checkout to MongoDB Analytics
+            UserActionLogger.Log(
+                actionType: "complete_order",
+                objectType: "guest_order",
+                objectId: orderId.ToString(),
+                details: new BsonDocument
+                {
+                    { "customerId", guestCustomerId }, 
+                    { "email", email },
+                    { "paymentMethod", paymentMethod },
+                    { "itemCount", items.Count },
+                    { "total", totalPrice },
+                    { "items", itemDocuments }
+                }
+            );
+            cart.ClearCart();
+
+            SoundEffects.PlayKaching();
+            AnsiConsole.MarkupLine("\n[green]Order confirmed.[/]");
+            AnsiConsole.MarkupLine($"[grey]Order ID:[/] [yellow]{orderId}[/]");
+            AnsiConsole.MarkupLine("[grey]Guest checkout completed.[/]");
+
+            ReturnToMainMenu();
+        }
+        catch (Exception ex)
+        {
+            SoundEffects.PlayErrorSound();
+            AnsiConsole.MarkupLine($"[red]Guest Checkout failed:[/] {ex.Message}");
+            AnsiConsole.MarkupLine("\n[yellow]Make sure you created the dummy Customer account (ID: 9999) in PostgreSQL![/]");
+            Pause();
+        }
     }
 
     private static string PromptGuestEmail()
