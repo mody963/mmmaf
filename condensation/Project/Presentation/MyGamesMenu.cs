@@ -1,5 +1,6 @@
 using Spectre.Console;
 using System.Globalization;
+using MongoDB.Bson;
 using System.Threading;
 
 public static class MyGamesMenu
@@ -260,6 +261,22 @@ public static class MyGamesMenu
         {
             // Show validation errors from the logic layer
             AnsiConsole.MarkupLine($"[red]{Markup.Escape(ex.Message)}[/]");
+
+                UserActionLogger.LogError(
+                message: "Review failed to save due to validation error.",
+                source: "MyGamesMenu.LeaveOrEditReview",
+                exception: ex,
+                details: new BsonDocument
+                {
+                    { "gameId", gameId },
+                    { "customerId", customerId },
+                    { "title", title },
+                    { "pros", pros },
+                    { "cons", cons },
+                    { "comment", comment },
+                    { "rating", rating }
+                }
+            );
         }
 
         Console.ReadKey(true);
