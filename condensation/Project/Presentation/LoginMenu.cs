@@ -264,6 +264,15 @@ public static class LoginMenu
 
                 if (attempts >= maxAttempts)
                 {
+                    UserActionLogger.LogError(
+                        message: "Too many failed login attempts.",
+                        source: "LoginMenu.DoLogin",
+                        details: new BsonDocument
+                        {
+                            { "email", email },
+                            { "attempts", attempts }
+                        }
+                    );
                     SoundEffects.PlayErrorSound();
                     AnsiConsole.MarkupLine($"[red]{Texts.Get("Login_TooManyAttempts")}[/]");
                     return true;
