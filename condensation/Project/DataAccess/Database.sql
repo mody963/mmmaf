@@ -103,3 +103,81 @@ CREATE TABLE reviews (
     CONSTRAINT ck_reviews_rating CHECK (rating BETWEEN 1 AND 10),
     CONSTRAINT uq_reviews UNIQUE (game_id, customer_id)
 );
+
+-- Create Roles Table
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- Create Permissions Table
+CREATE TABLE permissions (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Create Role_Permissions mapping table
+CREATE TABLE role_permissions (
+    role_id INT REFERENCES roles(id) ON DELETE CASCADE,
+    permission_id INT REFERENCES permissions(id) ON DELETE CASCADE,
+    PRIMARY KEY (role_id, permission_id)
+);
+
+-- Create Account_Roles mapping table
+CREATE TABLE account_roles (
+    account_id INT REFERENCES account(id) ON DELETE CASCADE,
+    role_id INT REFERENCES roles(id) ON DELETE CASCADE,
+    PRIMARY KEY (account_id, role_id)
+);
+
+
+-- Insert the 3  Roles
+INSERT INTO roles (id, name) VALUES 
+(1, 'Admin'), 
+(2, 'Publisher'), 
+(3, 'Customer');
+
+-- Insert all the Permissions we designed
+INSERT INTO permissions (id, name) VALUES 
+(1, 'cart.use'),
+(2, 'orders.create'),
+(3, 'orders.read.own'),
+(4, 'orders.read.any'),
+(5, 'library.read.own'),
+(6, 'reviews.create'),
+(7, 'reviews.delete.own'),
+(8, 'reviews.delete.owngames'),
+(9, 'reviews.delete.any'),
+(10, 'reviews.moderate'),
+(11, 'games.create'),
+(12, 'games.update.own'),
+(13, 'games.update.any'),
+(14, 'games.delete.own'),
+(15, 'games.delete.any'),
+(16, 'publishers.approve'),
+(17, 'analytics.read');
+
+-- Give permissions to Admin (Role 1) -> Gets Admin stuff
+INSERT INTO role_permissions (role_id, permission_id) VALUES 
+(1, 4), (1, 9), (1, 10), (1, 11), (1, 13), (1, 15), (1, 16), (1, 17);
+
+-- Give permissions to Publisher (Role 2) -> Gets Publisher stuff
+INSERT INTO role_permissions (role_id, permission_id) VALUES 
+(2, 8), (2, 11), (2, 12), (2, 14);
+
+-- Give permissions to Customer (Role 3) -> Gets Customer stuff
+INSERT INTO role_permissions (role_id, permission_id) VALUES 
+(3, 1), (3, 2), (3, 3), (3, 5), (3, 6), (3, 7);
+
+-- MIGRATE EXISTING USERS: Link your current accounts to the new Roles
+-- Migrate existing Admins (Old Role 2 -> New Role 1)
+INSERT INTO account_roles (account_id, role_id)
+SELECT id, 1 FROM account WHERE role = 2;
+
+-- Migrate existing Publishers (Old Role 1 -> New Role 2)
+INSERT INTO account_roles (account_id, role_id)
+SELECT id, 2 FROM account WHERE role = 1;
+
+-- Migrate existing Customers (Old Role 0 -> New Role 3)
+INSERT INTO account_roles (account_id, role_id)
+SELECT id, 3 FROM account WHERE role = 0;
