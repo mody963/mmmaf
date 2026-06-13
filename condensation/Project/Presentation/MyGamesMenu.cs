@@ -9,12 +9,12 @@ public static class MyGamesMenu
     private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
     private static readonly GameLogic _gameLogic = new GameLogic();
     private static readonly OrderLogic _orderLogic = new OrderLogic();
-
+    private static readonly PermissionsLogic _permissions = new PermissionsLogic();
     public static void Start()
     {
         var currentUser = CurrentUserModel.CurrentUser;
-
-        if (currentUser == null || currentUser.Role != AccountRoles.Customer)
+        
+        if (currentUser == null || !_permissions.HasPermission(currentUser.Id, Permissions.LibraryReadOwn))
         {
             AnsiConsole.MarkupLine($"[red]{Texts.Get("MyGames_NotLoggedInCustomer")}[/]");
             Console.ReadKey(true);
@@ -164,12 +164,7 @@ public static class MyGamesMenu
                 {
                     try
                     {
-                        _reviewLogic.DeleteReviewWithAuth(
-                            customerId,
-                            (int)CurrentUserModel.CurrentUser!.Role,
-                            ownReview!.Id,
-                            game.Id
-                        );
+                        _reviewLogic.DeleteReviewWithAuth(CurrentUserModel.CurrentUser!.Id, ownReview!.Id, game.Id);
                         AnsiConsole.MarkupLine($"[green]{Texts.Get("MyGames_ReviewDeleted")}[/]");
                         SoundEffects.PlayMenuClick();
                     }
