@@ -6,6 +6,7 @@ using Spectre.Console;
 public static class MainMenu
 {
     private static Cart cart = new Cart(); // Shared cart instance
+    private static readonly PermissionsLogic _permissions = new PermissionsLogic();
 
     // We move the language prompt here so the Main Menu can use it when "Menu_Language" is selected
     private static readonly SelectionPrompt<string> LanguagePrompt = new SelectionPrompt<string>()
@@ -13,6 +14,7 @@ public static class MainMenu
         .AddChoices("English", "Nederlands", "Deutsch", "Français")
         .HighlightStyle(new Style(foreground: Color.Green));
 
+    
     private static void ApplyLanguage(string lang)
     {
         var culture = lang switch
@@ -39,7 +41,9 @@ public static class MainMenu
         bool running = true;
         while (running)
         {
-            bool isCustomerLoggedIn = CurrentUserModel.CurrentUser?.Role == AccountRoles.Customer;
+            int userId = CurrentUserModel.CurrentUser?.Id ?? 0;
+            bool isCustomerLoggedIn = _permissions.HasPermission(userId, Permissions.LibraryReadOwn);
+            // bool isCustomerLoggedIn = CurrentUserModel.CurrentUser?.Role == AccountRoles.Customer;
             var menuChoices = new List<string>
             {
                 Texts.Get("Menu_Login"),
