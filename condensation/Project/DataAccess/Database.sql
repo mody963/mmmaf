@@ -169,15 +169,18 @@ INSERT INTO role_permissions (role_id, permission_id) VALUES
 INSERT INTO role_permissions (role_id, permission_id) VALUES 
 (3, 1), (3, 2), (3, 3), (3, 5), (3, 6), (3, 7);
 
+-- MIGRATE EXISTING USERS: Link current accounts to the new Roles
+DELETE FROM account_roles;  -- clear any previously-migrated links
+
 -- MIGRATE EXISTING USERS: Link your current accounts to the new Roles
--- Migrate existing Admins (Old Role 2 -> New Role 1)
+-- Migrate existing Admins (account.role = 1 -> roles.id 1 (Admin))
 INSERT INTO account_roles (account_id, role_id)
-SELECT id, 1 FROM account WHERE role = 2;
+SELECT id, 1 FROM account WHERE role = 1;
 
--- Migrate existing Publishers (Old Role 1 -> New Role 2)
+-- Migrate existing Publishers (account.role = 2 -> roles.id 2 (Publisher))
 INSERT INTO account_roles (account_id, role_id)
-SELECT id, 2 FROM account WHERE role = 1;
+SELECT id, 2 FROM account WHERE role = 2;
 
--- Migrate existing Customers (Old Role 0 -> New Role 3)
+-- Migrate existing Customers (account.role = 0 -> roles.id 3 (Customer))
 INSERT INTO account_roles (account_id, role_id)
 SELECT id, 3 FROM account WHERE role = 0;

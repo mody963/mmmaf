@@ -2,6 +2,9 @@ public class ReviewLogic
 {
     private readonly IReviewAccess _reviewAccess;
     private readonly IGameLogic _gameLogic;
+    private readonly PermissionsLogic _permissions = new PermissionsLogic();
+    private readonly CustomersLogic _customers = new CustomersLogic();
+    private readonly PublisherLogic _publishers = new PublisherLogic();
 
     public ReviewLogic()
     {
@@ -136,9 +139,10 @@ public class ReviewLogic
         _reviewAccess.DeleteReview(reviewId, gameId);
     }
 
-    public void DeleteReviewWithAuth(int userId, int userRole, int reviewId, int gameId)
+    // accountId = the logged in account id, permissions are checked by account
+    public void DeleteReviewWithAuth(int accountId, int reviewId, int gameId)
     {
-        if (userRole == (int)AccountRoles.Admin)
+        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteAny))
         {
             DeleteReview(reviewId, gameId);
             return;
@@ -148,25 +152,27 @@ public class ReviewLogic
         if (review == null)
             throw new InvalidOperationException("Review not found.");
 
-        if (userRole == (int)AccountRoles.Customer)
+        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteOwn))
         {
-            if (review.CustomerId != userId)
-                throw new UnauthorizedAccessException("You can only delete your own reviews.");
-
-            DeleteReview(reviewId, gameId);
-            return;
+            var customer = _customers.GetByAccountId(accountId);
+            if (customer != null && review.CustomerId == customer.Id)
+            {
+                DeleteReview(reviewId, gameId);
+                return;
+            }
         }
 
-        if (userRole == (int)AccountRoles.Publisher)
+        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteOwnGames))
         {
             var game = _gameLogic.GetGameById(gameId);
-            if (game == null || game.PublisherId != userId)
-                throw new UnauthorizedAccessException("You can only delete reviews from your own published games.");
-
-            DeleteReview(reviewId, gameId);
-            return;
+            var publisher = _publishers.GetByAccountId(accountId);
+            if (game != null && publisher != null && game.PublisherId == publisher.Id)
+            {
+                DeleteReview(reviewId, gameId);
+                return;
+            }
         }
 
-        throw new UnauthorizedAccessException("Invalid user role.");
+        throw new UnauthorizedAccessException("You do not have permission to delete this review.");
     }
 }

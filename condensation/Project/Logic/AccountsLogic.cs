@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class AccountsLogic
 {
     private readonly AccountsAccess _accounts = new AccountsAccess();
-    private readonly PermissionsLogic _permissions = new PermissionsLogic();
+    private readonly AccountRolesAccess _accountRoles = new AccountRolesAccess();
     
     public AccountModel? CheckLogin(string email, string password)
     {
@@ -23,19 +23,14 @@ public class AccountsLogic
         return account;
     }
 
-    public AccountModel? CheckAdminLogin(string email, string password)
-    {
-        var account = CheckLogin(email, password);
-        if (account == null) return null;
-        
-        return _permissions.HasPermission(account.Id, "analytics.read") ? account : null;
-    }
-
-    public int CreateAccount(AccountModel account)
+    public int CreateAccount(AccountModel account, int roleId)
     {
         var existing = _accounts.GetByEmail(account.Email);
         if (existing != null) throw new InvalidOperationException("Email already in use");
-        return _accounts.Create(account);
+
+        int accountId = _accounts.Create(account); // legacy account.role column still 
+        _accountRoles.Assign(accountId, roleId);
+        return accountId;
     }
 
     public bool IsValidEmail(string email)
