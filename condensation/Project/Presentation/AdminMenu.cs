@@ -9,6 +9,7 @@ public static class AdminMenu
     private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
 
     private static readonly OrderLogic _orderLogic = new OrderLogic();
+    private static readonly PermissionsLogic _permissions = new PermissionsLogic();
     public static void Start()
     {
         bool exitMenu = false;
@@ -17,20 +18,24 @@ public static class AdminMenu
         {
             AnsiConsole.Clear();
 
+            int userId = CurrentUserModel.CurrentUser!.Id;
+            var perms = _permissions.GetPermissions(userId);
+            var choices = new List<string>();
+
+            if (perms.Contains(Permissions.GamesCreate))       choices.Add(Texts.Get("Add_Game"));
+            if (perms.Contains(Permissions.GamesUpdateAny))    choices.Add(Texts.Get("Update_Game"));
+            if (perms.Contains(Permissions.GamesDeleteAny))    choices.Add(Texts.Get("Delete_Game"));
+            if (perms.Contains(Permissions.PublishersApprove)) choices.Add("Approve Publishers");
+            if (perms.Contains(Permissions.ReviewsModerate))   choices.Add("Toggle Review Visibility");
+            if (perms.Contains(Permissions.ReviewsDeleteAny))  choices.Add("Delete Review");
+            if (perms.Contains(Permissions.OrdersReadAny))     choices.Add("View Orders");
+            if (perms.Contains(Permissions.AnalyticsRead))     choices.Add(Texts.Get("Admin_Analytics"));
+            choices.Add(Texts.Get("Log_Out"));
+
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title($"[bold green]{Texts.Get("Admin_Menu")}[/]")
-                    .AddChoices(
-                        Texts.Get("Add_Game"),
-                        Texts.Get("Update_Game"),
-                        Texts.Get("Delete_Game"),
-                        "Approve Publishers",
-                        "Toggle Review Visibility",
-                        "Delete Review",
-                        "View Orders",
-                        Texts.Get("Admin_Analytics"),
-                        Texts.Get("Log_Out")
-                    )
+                    .AddChoices(choices)
                     .HighlightStyle(new Style(foreground: Color.Yellow))
             );
 
