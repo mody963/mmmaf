@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class AccountsLogic
 {
     private readonly AccountsAccess _accounts = new AccountsAccess();
+    private readonly PermissionsLogic _permissions = new PermissionsLogic();
     
     public AccountModel? CheckLogin(string email, string password)
     {
@@ -27,7 +28,7 @@ public class AccountsLogic
         var account = CheckLogin(email, password);
         if (account == null) return null;
         
-        return account.Role == AccountRoles.Admin ? account : null;
+        return _permissions.HasPermission(account.Id, "analytics.read") ? account : null;
     }
 
     public int CreateAccount(AccountModel account)
