@@ -106,15 +106,15 @@ public static class PublisherMenu
 
         game.Title = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Title")}:").DefaultValue(game.Title));
         SoundEffects.PlayMenuClick();
-        game.Description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:" ).DefaultValue(game.Description));
+        game.Description = AnsiConsole.Prompt(new TextPrompt<string>($"{Texts.Get("Description")}:").DefaultValue(game.Description));
         SoundEffects.PlayMenuClick();
-        game.Price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:" ).DefaultValue(game.Price));
+        game.Price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:").DefaultValue(game.Price));
         SoundEffects.PlayMenuClick();
 
         // 2. Dropdown for Genre
         var genres = _gameLogic.GetAllGenres();
         var currentGenre = genres.FirstOrDefault(g => g.Id == game.GenreId); // Find the current one
-        
+
         var selectedGenre = AnsiConsole.Prompt(
             new SelectionPrompt<GenreModel>()
                 .Title($"{Texts.Get("Admin_SelectGenreWithCurrent")} [yellow]{currentGenre?.Name}[/]):")
@@ -126,7 +126,7 @@ public static class PublisherMenu
 
         var ageRatings = _gameLogic.GetAllAgeRatings();
         var currentAgeRating = ageRatings.FirstOrDefault(a => a.Id == game.AgeRatingId);
-        
+
         var selectedAgeRating = AnsiConsole.Prompt(
             new SelectionPrompt<AgeRatingModel>()
                 .Title($"{Texts.Get("Admin_SelectAgeRatingWithCurrent")} [yellow]{currentAgeRating?.Name}[/]):")
@@ -151,8 +151,8 @@ public static class PublisherMenu
     private static void ShowPublisherRatings(int publisherId)
     {
 
-        AnsiConsole.MarkupLine("[red]DEBUG: entering ShowPublisherRatings[/]");
-        Console.ReadKey();
+        // AnsiConsole.MarkupLine("[red]debug: entering ShowPublisherRatings[/]");
+        // Console.ReadKey();
         const int pageSize = 10;
 
         AnsiConsole.Clear();
@@ -171,7 +171,7 @@ public static class PublisherMenu
             .GroupBy(r => new { r.GameId })
             .Select(g => new
             {
-                GameId = g.Key.GameId,  
+                GameId = g.Key.GameId,
                 GameTitle = _gameLogic.GetGameById(g.Key.GameId)?.Title ?? "Unknown Game",
                 Reviews = g.ToList()
             })
@@ -277,10 +277,10 @@ public static class PublisherMenu
             var reviewChoices = new List<ReviewModel>();
             var reviewPrompt = new SelectionPrompt<ReviewModel>()
                 .Title("Select a review to manage or navigate:")
-                .UseConverter(r => 
+                .UseConverter(r =>
                 {
                     string shortComment = r.Comment.Length > 40 ? r.Comment.Substring(0, 37) + "..." : r.Comment;
-                    return $"[yellow]{r.Rating}/10[/] - {Markup.Escape(r.ReviewerName)}: {shortComment}";
+                    return $"[yellow]{r.Rating}/5[/] - {Markup.Escape(r.ReviewerName)}: {shortComment}";
                 });
 
             foreach (var r in pageReviews)
@@ -330,11 +330,10 @@ public static class PublisherMenu
                 try
                 {
                     _reviewLogic.DeleteReviewWithAuth(
-                        CurrentUserModel.CurrentUser!.Id,
-                        CurrentUserModel.CurrentUser!.Role,
-                        selectedReview.Id,
-                        gameId
-                    );
+                    CurrentUserModel.CurrentUser!.Id,   // accountId
+                    selectedReview.Id,
+                    gameId
+                );
                     reviews.Remove(selectedReview);
                     totalPages = (int)Math.Ceiling(reviews.Count / (double)pageSize);
                     AnsiConsole.MarkupLine("[green]Review deleted successfully![/]");
@@ -365,7 +364,7 @@ public static class PublisherMenu
             return;
         }
 
-        
+
         if (game.PublisherId != publisher.Id)
         {
             SoundEffects.PlayErrorSound();
