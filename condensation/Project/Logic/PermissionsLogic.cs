@@ -9,11 +9,4 @@ public class PermissionsLogic
 
         return _permissionsAccess.HasPermission(accountId, permissionName);
     }
-
-    public HashSet<string> GetPermissions(int accountId)
-    {
-        if (accountId <= 0) return new HashSet<string>();
-
-        return _permissionsAccess.GetPermissionsForAccount(accountId);
-    }
 }
