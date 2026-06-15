@@ -19,17 +19,17 @@ public static class AdminMenu
             AnsiConsole.Clear();
 
             int userId = CurrentUserModel.CurrentUser!.Id;
-            var perms = _permissions.GetPermissions(userId);
             var choices = new List<string>();
 
-            if (perms.Contains(Permissions.GamesCreate))       choices.Add(Texts.Get("Add_Game"));
-            if (perms.Contains(Permissions.GamesUpdateAny))    choices.Add(Texts.Get("Update_Game"));
-            if (perms.Contains(Permissions.GamesDeleteAny))    choices.Add(Texts.Get("Delete_Game"));
-            if (perms.Contains(Permissions.PublishersApprove)) choices.Add("Approve Publishers");
-            if (perms.Contains(Permissions.ReviewsModerate))   choices.Add("Toggle Review Visibility");
-            if (perms.Contains(Permissions.ReviewsDeleteAny))  choices.Add("Delete Review");
-            if (perms.Contains(Permissions.OrdersReadAny))     choices.Add("View Orders");
-            if (perms.Contains(Permissions.AnalyticsRead))     choices.Add(Texts.Get("Admin_Analytics"));
+            if (_permissions.HasPermission(userId, "games.create")) choices.Add(Texts.Get("Add_Game"));
+            if (_permissions.HasPermission(userId, "games.update.any")) choices.Add(Texts.Get("Update_Game"));
+            if (_permissions.HasPermission(userId, "games.delete.any")) choices.Add(Texts.Get("Delete_Game"));
+            if (_permissions.HasPermission(userId, "publishers.approve")) choices.Add("Approve Publishers");
+            if (_permissions.HasPermission(userId, "reviews.moderate")) choices.Add("Toggle Review Visibility");
+            if (_permissions.HasPermission(userId, "reviews.delete.any")) choices.Add("Delete Review");
+            if (_permissions.HasPermission(userId, "orders.read.any")) choices.Add("View Orders");
+            if (_permissions.HasPermission(userId, "analytics.read")) choices.Add(Texts.Get("Admin_Analytics"));
+
             choices.Add(Texts.Get("Log_Out"));
 
             var choice = AnsiConsole.Prompt(
