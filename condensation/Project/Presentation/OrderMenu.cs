@@ -5,12 +5,13 @@ public static class OrderMenu
 {
     private static readonly OrderLogic _orderLogic = new OrderLogic();
     private static readonly CustomersLogic _customersLogic = new CustomersLogic();
+    private static readonly PermissionsAccess _permissions = new PermissionsAccess();
+
 
     public static void Start()
     {
         var currentUser = CurrentUserModel.CurrentUser;
-
-        if (currentUser == null || currentUser.Role != AccountRoles.Customer)
+        if (currentUser == null || !_permissions.HasPermission(currentUser.Id, Permissions.OrdersReadOwn))
         {
             AnsiConsole.MarkupLine($"[red]{Texts.Get("Order_NotLoggedInCustomer")}[/]");
             Console.ReadKey(true);
@@ -45,8 +46,8 @@ public static class OrderMenu
 
             var prompt = new SelectionPrompt<OrderModel>()
                 .Title($"[bold]{Texts.Get("Order_SelectOrder")}[/]")
-                .UseConverter(o => o.Id == -1 
-                    ? Texts.Get("Order_Back") 
+                .UseConverter(o => o.Id == -1
+                    ? Texts.Get("Order_Back")
                     : $"Order #{o.Id} - {o.OrderDate:yyyy-MM-dd} - EUR {o.TotalPrice:0.00}")
                 .HighlightStyle(new Style(foreground: Color.Green));
 
