@@ -4,12 +4,12 @@ namespace UnitTests;
 public class ReviewLogicTests
 {
     [TestMethod]
-    public void IsValidRating_ReturnsTrueForRange1To10()
+    public void IsValidRating_ReturnsTrueForRange1To5()
     {
         var logic = new ReviewLogic(new FakeReviewAccess());
 
         Assert.IsTrue(logic.IsValidRating(1));
-        Assert.IsTrue(logic.IsValidRating(10));
+        Assert.IsTrue(logic.IsValidRating(5));
     }
 
     [TestMethod]
@@ -18,7 +18,17 @@ public class ReviewLogicTests
         var logic = new ReviewLogic(new FakeReviewAccess());
 
         Assert.IsFalse(logic.IsValidRating(0));
-        Assert.IsFalse(logic.IsValidRating(11));
+        Assert.IsFalse(logic.IsValidRating(6));
+    }
+
+    [TestMethod]
+    public void IsValidComment_ReturnsFalseForEmptyOrTooShortText()
+    {
+        var logic = new ReviewLogic(new FakeReviewAccess());
+
+        Assert.IsFalse(logic.IsValidComment(null));
+        Assert.IsFalse(logic.IsValidComment("  "));
+        Assert.IsFalse(logic.IsValidComment("ok"));
     }
 
     [TestMethod]
@@ -31,7 +41,7 @@ public class ReviewLogicTests
         {
             GameId = 1,
             CustomerId = 1,
-            Rating = 8,
+            Rating = 4,
             Comment = "Great game"
         };
 
@@ -49,7 +59,7 @@ public class ReviewLogicTests
         {
             GameId = 1,
             CustomerId = 1,
-            Rating = 12,
+            Rating = 6,
             Comment = "Great game"
         };
 
@@ -67,7 +77,7 @@ public class ReviewLogicTests
         {
             GameId = 1,
             CustomerId = 1,
-            Rating = 8,
+            Rating = 4,
             Comment = "  "
         };
 
@@ -85,7 +95,7 @@ public class ReviewLogicTests
         {
             GameId = 9,
             CustomerId = 4,
-            Rating = 7,
+            Rating = 5,
             Comment = "  Nice story and music  "
         };
 
@@ -96,143 +106,54 @@ public class ReviewLogicTests
         Assert.AreEqual("Nice story and music", fakeAccess.LastSavedReview!.Comment);
         Assert.AreEqual(9, fakeAccess.LastSavedReview.GameId);
         Assert.AreEqual(4, fakeAccess.LastSavedReview.CustomerId);
-        Assert.AreEqual(7, fakeAccess.LastSavedReview.Rating);
+        Assert.AreEqual(5, fakeAccess.LastSavedReview.Rating);
     }
 
     [TestMethod]
-    public void DeleteReviewWithAuth_Admin_CanDeleteAnyReview()
+    public void DeleteReview_Throws_WhenReviewIsNull()
     {
-        var fakeAccess = new FakeReviewAccess 
-        { 
-            ReviewToReturn = new ReviewModel { Id = 5, GameId = 1, CustomerId = 2 }
-        };
-        var fakeGameLogic = new FakeGameLogic 
-        { 
-            GameToReturn = new GameModel { Id = 1, PublisherId = 3 } 
-        };
-        var logic = new ReviewLogic(fakeAccess, fakeGameLogic);
+        var logic = new ReviewLogic(new FakeReviewAccess());
 
-        // Admin (role=1) deleting a review
-        logic.DeleteReviewWithAuth(userId: 99, userRole: (int)AccountRoles.Admin, reviewId: 5, gameId: 1);
+        Assert.ThrowsException<ArgumentNullException>(() => logic.DeleteReview(null!));
+    }
+
+    [TestMethod]
+    public void DeleteReview_CallsAccessDelete()
+    {
+        var fakeAccess = new FakeReviewAccess();
+        var logic = new ReviewLogic(fakeAccess);
+        var review = new ReviewModel { Id = 7, GameId = 2 };
+
+        logic.DeleteReview(review);
 
         Assert.AreEqual(1, fakeAccess.DeleteCalls);
     }
 
     [TestMethod]
-    public void DeleteReviewWithAuth_Customer_CanDeleteOwnReview()
+    public void ToggleReviewVisibility_UpsertsWithToggledHiddenValue()
     {
-        var fakeAccess = new FakeReviewAccess 
-        { 
-            ReviewToReturn = new ReviewModel { Id = 5, GameId = 1, CustomerId = 10 }
+        var fakeAccess = new FakeReviewAccess
+        {
+            ReviewToReturn = new ReviewModel { Id = 5, GameId = 1, IsHidden = false }
         };
-        var fakeGameLogic = new FakeGameLogic();
-        var logic = new ReviewLogic(fakeAccess, fakeGameLogic);
+        var logic = new ReviewLogic(fakeAccess);
 
-        // Customer (role=0) deleting their own review
-        logic.DeleteReviewWithAuth(userId: 10, userRole: (int)AccountRoles.Customer, reviewId: 5, gameId: 1);
+        logic.ToggleReviewVisibility(5);
 
-        Assert.AreEqual(1, fakeAccess.DeleteCalls);
+        Assert.AreEqual(1, fakeAccess.UpsertCalls);
+        Assert.IsNotNull(fakeAccess.LastSavedReview);
+        Assert.IsTrue(fakeAccess.LastSavedReview!.IsHidden);
     }
 
     [TestMethod]
-    public void DeleteReviewWithAuth_Customer_CannotDeleteOthersReview()
+    public void GetAllReviewsForGameAdmin_ReturnsEmpty_WhenGameIdIsInvalid()
     {
-        var fakeAccess = new FakeReviewAccess 
-        { 
-            ReviewToReturn = new ReviewModel { Id = 5, GameId = 1, CustomerId = 10 }
-        };
-        var fakeGameLogic = new FakeGameLogic();
-        var logic = new ReviewLogic(fakeAccess, fakeGameLogic);
+        var logic = new ReviewLogic(new FakeReviewAccess());
 
-        // Customer (role=0) trying to delete someone else's review
-        var ex = Assert.ThrowsException<UnauthorizedAccessException>(() =>
-            logic.DeleteReviewWithAuth(userId: 20, userRole: (int)AccountRoles.Customer, reviewId: 5, gameId: 1)
-        );
+        var result = logic.GetAllReviewsForGameAdmin(0);
 
-        Assert.AreEqual("You can only delete your own reviews.", ex.Message);
-        Assert.AreEqual(0, fakeAccess.DeleteCalls);
-    }
-
-    [TestMethod]
-    public void DeleteReviewWithAuth_Publisher_CanDeleteReviewFromOwnGame()
-    {
-        var fakeAccess = new FakeReviewAccess 
-        { 
-            ReviewToReturn = new ReviewModel { Id = 5, GameId = 1, CustomerId = 10 }
-        };
-        var fakeGameLogic = new FakeGameLogic 
-        { 
-            GameToReturn = new GameModel { Id = 1, PublisherId = 99 } 
-        };
-        var logic = new ReviewLogic(fakeAccess, fakeGameLogic);
-
-        // Publisher (role=2) deleting review from their own game
-        logic.DeleteReviewWithAuth(userId: 99, userRole: (int)AccountRoles.Publisher, reviewId: 5, gameId: 1);
-
-        Assert.AreEqual(1, fakeAccess.DeleteCalls);
-    }
-
-    [TestMethod]
-    public void DeleteReviewWithAuth_Publisher_CannotDeleteReviewFromOthersGame()
-    {
-        var fakeAccess = new FakeReviewAccess 
-        { 
-            ReviewToReturn = new ReviewModel { Id = 5, GameId = 1, CustomerId = 10 }
-        };
-        var fakeGameLogic = new FakeGameLogic 
-        { 
-            GameToReturn = new GameModel { Id = 1, PublisherId = 99 } 
-        };
-        var logic = new ReviewLogic(fakeAccess, fakeGameLogic);
-
-        // Publisher (role=2) trying to delete review from someone else's game
-        var ex = Assert.ThrowsException<UnauthorizedAccessException>(() =>
-            logic.DeleteReviewWithAuth(userId: 50, userRole: (int)AccountRoles.Publisher, reviewId: 5, gameId: 1)
-        );
-
-        Assert.AreEqual("You can only delete reviews from your own published games.", ex.Message);
-        Assert.AreEqual(0, fakeAccess.DeleteCalls);
-    }
-
-    [TestMethod]
-    public void DeleteReviewWithAuth_Throws_WhenReviewNotFound()
-    {
-        var fakeAccess = new FakeReviewAccess 
-        { 
-            ReviewToReturn = null
-        };
-        var fakeGameLogic = new FakeGameLogic();
-        var logic = new ReviewLogic(fakeAccess, fakeGameLogic);
-
-        // Try to delete a non-existent review
-        var ex = Assert.ThrowsException<InvalidOperationException>(() =>
-            logic.DeleteReviewWithAuth(userId: 10, userRole: (int)AccountRoles.Customer, reviewId: 999, gameId: 1)
-        );
-
-        Assert.AreEqual("Review not found.", ex.Message);
-        Assert.AreEqual(0, fakeAccess.DeleteCalls);
-    }
-
-    [TestMethod]
-    public void DeleteReviewWithAuth_Publisher_Throws_WhenGameNotFound()
-    {
-        var fakeAccess = new FakeReviewAccess 
-        { 
-            ReviewToReturn = new ReviewModel { Id = 5, GameId = 1, CustomerId = 10 }
-        };
-        var fakeGameLogic = new FakeGameLogic 
-        { 
-            GameToReturn = null 
-        };
-        var logic = new ReviewLogic(fakeAccess, fakeGameLogic);
-
-        // Publisher trying to delete review from non-existent game
-        var ex = Assert.ThrowsException<UnauthorizedAccessException>(() =>
-            logic.DeleteReviewWithAuth(userId: 99, userRole: (int)AccountRoles.Publisher, reviewId: 5, gameId: 999)
-        );
-
-        Assert.AreEqual("You can only delete reviews from your own published games.", ex.Message);
-        Assert.AreEqual(0, fakeAccess.DeleteCalls);
+        Assert.IsNotNull(result);
+        Assert.AreEqual(0, result.Count);
     }
 
     private class FakeReviewAccess : IReviewAccess
