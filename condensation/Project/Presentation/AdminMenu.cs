@@ -21,14 +21,14 @@ public static class AdminMenu
             int userId = CurrentUserModel.CurrentUser!.Id;
             var choices = new List<string>();
 
-            if (_permissions.HasPermission(userId, "games.create")) choices.Add(Texts.Get("Add_Game"));
-            if (_permissions.HasPermission(userId, "games.update.any")) choices.Add(Texts.Get("Update_Game"));
-            if (_permissions.HasPermission(userId, "games.delete.any")) choices.Add(Texts.Get("Delete_Game"));
-            if (_permissions.HasPermission(userId, "publishers.approve")) choices.Add("Approve Publishers");
-            if (_permissions.HasPermission(userId, "reviews.moderate")) choices.Add("Toggle Review Visibility");
-            if (_permissions.HasPermission(userId, "reviews.delete.any")) choices.Add("Delete Review");
-            if (_permissions.HasPermission(userId, "orders.read.any")) choices.Add("View Orders");
-            if (_permissions.HasPermission(userId, "analytics.read")) choices.Add(Texts.Get("Admin_Analytics"));
+            if (_permissions.HasPermission(userId, Permissions.GamesCreate)) choices.Add(Texts.Get("Add_Game"));
+            if (_permissions.HasPermission(userId, Permissions.GamesUpdateAny)) choices.Add(Texts.Get("Update_Game"));
+            if (_permissions.HasPermission(userId, Permissions.GamesDeleteAny)) choices.Add(Texts.Get("Delete_Game"));
+            if (_permissions.HasPermission(userId, Permissions.PublishersApprove)) choices.Add("Approve Publishers");
+            if (_permissions.HasPermission(userId, Permissions.ReviewsModerate)) choices.Add("Toggle Review Visibility");
+            if (_permissions.HasPermission(userId, Permissions.ReviewsDeleteAny)) choices.Add("Delete Review");
+            if (_permissions.HasPermission(userId, Permissions.OrdersReadAny)) choices.Add("View Orders");
+            if (_permissions.HasPermission(userId, Permissions.AnalyticsRead)) choices.Add(Texts.Get("Admin_Analytics"));
 
             choices.Add(Texts.Get("Log_Out"));
 
