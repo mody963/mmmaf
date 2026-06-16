@@ -142,7 +142,7 @@ public class ReviewLogic
     // accountId = the logged in account id, permissions are checked by account
     public void DeleteReviewWithAuth(int accountId, int reviewId, int gameId)
     {
-        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteAny))
+        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteAny)) // Admin permission
         {
             DeleteReview(reviewId, gameId);
             return;
@@ -152,7 +152,7 @@ public class ReviewLogic
         if (review == null)
             throw new InvalidOperationException("Review not found.");
 
-        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteOwn))
+        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteOwn)) // Customer permission
         {
             var customer = _customers.GetByAccountId(accountId);
             if (customer != null && review.CustomerId == customer.Id)
@@ -162,7 +162,7 @@ public class ReviewLogic
             }
         }
 
-        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteOwnGames))
+        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteOwnGames)) // Publisher permission
         {
             var game = _gameLogic.GetGameById(gameId);
             var publisher = _publishers.GetByAccountId(accountId);
