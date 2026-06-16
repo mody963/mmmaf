@@ -184,3 +184,7 @@ SELECT id, 2 FROM account WHERE role = 2;
 -- Migrate existing Customers (account.role = 0 -> roles.id 3 (Customer))
 INSERT INTO account_roles (account_id, role_id)
 SELECT id, 3 FROM account WHERE role = 0;
+ -- changed perm
+UPDATE permissions 
+SET name = 'reviews.read.owngames' 
+WHERE name = 'reviews.delete.owngames';

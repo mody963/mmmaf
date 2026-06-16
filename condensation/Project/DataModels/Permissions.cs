@@ -8,7 +8,7 @@ public static class Permissions
     public const string LibraryReadOwn = "library.read.own";
     public const string ReviewsCreate = "reviews.create";
     public const string ReviewsDeleteOwn = "reviews.delete.own";
-    public const string ReviewsDeleteOwnGames = "reviews.delete.owngames";
+    public const string ReviewsReadOwnGames = "reviews.read.owngames";    
     public const string ReviewsDeleteAny = "reviews.delete.any";
     public const string ReviewsModerate = "reviews.moderate";
     public const string GamesCreate = "games.create";
