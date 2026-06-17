@@ -9,6 +9,12 @@ public class OrderIntegrationTests
 
     public OrderIntegrationTests()
     {
+        // Inject both connection strings so the test can log in
+        AppConfig.PostgresConnectionString = "Host=localhost;Port=5433;Database=Condensation;Username=mouhamad;Password=dei2Kaish4dooquiepei";
+        
+        AppConfig.MongoDbConnectionString = "mongodb://hro_gebruiker:hetismongodb@pg-hro.crazyelectron.io:27017/?authsource=admin"; 
+        AppConfig.MongoDbDatabaseName = "Condensation";
+
         _ordersAccess = new OrdersAccess();
 
         var mongo = new MongoDb(

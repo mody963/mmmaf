@@ -4,8 +4,23 @@ using System.Collections.Generic;
 
 public class AccountsLogic
 {
-    private readonly AccountsAccess _accounts = new AccountsAccess();
+    private readonly IAccountsAccess _accounts;
+    
     private readonly AccountRolesAccess _accountRoles = new AccountRolesAccess();
+
+    // Standard constructor for the real app
+    public AccountsLogic()
+    {
+        _accounts = new AccountsAccess();
+        _accountRoles = new AccountRolesAccess();
+    }
+
+    // Test constructor for Unit Testing
+    public AccountsLogic(IAccountsAccess accountsAccess)
+    {
+        _accounts = accountsAccess;
+        _accountRoles = new AccountRolesAccess(); // Can be mocked later if needed
+    }
     
     public AccountModel? CheckLogin(string email, string password)
     {

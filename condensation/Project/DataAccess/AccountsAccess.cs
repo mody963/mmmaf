@@ -3,7 +3,7 @@ using Dapper;
 using System.Collections.Generic;
 using System.Linq;
 
-public class AccountsAccess
+public class AccountsAccess : IAccountsAccess
 {
     //private readonly string _connectionString = AppConfig.ConnectionString;
     private string _connectionString => AppConfig.PostgresConnectionString;
