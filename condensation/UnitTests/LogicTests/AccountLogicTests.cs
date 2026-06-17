@@ -41,6 +41,21 @@ public class AccountsLogicTests
         Assert.AreEqual(3, result.Role); // Verify it's a Customer
     }
 
+
+    [TestMethod]
+
+    public void CheckLogin_HappyPath_Publisher_ReturnsAccount()
+    {
+        var fakeAccess = new FakeAccountsAccess();
+        fakeAccess.AccountToReturn = new AccountModel{Id = 1, Email = "publisher@test.com", Password = "hashedpassword", Role = 2, IsActive = true}; 
+        var logic = new AccountsLogic(fakeAccess);
+
+        var result = logic.CheckLogin("publisher@test.com", "hashedpassword");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(2, result.Role); 
+    }
+
     [TestMethod]
     public void CheckLogin_VerkeerdWachtwoord_ReturnsNull()
     {
