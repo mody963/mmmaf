@@ -78,7 +78,21 @@ public class ReviewLogic
 
     public List<ReviewModel> GetPublisherReviews(int publisherId)
     {
-        return _reviewAccess.GetReviewsByPublisherId(publisherId);
+        var publisherReviews = new List<ReviewModel>();
+
+        
+        var publisherGames = _gameLogic.GetAllGames()
+            .Where(g => g.PublisherId == publisherId && g.IsActive)
+            .ToList();
+
+        foreach (var game in publisherGames)
+        {
+            // We use GetAllReviewsForGameAdmin so publishers can see hidden reviews on their own games too!
+            var gameReviews = _reviewAccess.GetAllReviewsForGameAdmin(game.Id);
+            publisherReviews.AddRange(gameReviews);
+        }
+
+        return publisherReviews;
     }
 
     public bool IsValidTitle(string? title)
@@ -162,16 +176,6 @@ public class ReviewLogic
             }
         }
 
-        if (_permissions.HasPermission(accountId, Permissions.ReviewsDeleteOwnGames)) // Publisher permission
-        {
-            var game = _gameLogic.GetGameById(gameId);
-            var publisher = _publishers.GetByAccountId(accountId);
-            if (game != null && publisher != null && game.PublisherId == publisher.Id)
-            {
-                DeleteReview(reviewId, gameId);
-                return;
-            }
-        }
 
         throw new UnauthorizedAccessException("You do not have permission to delete this review.");
     }

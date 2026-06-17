@@ -173,4 +173,10 @@ public class OrdersAccess
         const string sql = "SELECT * FROM game WHERE id = @GameId";
         return connection.QueryFirstOrDefault<GameModel>(sql, new { GameId = gameId });
     }
+
+    public void DeleteOrder(int orderId) //Puur voor testen
+    {
+        var filter = Builders<BsonDocument>.Filter.Eq("id", orderId);
+        _ordersCollection.DeleteOne(filter);
+    }
 }

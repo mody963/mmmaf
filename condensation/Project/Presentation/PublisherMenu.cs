@@ -5,10 +5,12 @@ public static class PublisherMenu
 {
     private static readonly GameLogic _gameLogic = new GameLogic();
     private static readonly PublisherLogic _publisherLogic = new PublisherLogic();
+    private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
+    
+    private static readonly PermissionsLogic _permissions = new PermissionsLogic(); 
 
     public static void Start()
     {
-        // Haal de gekoppelde publisher-gegevens op van de ingelogde gebruiker
         var publisher = _publisherLogic.GetByAccountId(CurrentUserModel.CurrentUser.Id);
 
         if (publisher == null)
@@ -23,16 +25,28 @@ public static class PublisherMenu
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine($"[bold blue]Publisher Dashboard:[/] [yellow]{publisher.StudioName}[/]\n");
 
+    
+            int accountId = CurrentUserModel.CurrentUser.Id;
+            var choices = new List<string>();
+
+            if (_permissions.HasPermission(accountId, Permissions.GamesCreate)) 
+                choices.Add("Add My Game");
+                
+            if (_permissions.HasPermission(accountId, Permissions.GamesUpdateOwn)) 
+                choices.Add("Update My Game");
+                
+            if (_permissions.HasPermission(accountId, Permissions.GamesDeleteOwn)) 
+                choices.Add("Delete My Game");
+                
+            if (_permissions.HasPermission(accountId, Permissions.ReviewsReadOwnGames)) 
+                choices.Add("View My Ratings");
+
+            choices.Add("Go Back");
+
             var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Wat wilt u doen?")
-                    .AddChoices(
-                        "Add My Game",
-                        "Update My Game",
-                        "Delete My Game",
-                        "View My Ratings",
-                        "Go Back"
-                    )
+                    .AddChoices(choices)
                     .HighlightStyle(new Style(foreground: Color.Cyan1))
             );
 
@@ -57,8 +71,6 @@ public static class PublisherMenu
             }
         }
     }
-
-
 
     private static GameModel? SearchAndSelectGame(string action)
     {
@@ -111,9 +123,8 @@ public static class PublisherMenu
         game.Price = AnsiConsole.Prompt(new TextPrompt<double>($"{Texts.Get("Price")}:").DefaultValue(game.Price));
         SoundEffects.PlayMenuClick();
 
-        // 2. Dropdown for Genre
         var genres = _gameLogic.GetAllGenres();
-        var currentGenre = genres.FirstOrDefault(g => g.Id == game.GenreId); // Find the current one
+        var currentGenre = genres.FirstOrDefault(g => g.Id == game.GenreId); 
 
         var selectedGenre = AnsiConsole.Prompt(
             new SelectionPrompt<GenreModel>()
@@ -146,15 +157,9 @@ public static class PublisherMenu
         Console.ReadKey(true);
     }
 
-    private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
-
     private static void ShowPublisherRatings(int publisherId)
     {
-
-        // AnsiConsole.MarkupLine("[red]debug: entering ShowPublisherRatings[/]");
-        // Console.ReadKey();
         const int pageSize = 10;
-
         AnsiConsole.Clear();
 
         var allReviews = _reviewLogic.GetPublisherReviews(publisherId);
@@ -216,32 +221,17 @@ public static class PublisherMenu
                 case ConsoleKey.UpArrow:
                     selectedIndex = (selectedIndex - 1 + pageGames.Count) % pageGames.Count;
                     break;
-
                 case ConsoleKey.DownArrow:
                     selectedIndex = (selectedIndex + 1) % pageGames.Count;
                     break;
-
                 case ConsoleKey.LeftArrow:
-                    if (currentPage > 0)
-                    {
-                        currentPage--;
-                        selectedIndex = 0;
-                        SoundEffects.PlayMenuClick();
-                    }
+                    if (currentPage > 0) { currentPage--; selectedIndex = 0; SoundEffects.PlayMenuClick(); }
                     break;
-
                 case ConsoleKey.RightArrow:
-                    if (currentPage < totalPages - 1)
-                    {
-                        currentPage++;
-                        selectedIndex = 0;
-                        SoundEffects.PlayMenuClick();
-                    }
+                    if (currentPage < totalPages - 1) { currentPage++; selectedIndex = 0; SoundEffects.PlayMenuClick(); }
                     break;
-
                 case ConsoleKey.Escape:
                     return;
-
                 case ConsoleKey.Enter:
                     SoundEffects.PlayMenuClick();
                     ShowReviewsForGame(pageGames[selectedIndex]);
@@ -276,13 +266,20 @@ public static class PublisherMenu
 
             var reviewChoices = new List<ReviewModel>();
             var reviewPrompt = new SelectionPrompt<ReviewModel>()
-                .Title("Select a review to manage or navigate:")
+                .Title("Select a review to read or navigate:")
                 .UseConverter(r =>
                 {
-                    string shortComment = r.Comment.Length > 40 ? r.Comment.Substring(0, 37) + "..." : r.Comment;
-                    return $"[yellow]{r.Rating}/5[/] - {Markup.Escape(r.ReviewerName)}: {shortComment}";
+                    if (r.Id < 0) 
+                    {
+                        return r.ReviewerName ?? "Go Back";
+                    }
+                    
+                    string comment = r.Comment ?? "";
+                    string shortComment = comment.Length > 40 ? comment.Substring(0, 37) + "..." : comment;
+                    
+                    return $"[yellow]{r.Rating}/5[/] - {Markup.Escape(r.ReviewerName ?? "Unknown")}: {Markup.Escape(shortComment)}";
                 });
-
+                
             foreach (var r in pageReviews)
             {
                 reviewChoices.Add(r);
@@ -299,7 +296,7 @@ public static class PublisherMenu
             var selectedReview = AnsiConsole.Prompt(reviewPrompt);
 
             if (selectedReview.Id == -1)
-                return; // Go back
+                return; 
             else if (selectedReview.Id == -2)
             {
                 currentPage--;
@@ -312,10 +309,11 @@ public static class PublisherMenu
                 SoundEffects.PlayMenuClick();
                 continue;
             }
+            
             AnsiConsole.Clear();
             var panel = new Panel(
                 $"[bold]{Markup.Escape(selectedReview.ReviewerName)}[/]\n" +
-                $"[yellow]Rating:[/] {selectedReview.Rating}/10\n\n" +
+                $"[yellow]Rating:[/] {selectedReview.Rating}/5\n\n" +
                 $"{Markup.Escape(selectedReview.Comment)}\n\n" +
                 $"[grey]{selectedReview.CreatedAt:g}[/]"
             )
@@ -324,30 +322,8 @@ public static class PublisherMenu
 
             AnsiConsole.Write(panel);
 
-            var deleteAction = AnsiConsole.Confirm("\n[yellow]Delete this review?[/]", false);
-            if (deleteAction)
-            {
-                try
-                {
-                    _reviewLogic.DeleteReviewWithAuth(
-                    CurrentUserModel.CurrentUser!.Id,   // accountId
-                    selectedReview.Id,
-                    gameId
-                );
-                    reviews.Remove(selectedReview);
-                    totalPages = (int)Math.Ceiling(reviews.Count / (double)pageSize);
-                    AnsiConsole.MarkupLine("[green]Review deleted successfully![/]");
-                    SoundEffects.PlayMenuClick();
-                    Thread.Sleep(1000);
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
-                    SoundEffects.PlayErrorSound();
-                    Thread.Sleep(1500);
-                    continue;
-                }
-            }
+            AnsiConsole.MarkupLine("\n[grey]Press any key to return to the review list...[/]");
+            Console.ReadKey(true);
         }
     }
 
@@ -363,7 +339,6 @@ public static class PublisherMenu
             Console.ReadKey(true);
             return;
         }
-
 
         if (game.PublisherId != publisher.Id)
         {

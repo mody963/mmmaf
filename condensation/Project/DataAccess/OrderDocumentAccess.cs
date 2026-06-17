@@ -115,4 +115,12 @@ public class OrderDocumentAccess
             throw;
         }
     }
+
+    public async Task<bool> DeleteOrderDocumentAsync(string orderNumber) // Puur voor testen
+    {
+        var collection = _mongoDb.GetCollection<OrderDocumentModel>(_collectionName);
+        var filter = Builders<OrderDocumentModel>.Filter.Eq(o => o.OrderNumber, orderNumber);
+        var result = await collection.DeleteOneAsync(filter);
+        return result.DeletedCount > 0;
+    }
 }
