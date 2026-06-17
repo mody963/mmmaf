@@ -7,7 +7,7 @@ public class CheckoutIntegrationTests
 
     public CheckoutIntegrationTests()
     {
-        AppConfig.PostgresConnectionString = "Host=localhost;Port=5433;Database=Condensation;Username=mouhamad;Password=dei2Kaish4dooquiepei";
+        AppConfig.PostgresConnectionString = "Host=localhost;Port=5432;Database=Condensation;Username=mouhamad;Password=dei2Kaish4dooquiepei";
         AppConfig.MongoDbConnectionString = "mongodb://hro_gebruiker:hetismongodb@pg-hro.crazyelectron.io:27017/?authsource=admin";
         AppConfig.MongoDbDatabaseName = "Condensation";
 
@@ -17,6 +17,8 @@ public class CheckoutIntegrationTests
             AppConfig.MongoDbConnectionString,
             AppConfig.MongoDbDatabaseName
         );
+
+            AppConfig.MongoDb = mongo;
 
         _orderDocumentAccess = new OrderDocumentAccess(mongo);
         _checkoutLogic = new CheckoutLogic();
