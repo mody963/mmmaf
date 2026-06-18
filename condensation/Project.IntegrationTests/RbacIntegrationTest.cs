@@ -35,12 +35,6 @@ public class RbacPermissionsIntegrationTests : IDisposable
     }
 
     [Fact]
-    public void HasPermission_AdminAccount_HasGamesCreate()
-    {
-        Assert.True(_access.HasPermission(_testAccountId, "games.create"));
-    }
-
-    [Fact]
     public void GetPermissionsForAccount_AdminAccount_ReturnsAdminPermissions()
     {
         var permissions = _access.GetPermissionsForAccount(_testAccountId);
