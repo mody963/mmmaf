@@ -143,7 +143,7 @@ public static class LoginMenu
         try
         {
             // accountsLogic checks if email exists and throws an error if it does
-            accountId = accountsLogic.CreateAccount(newAccount, (int)newAccount.Role);
+            accountId = accountsLogic.CreateAccount(newAccount, Roles.Customer);
         }
         catch (InvalidOperationException ex)
         {
@@ -210,7 +210,7 @@ public static class LoginMenu
         int accountId;
         try
         {
-            accountId = accountsLogic.CreateAccount(newAccount, (int)newAccount.Role);
+            accountId = accountsLogic.CreateAccount(newAccount, Roles.Publisher);
         }
         catch (Exception ex)
         {
