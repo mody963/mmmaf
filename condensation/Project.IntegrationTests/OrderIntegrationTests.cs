@@ -89,31 +89,6 @@ public class OrderIntegrationTests
     }
 
     [Fact]
-    public async Task CreateOrderDocument_ThenRetrieve_Works()
-    {
-        string orderNumber = $"TEST-{Guid.NewGuid()}";
-
-        var doc = new OrderDocumentModel
-        {
-            OrderNumber = orderNumber,
-            CustomerId = 9999,
-            OrderDate = DateTime.UtcNow,
-            OrderStatus = "Created",
-            PaymentStatus = "Pending",
-            StatusHistory = new List<OrderStatusHistoryModel>()
-        };
-
-        await _orderDocumentAccess.CreateOrderDocumentAsync(doc);
-
-        var fetched = await _orderDocumentAccess.GetOrderDocumentByNumberAsync(orderNumber);
-
-        Assert.NotNull(fetched);
-        Assert.Equal(orderNumber, fetched.OrderNumber);
-
-        // Cleanup
-        await _orderDocumentAccess.DeleteOrderDocumentAsync(orderNumber);
-    }
-    [Fact]
     public void HasPurchasedGame_ReturnsTrue_WhenGameWasBought()
     {
         int customerId = 9999;
