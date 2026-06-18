@@ -9,4 +9,11 @@ public class PermissionsLogic
 
         return _permissionsAccess.HasPermission(accountId, permissionName);
     }
+
+    // Cache permissions for a given account to avoid repeated database trips -> in-memory cache
+    public HashSet<string> GetPermissions(int accountId)
+    {
+        if (accountId <= 0) return new HashSet<string>();
+        return _permissionsAccess.GetPermissionsForAccount(accountId);
+    }
 }

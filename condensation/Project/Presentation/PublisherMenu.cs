@@ -6,8 +6,8 @@ public static class PublisherMenu
     private static readonly GameLogic _gameLogic = new GameLogic();
     private static readonly PublisherLogic _publisherLogic = new PublisherLogic();
     private static readonly ReviewLogic _reviewLogic = new ReviewLogic();
-    
-    private static readonly PermissionsLogic _permissions = new PermissionsLogic(); 
+
+    private static readonly PermissionsLogic _permissions = new PermissionsLogic();
 
     public static void Start()
     {
@@ -25,20 +25,20 @@ public static class PublisherMenu
             AnsiConsole.Clear();
             AnsiConsole.MarkupLine($"[bold blue]Publisher Dashboard:[/] [yellow]{publisher.StudioName}[/]\n");
 
-    
             int accountId = CurrentUserModel.CurrentUser.Id;
+            var perms = _permissions.GetPermissions(accountId);   // 1 DB call for all permissions
             var choices = new List<string>();
 
-            if (_permissions.HasPermission(accountId, Permissions.GamesCreate)) 
+            if (perms.Contains(Permissions.GamesCreate))
                 choices.Add("Add My Game");
-                
-            if (_permissions.HasPermission(accountId, Permissions.GamesUpdateOwn)) 
+
+            if (perms.Contains(Permissions.GamesUpdateOwn))
                 choices.Add("Update My Game");
-                
-            if (_permissions.HasPermission(accountId, Permissions.GamesDeleteOwn)) 
+
+            if (perms.Contains(Permissions.GamesDeleteOwn))
                 choices.Add("Delete My Game");
-                
-            if (_permissions.HasPermission(accountId, Permissions.ReviewsReadOwnGames)) 
+
+            if (perms.Contains(Permissions.ReviewsReadOwnGames))
                 choices.Add("View My Ratings");
 
             choices.Add("Go Back");
@@ -124,7 +124,7 @@ public static class PublisherMenu
         SoundEffects.PlayMenuClick();
 
         var genres = _gameLogic.GetAllGenres();
-        var currentGenre = genres.FirstOrDefault(g => g.Id == game.GenreId); 
+        var currentGenre = genres.FirstOrDefault(g => g.Id == game.GenreId);
 
         var selectedGenre = AnsiConsole.Prompt(
             new SelectionPrompt<GenreModel>()
@@ -269,17 +269,17 @@ public static class PublisherMenu
                 .Title("Select a review to read or navigate:")
                 .UseConverter(r =>
                 {
-                    if (r.Id < 0) 
+                    if (r.Id < 0)
                     {
                         return r.ReviewerName ?? "Go Back";
                     }
-                    
+
                     string comment = r.Comment ?? "";
                     string shortComment = comment.Length > 40 ? comment.Substring(0, 37) + "..." : comment;
-                    
+
                     return $"[yellow]{r.Rating}/5[/] - {Markup.Escape(r.ReviewerName ?? "Unknown")}: {Markup.Escape(shortComment)}";
                 });
-                
+
             foreach (var r in pageReviews)
             {
                 reviewChoices.Add(r);
@@ -296,7 +296,7 @@ public static class PublisherMenu
             var selectedReview = AnsiConsole.Prompt(reviewPrompt);
 
             if (selectedReview.Id == -1)
-                return; 
+                return;
             else if (selectedReview.Id == -2)
             {
                 currentPage--;
@@ -309,7 +309,7 @@ public static class PublisherMenu
                 SoundEffects.PlayMenuClick();
                 continue;
             }
-            
+
             AnsiConsole.Clear();
             var panel = new Panel(
                 $"[bold]{Markup.Escape(selectedReview.ReviewerName)}[/]\n" +
