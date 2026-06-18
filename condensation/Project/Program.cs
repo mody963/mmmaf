@@ -70,5 +70,18 @@ AppConfig.MongoDb = mongoDb;
 var uiSoundPlayer = new UiSoundPlayer(AppContext.BaseDirectory);
 SoundEffects.Configure(uiSoundPlayer);
 
+// Run seed data when requested
+if (args.Length > 0 && args[0].Equals("seed", StringComparison.OrdinalIgnoreCase))
+{
+    int seedCount = 5000;
+    if (args.Length > 1 && int.TryParse(args[1], out var parsedCount) && parsedCount > 0)
+    {
+        seedCount = parsedCount;
+    }
+
+    await MockDataSeeder.SeedAsync(seedCount);
+    return;
+}
+
 // Start app
 MainMenu.Start();
