@@ -52,7 +52,6 @@ Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 var db = new Database(postgresConnectionString);
 
 await db.TestConnectionAsync();
-await db.EnsureAnalyticsViewsAsync();
 await db.EnsureReviewSchemaAsync();
 
 // Init Redis

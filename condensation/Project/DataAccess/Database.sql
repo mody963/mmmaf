@@ -188,3 +188,76 @@ SELECT id, 3 FROM account WHERE role = 0;
 UPDATE permissions 
 SET name = 'reviews.read.owngames' 
 WHERE name = 'reviews.delete.owngames';
+
+-- Analytics views
+
+CREATE OR REPLACE VIEW vw_user_revenue_last_month AS
+SELECT
+    DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')::date AS period_start,
+    (DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 day')::date AS period_end,
+    COALESCE(SUM(o.total_price), 0)::numeric(12,2) AS total_revenue
+FROM orders o
+WHERE o.order_date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+  AND o.order_date < DATE_TRUNC('month', CURRENT_DATE);
+
+CREATE OR REPLACE VIEW vw_user_revenue_last_year AS
+SELECT
+    DATE_TRUNC('year', CURRENT_DATE - INTERVAL '1 year')::date AS period_start,
+    (DATE_TRUNC('year', CURRENT_DATE) - INTERVAL '1 day')::date AS period_end,
+    COALESCE(SUM(o.total_price), 0)::numeric(12,2) AS total_revenue
+FROM orders o
+WHERE o.order_date >= DATE_TRUNC('year', CURRENT_DATE - INTERVAL '1 year')
+  AND o.order_date < DATE_TRUNC('year', CURRENT_DATE);
+
+CREATE OR REPLACE VIEW vw_user_top_3_most_expensive_games AS
+SELECT g.id, g.title AS game_name, g.price
+FROM game g
+WHERE g.is_active = true
+ORDER BY g.price DESC, g.title ASC
+LIMIT 3;
+
+CREATE OR REPLACE VIEW vw_user_top_3_cheapest_games AS
+SELECT g.id, g.title AS game_name, g.price
+FROM game g
+WHERE g.is_active = true
+ORDER BY g.price ASC, g.title ASC
+LIMIT 3;
+
+CREATE OR REPLACE VIEW vw_user_top_3_genres_most_sold AS
+SELECT ge.id, ge.name AS genre_name, SUM(og.quantity) AS sold_copies
+FROM order_games og
+JOIN game g ON g.id = og.game_id
+JOIN genre ge ON ge.id = g.genre_id
+GROUP BY ge.id, ge.name
+ORDER BY sold_copies DESC, ge.name ASC
+LIMIT 3;
+
+CREATE OR REPLACE VIEW vw_admin_top_10_games_last_month AS
+SELECT g.id, g.title AS game_name, SUM(og.quantity) AS sold_copies
+FROM orders o
+JOIN order_games og ON og.order_id = o.id
+JOIN game g ON g.id = og.game_id
+WHERE o.order_date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+  AND o.order_date < DATE_TRUNC('month', CURRENT_DATE)
+GROUP BY g.id, g.title
+ORDER BY sold_copies DESC, g.title ASC
+LIMIT 10;
+
+CREATE OR REPLACE VIEW vw_admin_top_10_genres AS
+WITH genre_sales AS (
+    SELECT
+        ge.id,
+        ge.name AS genre_name,
+        SUM(og.quantity) AS sold_copies
+    FROM order_games og
+    JOIN game g  ON g.id = og.game_id
+    JOIN genre ge ON ge.id = g.genre_id
+    GROUP BY ge.id, ge.name
+)
+SELECT
+    id,
+    genre_name,
+    sold_copies
+FROM genre_sales
+ORDER BY sold_copies DESC, genre_name ASC
+LIMIT 10;
